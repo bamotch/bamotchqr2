@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📧 TempMail + Fake Identity</title>
+    <title>📧 TempMail Pro - Contrôle Total</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ===== RESET & BASE ===== */
@@ -28,7 +28,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -45,6 +45,12 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== HEADER SIMPLE ===== */
@@ -133,10 +139,10 @@
 
         .email-display.show {
             display: block;
-            animation: fadeIn 0.5s ease-out;
+            animation: slideIn 0.5s ease-out;
         }
 
-        @keyframes fadeIn {
+        @keyframes slideIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
@@ -362,33 +368,54 @@
             margin-top: 30px;
         }
 
-        .identity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .identity-section .section-title {
             margin-bottom: 20px;
+        }
+
+        .identity-placeholder {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--gray);
+        }
+
+        .identity-placeholder i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
         }
 
         .generate-identity-btn {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 18px 40px;
+            font-size: 18px;
             font-weight: 600;
+            border-radius: 50px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             transition: var(--transition);
-        }
-
-        .generate-identity-btn:hover {
-            transform: translateY(-2px);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
             box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
         }
 
-        /* ===== GRID IDENTITÉ ===== */
+        .generate-identity-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        /* ===== GRID IDENTITÉ (caché par défaut) ===== */
+        .identity-content {
+            display: none;
+        }
+
+        .identity-content.show {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
         .identity-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -436,6 +463,54 @@
         .female {
             background: #fce7f3;
             color: #9d174d;
+        }
+
+        /* ===== TEST EMAIL SECTION ===== */
+        .test-email-section {
+            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .test-email-section.show {
+            display: block;
+        }
+
+        .test-email-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .test-email-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .test-email-btn {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-email-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
         }
 
         /* ===== NOTIFICATION ===== */
@@ -509,6 +584,15 @@
             .identity-grid {
                 grid-template-columns: 1fr;
             }
+
+            .test-email-buttons {
+                flex-direction: column;
+            }
+
+            .test-email-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -534,8 +618,8 @@
     <div class="app-container">
         <!-- HEADER -->
         <header class="app-header">
-            <h1><i class="fas fa-mail-bulk"></i> TempMail Generator</h1>
-            <p>Générez un email temporaire • Créez une fausse identité • Protégez votre vie privée</p>
+            <h1><i class="fas fa-mail-bulk"></i> TempMail Pro</h1>
+            <p>Générez un email temporaire • Créez une identité • Contrôle total</p>
         </header>
 
         <!-- CONTENU PRINCIPAL -->
@@ -576,6 +660,24 @@
                     <div class="timer-label">Email valable encore</div>
                 </div>
 
+                <!-- SECTION TEST EMAIL -->
+                <div class="test-email-section" id="testEmailSection">
+                    <div class="test-email-title">
+                        <i class="fas fa-vial"></i> Tester la réception d'emails
+                    </div>
+                    <div class="test-email-buttons">
+                        <button class="test-email-btn" id="testWelcomeBtn">
+                            <i class="fas fa-hand-wave"></i> Email de bienvenue
+                        </button>
+                        <button class="test-email-btn" id="testVerificationBtn">
+                            <i class="fas fa-shield-check"></i> Email de vérification
+                        </button>
+                        <button class="test-email-btn" id="testNewsletterBtn">
+                            <i class="fas fa-newspaper"></i> Newsletter
+                        </button>
+                    </div>
+                </div>
+
                 <!-- BOÎTE DE RÉCEPTION -->
                 <div class="inbox-container">
                     <div class="inbox-header">
@@ -584,7 +686,7 @@
                             <span id="emailCount">(0 email)</span>
                         </div>
                         <button class="refresh-btn" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i> Rafraîchir
+                            <i class="fas fa-sync-alt"></i> Rafraîchir manuellement
                         </button>
                     </div>
                     
@@ -592,9 +694,9 @@
                         <div class="empty-inbox">
                             <div class="empty-icon">📭</div>
                             <h3>Aucun email reçu</h3>
-                            <p>Les emails apparaîtront ici automatiquement</p>
+                            <p>Utilisez l'email généré pour recevoir des messages</p>
                             <p style="margin-top: 10px; font-size: 14px; opacity: 0.7;">
-                                Cliquez sur "Rafraîchir" pour vérifier manuellement
+                                Cliquez sur "Rafraîchir" après avoir envoyé un email
                             </p>
                         </div>
                     </div>
@@ -605,57 +707,76 @@
             <div class="identity-section">
                 <div class="section-title">
                     <i class="fas fa-user-secret"></i>
-                    <span>Fausse Identité</span>
+                    <span>Générateur d'Identité</span>
                 </div>
 
-                <div class="identity-header">
-                    <p>Générez une identité aléatoire complète</p>
+                <!-- PLACEHOLDER PAR DÉFAUT -->
+                <div class="identity-placeholder" id="identityPlaceholder">
+                    <i class="fas fa-user-plus"></i>
+                    <h3>Créez une identité aléatoire</h3>
+                    <p>Générez une fausse identité complète avec tous les détails</p>
                     <button class="generate-identity-btn" id="generateIdentityBtn">
-                        <i class="fas fa-random"></i> Générer Identité
+                        <i class="fas fa-random"></i> Générer une Identité
                     </button>
                 </div>
 
-                <div class="identity-grid" id="identityGrid">
-                    <!-- Les champs d'identité seront générés ici -->
-                    <div class="identity-item">
-                        <div class="identity-label">Nom complet</div>
-                        <div class="identity-value" id="fullName">-</div>
+                <!-- CONTENU IDENTITÉ (caché par défaut) -->
+                <div class="identity-content" id="identityContent">
+                    <div class="identity-header" style="margin-bottom: 20px;">
+                        <button class="generate-identity-btn" id="newIdentityBtn" style="padding: 12px 24px; font-size: 16px;">
+                            <i class="fas fa-redo"></i> Nouvelle Identité
+                        </button>
                     </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Genre</div>
-                        <div class="identity-value" id="gender">-</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Date de naissance</div>
-                        <div class="identity-value" id="birthDate">-</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Âge</div>
-                        <div class="identity-value" id="age">-</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Adresse</div>
-                        <div class="identity-value" id="address">-</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Ville</div>
-                        <div class="identity-value" id="city">-</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Code postal</div>
-                        <div class="identity-value" id="zipCode">-</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Pays</div>
-                        <div class="identity-value" id="country">France</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Téléphone</div>
-                        <div class="identity-value" id="phone">-</div>
-                    </div>
-                    <div class="identity-item">
-                        <div class="identity-label">Profession</div>
-                        <div class="identity-value" id="profession">-</div>
+
+                    <div class="identity-grid">
+                        <div class="identity-item">
+                            <div class="identity-label">Nom complet</div>
+                            <div class="identity-value" id="fullName">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Genre</div>
+                            <div class="identity-value" id="gender">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Date de naissance</div>
+                            <div class="identity-value" id="birthDate">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Âge</div>
+                            <div class="identity-value" id="age">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Adresse</div>
+                            <div class="identity-value" id="address">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Ville</div>
+                            <div class="identity-value" id="city">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Code postal</div>
+                            <div class="identity-value" id="zipCode">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Pays</div>
+                            <div class="identity-value" id="country">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Téléphone</div>
+                            <div class="identity-value" id="phone">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Email</div>
+                            <div class="identity-value" id="identityEmail">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Profession</div>
+                            <div class="identity-value" id="profession">-</div>
+                        </div>
+                        <div class="identity-item">
+                            <div class="identity-label">Situation</div>
+                            <div class="identity-value" id="situation">-</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -669,8 +790,7 @@
         // ===== CONFIGURATION =====
         const CONFIG = {
             DOMAINS: ['tempmail.dev', 'maildrop.cc', '10minutemail.net', 'guerrillamail.net'],
-            DURATION: 600, // 10 minutes en secondes
-            AUTO_REFRESH: 10000 // 10 secondes
+            DURATION: 600 // 10 minutes en secondes
         };
 
         // ===== DONNÉES POUR FAKE IDENTITY =====
@@ -680,7 +800,9 @@
             lastNames: ['Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand', 'Leroy', 'Moreau'],
             cities: ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier', 'Bordeaux', 'Lille'],
             streets: ['Rue de la Paix', 'Avenue des Champs-Élysées', 'Boulevard Saint-Germain', 'Rue du Faubourg Saint-Honoré', 'Place de la République'],
-            professions: ['Développeur', 'Designer', 'Commercial', 'Enseignant', 'Médecin', 'Ingénieur', 'Architecte', 'Avocat', 'Comptable', 'Chef de projet']
+            professions: ['Développeur', 'Designer', 'Commercial', 'Enseignant', 'Médecin', 'Ingénieur', 'Architecte', 'Avocat', 'Comptable', 'Chef de projet'],
+            maritalStatus: ['Célibataire', 'Marié(e)', 'Divorcé(e)', 'Veuf/Veuve', 'En couple'],
+            countries: ['France', 'Belgique', 'Suisse', 'Canada', 'Luxembourg']
         };
 
         // ===== ÉTAT DE L'APPLICATION =====
@@ -689,7 +811,7 @@
             timeLeft: CONFIG.DURATION,
             timerInterval: null,
             emails: [],
-            autoRefreshInterval: null
+            identityGenerated: false
         };
 
         // ===== ÉLÉMENTS DOM =====
@@ -704,20 +826,26 @@
             refreshBtn: document.getElementById('refreshBtn'),
             emailList: document.getElementById('emailList'),
             emailCount: document.getElementById('emailCount'),
+            testEmailSection: document.getElementById('testEmailSection'),
+            testWelcomeBtn: document.getElementById('testWelcomeBtn'),
+            testVerificationBtn: document.getElementById('testVerificationBtn'),
+            testNewsletterBtn: document.getElementById('testNewsletterBtn'),
             generateIdentityBtn: document.getElementById('generateIdentityBtn'),
+            newIdentityBtn: document.getElementById('newIdentityBtn'),
+            identityPlaceholder: document.getElementById('identityPlaceholder'),
+            identityContent: document.getElementById('identityContent'),
             notification: document.getElementById('notification')
         };
 
         // ===== INITIALISATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            // Générer une identité au démarrage
-            generateFakeIdentity();
-            
             // Configurer les événements
             setupEventListeners();
             
-            // Démarrer le rafraîchissement automatique
-            startAutoRefresh();
+            // Désactiver les boutons de test par défaut
+            elements.testWelcomeBtn.disabled = true;
+            elements.testVerificationBtn.disabled = true;
+            elements.testNewsletterBtn.disabled = true;
         });
 
         // ===== CONFIGURATION DES ÉVÉNEMENTS =====
@@ -726,7 +854,15 @@
             elements.copyBtn.addEventListener('click', copyEmail);
             elements.newEmailBtn.addEventListener('click', generateEmail);
             elements.refreshBtn.addEventListener('click', refreshInbox);
+            
+            // Boutons de test d'email
+            elements.testWelcomeBtn.addEventListener('click', () => sendTestEmail('welcome'));
+            elements.testVerificationBtn.addEventListener('click', () => sendTestEmail('verification'));
+            elements.testNewsletterBtn.addEventListener('click', () => sendTestEmail('newsletter'));
+            
+            // Boutons d'identité
             elements.generateIdentityBtn.addEventListener('click', generateFakeIdentity);
+            elements.newIdentityBtn.addEventListener('click', generateFakeIdentity);
         }
 
         // ===== GÉNÉRATION D'EMAIL =====
@@ -747,8 +883,14 @@
             elements.emailAddress.textContent = state.currentEmail;
             elements.emailDisplay.classList.add('show');
             elements.timerContainer.style.display = 'block';
+            elements.testEmailSection.classList.add('show');
             
-            // Mettre à jour l'interface
+            // Activer les boutons de test
+            elements.testWelcomeBtn.disabled = false;
+            elements.testVerificationBtn.disabled = false;
+            elements.testNewsletterBtn.disabled = false;
+            
+            // Mettre à jour la boîte de réception
             updateInbox();
             
             // Démarrer le timer
@@ -769,8 +911,15 @@
                 if (state.timeLeft <= 0) {
                     clearInterval(state.timerInterval);
                     showNotification('⏰ Votre email temporaire a expiré !', 'error');
-                    elements.emailDisplay.classList.remove('show');
-                    elements.timerContainer.style.display = 'none';
+                    
+                    // Cacher l'interface
+                    setTimeout(() => {
+                        elements.emailDisplay.classList.remove('show');
+                        elements.timerContainer.style.display = 'none';
+                        elements.testEmailSection.classList.remove('show');
+                        state.emails = [];
+                        updateInbox();
+                    }, 1000);
                 }
             }, 1000);
         }
@@ -800,6 +949,52 @@
                 });
         }
 
+        // ===== ENVOYER UN EMAIL DE TEST =====
+        function sendTestEmail(type) {
+            if (!state.currentEmail) {
+                showNotification('❌ Veuillez générer un email d\'abord', 'error');
+                return;
+            }
+            
+            const emailTemplates = {
+                welcome: {
+                    from: 'bienvenue@service.com',
+                    subject: '👋 Bienvenue sur notre plateforme !',
+                    body: 'Nous sommes ravis de vous accueillir. Votre compte a été créé avec succès.'
+                },
+                verification: {
+                    from: 'noreply@verification.com',
+                    subject: '🔐 Vérifiez votre adresse email',
+                    body: 'Pour finaliser votre inscription, cliquez sur le lien : https://verif.com/confirm'
+                },
+                newsletter: {
+                    from: 'newsletter@weekly.com',
+                    subject: '📰 Votre newsletter de la semaine',
+                    body: 'Découvrez les dernières actualités et promotions exclusives.'
+                }
+            };
+            
+            const template = emailTemplates[type];
+            const now = new Date();
+            
+            // Ajouter l'email à la liste
+            state.emails.unshift({
+                id: Date.now(),
+                from: template.from,
+                subject: template.subject,
+                body: template.body,
+                time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                date: now.toLocaleDateString('fr-FR'),
+                unread: true
+            });
+            
+            // Mettre à jour l'affichage
+            updateInbox();
+            
+            // Notification
+            showNotification(`📨 Email de test envoyé à ${state.currentEmail}`, 'success');
+        }
+
         // ===== BOÎTE DE RÉCEPTION =====
         function refreshInbox() {
             if (!state.currentEmail) {
@@ -810,76 +1005,16 @@
             // Animation de rotation
             elements.refreshBtn.classList.add('spinning');
             
-            // Simuler la réception d'emails
+            // Simuler un délai de rafraîchissement
             setTimeout(() => {
-                simulateEmailReception();
                 elements.refreshBtn.classList.remove('spinning');
-            }, 1000);
-        }
-
-        function simulateEmailReception() {
-            // Nombre aléatoire d'emails à ajouter (0-3)
-            const newEmailsCount = Math.floor(Math.random() * 4);
-            
-            if (newEmailsCount === 0) {
-                showNotification('📭 Aucun nouvel email', 'info');
-                return;
-            }
-            
-            // Types d'emails possibles
-            const emailTypes = [
-                {
-                    from: 'newsletter@service.com',
-                    subject: '📰 Votre newsletter de la semaine',
-                    body: 'Découvrez les dernières actualités et promotions exclusives.'
-                },
-                {
-                    from: 'noreply@verification.com',
-                    subject: '🔐 Vérifiez votre compte',
-                    body: 'Cliquez sur le lien suivant pour vérifier votre adresse email.'
-                },
-                {
-                    from: 'welcome@platform.com',
-                    subject: '👋 Bienvenue sur notre plateforme !',
-                    body: 'Merci pour votre inscription. Votre compte a été créé avec succès.'
-                },
-                {
-                    from: 'security@alert.com',
-                    subject: '⚠️ Activité suspecte détectée',
-                    body: 'Une connexion inhabituelle a été détectée sur votre compte.'
-                },
-                {
-                    from: 'promo@store.com',
-                    subject: '🎁 Offre spéciale -50%',
-                    body: 'Profitez de notre offre spéciale limitée dans le temps.'
-                }
-            ];
-            
-            // Ajouter les nouveaux emails
-            for (let i = 0; i < newEmailsCount; i++) {
-                const randomEmail = emailTypes[Math.floor(Math.random() * emailTypes.length)];
-                const now = new Date();
                 
-                state.emails.unshift({
-                    id: Date.now() + i,
-                    from: randomEmail.from,
-                    subject: randomEmail.subject,
-                    body: randomEmail.body,
-                    time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                    unread: true
-                });
-            }
-            
-            // Limiter à 20 emails maximum
-            if (state.emails.length > 20) {
-                state.emails = state.emails.slice(0, 20);
-            }
-            
-            // Mettre à jour l'affichage
-            updateInbox();
-            
-            // Notification
-            showNotification(`📨 ${newEmailsCount} nouveau(x) email(s) reçu(s) !`, 'success');
+                if (state.emails.length === 0) {
+                    showNotification('📭 Aucun email dans la boîte de réception', 'info');
+                } else {
+                    showNotification(`✅ Boîte de réception actualisée (${state.emails.length} email${state.emails.length > 1 ? 's' : ''})`, 'success');
+                }
+            }, 800);
         }
 
         function updateInbox() {
@@ -891,7 +1026,10 @@
                     <div class="empty-inbox">
                         <div class="empty-icon">📭</div>
                         <h3>Aucun email reçu</h3>
-                        <p>Les emails envoyés à ${state.currentEmail || 'votre adresse'} apparaîtront ici</p>
+                        <p>Utilisez l'email généré pour recevoir des messages</p>
+                        <p style="margin-top: 10px; font-size: 14px; opacity: 0.7;">
+                            Utilisez les boutons de test pour envoyer un email
+                        </p>
                     </div>
                 `;
                 emailCount.textContent = '(0 email)';
@@ -928,11 +1066,15 @@
             email.unread = false;
             
             // Afficher une alerte avec les détails
-            alert(`📧 ${email.subject}\n\nDe: ${email.from}\n\n${email.body}\n\nReçu à: ${email.time}`);
+            alert(`📧 ${email.subject}\n\nDe: ${email.from}\nÀ: ${state.currentEmail}\nDate: ${email.date} à ${email.time}\n\nMessage:\n${email.body}`);
         }
 
         // ===== FAKE IDENTITY GENERATOR =====
         function generateFakeIdentity() {
+            // Changer l'affichage
+            elements.identityPlaceholder.style.display = 'none';
+            elements.identityContent.classList.add('show');
+            
             // Choisir un genre aléatoire
             const isMale = Math.random() > 0.5;
             const gender = isMale ? 'Masculin' : 'Féminin';
@@ -960,11 +1102,20 @@
             const zipCode = (Math.floor(Math.random() * 90000) + 10000).toString();
             const address = `${streetNumber} ${street}`;
             
+            // Choisir un pays
+            const country = FAKE_DATA.countries[Math.floor(Math.random() * FAKE_DATA.countries.length)];
+            
             // Générer téléphone
             const phone = `+33 ${Math.floor(Math.random() * 9) + 1} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
             
             // Générer profession
             const profession = FAKE_DATA.professions[Math.floor(Math.random() * FAKE_DATA.professions.length)];
+            
+            // Situation familiale
+            const situation = FAKE_DATA.maritalStatus[Math.floor(Math.random() * FAKE_DATA.maritalStatus.length)];
+            
+            // Générer un email pour l'identité
+            const identityEmail = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${isMale ? 'gmail' : 'outlook'}.com`;
             
             // Mettre à jour l'interface
             document.getElementById('fullName').textContent = fullName;
@@ -974,23 +1125,17 @@
             document.getElementById('address').textContent = address;
             document.getElementById('city').textContent = city;
             document.getElementById('zipCode').textContent = zipCode;
+            document.getElementById('country').textContent = country;
             document.getElementById('phone').textContent = phone;
+            document.getElementById('identityEmail').textContent = identityEmail;
             document.getElementById('profession').textContent = profession;
+            document.getElementById('situation').textContent = situation;
+            
+            // Mettre à jour l'état
+            state.identityGenerated = true;
             
             // Notification
             showNotification(`👤 Identité générée : ${fullName}`, 'success');
-        }
-
-        // ===== RAFFRAÎCHISSEMENT AUTOMATIQUE =====
-        function startAutoRefresh() {
-            state.autoRefreshInterval = setInterval(() => {
-                if (state.currentEmail && state.emails.length > 0) {
-                    // 30% de chance de recevoir un nouvel email automatiquement
-                    if (Math.random() < 0.3) {
-                        simulateEmailReception();
-                    }
-                }
-            }, CONFIG.AUTO_REFRESH);
         }
 
         // ===== NOTIFICATIONS =====
