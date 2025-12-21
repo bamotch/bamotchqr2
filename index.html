@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📧 TempMail Pro - Générateur de Mail Temporaire</title>
+    <title>📧 TempMail + Fake Identity</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* ===== RESET & BASE ===== */
         * {
@@ -20,142 +19,81 @@
             --secondary: #4cc9f0;
             --success: #4ade80;
             --danger: #f43f5e;
-            --warning: #f59e0b;
             --dark: #1e293b;
             --light: #f8fafc;
             --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --border-radius: 16px;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            color: var(--dark);
         }
 
         /* ===== CONTAINER PRINCIPAL ===== */
         .app-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1000px;
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr;
-            min-height: 90vh;
         }
 
-        /* ===== HEADER ===== */
+        /* ===== HEADER SIMPLE ===== */
         .app-header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 30px;
+            padding: 25px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .app-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.1;
-        }
-
-        .logo {
-            font-size: 42px;
-            margin-bottom: 15px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
         }
 
         .app-header h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 8px;
         }
 
         .app-header p {
             font-size: 16px;
             opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
 
-        /* ===== CONTENT AREA ===== */
-        .content-area {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+        /* ===== CONTENU PRINCIPAL ===== */
+        .main-content {
             padding: 30px;
-            height: 100%;
         }
 
-        @media (max-width: 768px) {
-            .content-area {
-                grid-template-columns: 1fr;
-            }
+        /* ===== SECTION MAIL TEMPORAIRE ===== */
+        .mail-section {
+            margin-bottom: 30px;
         }
 
-        /* ===== LEFT PANEL - EMAIL GENERATOR ===== */
-        .left-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .panel {
-            background: var(--light);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--gray-light);
-            transition: var(--transition);
-        }
-
-        .panel:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .panel-title {
+        .section-title {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
             color: var(--primary-dark);
             font-size: 20px;
             font-weight: 600;
+            margin-bottom: 20px;
         }
 
-        .panel-title i {
+        .section-title i {
             font-size: 24px;
         }
 
-        /* ===== EMAIL GENERATOR ===== */
-        .email-generator {
+        /* ===== BOUTON GÉNÉRER ===== */
+        .generate-container {
             text-align: center;
+            margin-bottom: 25px;
         }
 
         .generate-btn {
@@ -167,133 +105,115 @@
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
-            width: 100%;
             transition: var(--transition);
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 12px;
-            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
 
         .generate-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
         }
 
-        .generate-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
+        .generate-btn:active {
+            transform: translateY(-1px);
         }
 
+        /* ===== AFFICHAGE EMAIL ===== */
         .email-display {
-            background: white;
+            background: var(--light);
             border-radius: var(--border-radius);
-            padding: 20px;
-            border: 2px solid var(--gray-light);
-            margin-top: 20px;
-            animation: slideIn 0.5s ease-out;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px dashed var(--primary);
+            display: none;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .email-display.show {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .email-display h3 {
-            color: var(--dark);
-            margin-bottom: 15px;
-            font-size: 18px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .email-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .email-address {
-            background: #f8fafc;
-            padding: 18px;
-            border-radius: 12px;
             font-family: 'Courier New', monospace;
-            font-size: 18px;
-            word-break: break-all;
-            margin-bottom: 20px;
-            border: 2px solid #e2e8f0;
-            color: var(--dark);
+            font-size: 20px;
             font-weight: 500;
+            color: var(--dark);
+            word-break: break-all;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            flex: 1;
+            margin-right: 15px;
         }
 
-        .action-buttons {
+        .email-actions {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border-radius: 10px;
+        .action-btn {
+            padding: 12px 20px;
+            border-radius: 8px;
             border: none;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            flex: 1;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--secondary), #3ab0d3);
+        .copy-btn {
+            background: var(--success);
             color: white;
         }
 
-        .btn-primary:hover {
+        .copy-btn:hover {
+            background: #22c55e;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
         }
 
-        .btn-secondary {
-            background: var(--gray-light);
-            color: var(--dark);
-        }
-
-        .btn-secondary:hover {
-            background: var(--gray);
+        .new-btn {
+            background: var(--secondary);
             color: white;
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #22c55e);
-            color: white;
-        }
-
-        .btn-success:hover {
+        .new-btn:hover {
+            background: #3ab0d3;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(74, 222, 128, 0.4);
         }
 
         /* ===== TIMER ===== */
         .timer-container {
-            text-align: center;
-            padding: 20px;
             background: linear-gradient(135deg, #1e293b, #334155);
             color: white;
             border-radius: var(--border-radius);
-            margin-top: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .timer-display {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 700;
             font-family: 'Courier New', monospace;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: 2px;
         }
 
@@ -304,51 +224,44 @@
             letter-spacing: 1px;
         }
 
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            margin-top: 15px;
+        /* ===== BOÎTE DE RÉCEPTION ===== */
+        .inbox-container {
+            background: white;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--primary);
             overflow: hidden;
         }
 
-        .progress {
-            height: 100%;
-            background: linear-gradient(90deg, #4cc9f0, #4361ee);
-            width: 100%;
-            transition: width 1s linear;
-        }
-
-        /* ===== RIGHT PANEL - INBOX ===== */
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
         .inbox-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+        }
+
+        .inbox-title {
+            font-size: 18px;
+            font-weight: 600;
         }
 
         .refresh-btn {
-            background: var(--primary);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: 600;
             transition: var(--transition);
         }
 
         .refresh-btn:hover {
-            background: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
 
@@ -361,364 +274,259 @@
             100% { transform: rotate(360deg); }
         }
 
-        .email-count {
-            background: var(--primary);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        /* ===== EMAIL LIST ===== */
+        /* ===== LISTE EMAILS ===== */
         .email-list {
-            max-height: 500px;
+            max-height: 300px;
             overflow-y: auto;
-            padding-right: 10px;
+            padding: 20px;
         }
 
         .email-list::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         .email-list::-webkit-scrollbar-track {
-            background: var(--gray-light);
-            border-radius: 4px;
+            background: #f1f1f1;
+            border-radius: 3px;
         }
 
         .email-list::-webkit-scrollbar-thumb {
-            background: var(--gray);
-            border-radius: 4px;
+            background: var(--primary);
+            border-radius: 3px;
         }
 
         .email-item {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
+            background: var(--light);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
             border-left: 4px solid var(--primary);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            transition: var(--transition);
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .email-item:hover {
             transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
-        }
-
-        .email-item.unread {
-            border-left-color: var(--danger);
-            background: #fff5f5;
+            background: #f0f4ff;
         }
 
         .email-item-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .email-sender {
             font-weight: 600;
             color: var(--dark);
-            font-size: 16px;
         }
 
         .email-time {
             color: var(--gray);
             font-size: 13px;
-            white-space: nowrap;
         }
 
         .email-subject {
             color: var(--primary);
             font-weight: 600;
-            margin-bottom: 10px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 5px;
         }
 
         .email-preview {
             color: var(--gray);
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.4;
+            overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
-        .email-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .email-item:hover .email-actions {
-            opacity: 1;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: none;
-            font-size: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* ===== EMAIL DETAILS MODAL ===== */
-        .email-details {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            max-height: 600px;
-            overflow-y: auto;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .email-details-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--gray-light);
-        }
-
-        .close-details {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--gray);
-            transition: var(--transition);
-        }
-
-        .close-details:hover {
-            color: var(--danger);
-        }
-
-        .email-details-body {
-            line-height: 1.6;
-        }
-
-        .details-row {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .details-label {
-            font-weight: 600;
-            color: var(--dark);
-            min-width: 80px;
-        }
-
-        .details-value {
-            color: var(--gray);
-            flex: 1;
-        }
-
-        /* ===== EMPTY STATE ===== */
-        .empty-state {
+        .empty-inbox {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: var(--gray);
         }
 
         .empty-icon {
-            font-size: 64px;
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* ===== SECTION FAKE IDENTITY ===== */
+        .identity-section {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .identity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
-            opacity: 0.3;
         }
 
-        /* ===== STATS ===== */
-        .stats {
+        .generate-identity-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .generate-identity-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* ===== GRID IDENTITÉ ===== */
+        .identity-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .stat-card {
+        .identity-item {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
         }
 
-        .stat-number {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary);
+        .identity-label {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-bottom: 5px;
         }
 
-        .stat-label {
-            font-size: 14px;
-            color: var(--gray);
+        .identity-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            word-break: break-word;
+        }
+
+        .gender-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+
+        .male {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .female {
+            background: #fce7f3;
+            color: #9d174d;
         }
 
         /* ===== NOTIFICATION ===== */
         .notification {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
-            padding: 15px 25px;
-            border-radius: 10px;
+            background: var(--success);
             color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
             font-weight: 600;
-            z-index: 1000;
             display: flex;
             align-items: center;
             gap: 10px;
+            z-index: 1000;
             transform: translateX(400px);
             transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .notification.show {
             transform: translateX(0);
         }
 
-        .notification.success {
-            background: linear-gradient(135deg, var(--success), #22c55e);
-        }
-
         .notification.error {
-            background: linear-gradient(135deg, var(--danger), #e11d48);
+            background: var(--danger);
         }
 
         .notification.info {
-            background: linear-gradient(135deg, var(--secondary), #3ab0d3);
-        }
-
-        /* ===== FOOTER ===== */
-        .app-footer {
-            background: var(--light);
-            padding: 25px;
-            text-align: center;
-            border-top: 1px solid var(--gray-light);
-            margin-top: 30px;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .features {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .feature {
-            text-align: center;
-            padding: 25px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-
-        .feature-icon {
-            font-size: 40px;
-            color: var(--primary);
-            margin-bottom: 15px;
+            background: var(--secondary);
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
-            .app-container {
-                min-height: auto;
-            }
-            
-            .content-area {
+        @media (max-width: 768px) {
+            .main-content {
                 padding: 20px;
             }
-        }
 
-        @media (max-width: 768px) {
             .app-header {
                 padding: 20px;
             }
-            
+
             .app-header h1 {
                 font-size: 24px;
             }
-            
-            .logo {
-                font-size: 32px;
+
+            .generate-btn {
+                padding: 15px 30px;
+                font-size: 16px;
             }
-            
-            .content-area {
-                padding: 15px;
-                gap: 20px;
+
+            .email-address {
+                font-size: 16px;
             }
-            
-            .panel {
-                padding: 20px;
-            }
-            
+
             .timer-display {
                 font-size: 36px;
             }
-            
-            .action-buttons {
+
+            .email-actions {
                 flex-direction: column;
+                width: 100%;
             }
-            
-            .stats {
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .identity-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         @media (max-width: 480px) {
-            .app-header {
-                padding: 15px;
+            .email-header {
+                flex-direction: column;
+                gap: 15px;
             }
-            
-            .panel {
-                padding: 15px;
+
+            .email-address {
+                margin-right: 0;
+                margin-bottom: 10px;
             }
-            
-            .email-details {
-                padding: 15px;
+
+            .inbox-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
             }
-        }
-
-        /* ===== LOADING ===== */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--gray-light);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 4px;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
         }
     </style>
 </head>
@@ -726,159 +534,131 @@
     <div class="app-container">
         <!-- HEADER -->
         <header class="app-header">
-            <div class="logo">📧</div>
-            <h1>TempMail Pro</h1>
-            <p>Générez des adresses email temporaires • Recevez des emails en temps réel • Protégez votre vie privée</p>
+            <h1><i class="fas fa-mail-bulk"></i> TempMail Generator</h1>
+            <p>Générez un email temporaire • Créez une fausse identité • Protégez votre vie privée</p>
         </header>
 
-        <!-- CONTENT AREA -->
-        <div class="content-area">
-            <!-- LEFT PANEL - EMAIL GENERATOR -->
-            <div class="left-panel">
-                <!-- GENERATOR PANEL -->
-                <div class="panel email-generator">
-                    <div class="panel-title">
-                        <i class="fas fa-mail-bulk"></i>
-                        <h2>Générateur d'Email</h2>
-                    </div>
-                    
+        <!-- CONTENU PRINCIPAL -->
+        <div class="main-content">
+            <!-- SECTION MAIL TEMPORAIRE -->
+            <div class="mail-section">
+                <div class="section-title">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email Temporaire</span>
+                </div>
+
+                <!-- BOUTON GÉNÉRER -->
+                <div class="generate-container">
                     <button class="generate-btn" id="generateBtn">
                         <i class="fas fa-plus-circle"></i>
-                        <span>Générer un Nouvel Email</span>
+                        Générer un Email Temporaire
                     </button>
+                </div>
 
-                    <div id="emailDisplay" style="display: none;">
-                        <div class="email-display">
-                            <h3><i class="fas fa-envelope"></i> Votre Email Temporaire</h3>
-                            <div class="email-address" id="emailAddress"></div>
-                            
-                            <div class="action-buttons">
-                                <button class="btn btn-primary" id="copyBtn">
-                                    <i class="fas fa-copy"></i> Copier
-                                </button>
-                                <button class="btn btn-secondary" id="refreshEmailBtn">
-                                    <i class="fas fa-redo"></i> Nouveau
-                                </button>
-                                <button class="btn btn-success" id="shareBtn">
-                                    <i class="fas fa-share-alt"></i> Partager
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- TIMER -->
-                        <div class="timer-container">
-                            <div class="timer-display" id="timerDisplay">10:00</div>
-                            <div class="timer-label">Temps restant avant expiration</div>
-                            <div class="progress-bar">
-                                <div class="progress" id="progressBar"></div>
-                            </div>
+                <!-- AFFICHAGE EMAIL -->
+                <div class="email-display" id="emailDisplay">
+                    <div class="email-header">
+                        <div class="email-address" id="emailAddress"></div>
+                        <div class="email-actions">
+                            <button class="action-btn copy-btn" id="copyBtn">
+                                <i class="fas fa-copy"></i> Copier
+                            </button>
+                            <button class="action-btn new-btn" id="newEmailBtn">
+                                <i class="fas fa-redo"></i> Nouveau
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- STATISTICS -->
-                <div class="panel">
-                    <div class="panel-title">
-                        <i class="fas fa-chart-line"></i>
-                        <h2>Statistiques</h2>
-                    </div>
-                    <div class="stats">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalEmails">0</div>
-                            <div class="stat-label">Emails reçus</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="activeTime">10:00</div>
-                            <div class="stat-label">Temps actif</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="emailsToday">0</div>
-                            <div class="stat-label">Aujourd'hui</div>
-                        </div>
-                    </div>
+                <!-- TIMER -->
+                <div class="timer-container" id="timerContainer" style="display: none;">
+                    <div class="timer-display" id="timerDisplay">10:00</div>
+                    <div class="timer-label">Email valable encore</div>
                 </div>
-            </div>
 
-            <!-- RIGHT PANEL - INBOX -->
-            <div class="right-panel">
-                <div class="panel">
+                <!-- BOÎTE DE RÉCEPTION -->
+                <div class="inbox-container">
                     <div class="inbox-header">
-                        <div class="panel-title">
-                            <i class="fas fa-inbox"></i>
-                            <h2>Boîte de Réception</h2>
-                            <span class="email-count" id="emailCount">0 emails</span>
+                        <div class="inbox-title">
+                            <i class="fas fa-inbox"></i> Boîte de réception
+                            <span id="emailCount">(0 email)</span>
                         </div>
-                        <button class="refresh-btn" id="refreshInboxBtn">
+                        <button class="refresh-btn" id="refreshBtn">
                             <i class="fas fa-sync-alt"></i> Rafraîchir
                         </button>
                     </div>
-
+                    
                     <div class="email-list" id="emailList">
-                        <!-- Emails will appear here -->
-                        <div class="empty-state">
+                        <div class="empty-inbox">
                             <div class="empty-icon">📭</div>
-                            <h3>Boîte de réception vide</h3>
-                            <p>Les emails envoyés à votre adresse temporaire apparaîtront ici.</p>
+                            <h3>Aucun email reçu</h3>
+                            <p>Les emails apparaîtront ici automatiquement</p>
                             <p style="margin-top: 10px; font-size: 14px; opacity: 0.7;">
-                                Cliquez sur "Rafraîchir" pour vérifier les nouveaux emails
+                                Cliquez sur "Rafraîchir" pour vérifier manuellement
                             </p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- EMAIL DETAILS (Hidden by default) -->
-                <div class="panel email-details" id="emailDetails" style="display: none;">
-                    <div class="email-details-header">
-                        <h3 id="detailsSubject"></h3>
-                        <button class="close-details" id="closeDetailsBtn">
-                            <i class="fas fa-times"></i>
-                        </button>
+            <!-- SECTION FAKE IDENTITY -->
+            <div class="identity-section">
+                <div class="section-title">
+                    <i class="fas fa-user-secret"></i>
+                    <span>Fausse Identité</span>
+                </div>
+
+                <div class="identity-header">
+                    <p>Générez une identité aléatoire complète</p>
+                    <button class="generate-identity-btn" id="generateIdentityBtn">
+                        <i class="fas fa-random"></i> Générer Identité
+                    </button>
+                </div>
+
+                <div class="identity-grid" id="identityGrid">
+                    <!-- Les champs d'identité seront générés ici -->
+                    <div class="identity-item">
+                        <div class="identity-label">Nom complet</div>
+                        <div class="identity-value" id="fullName">-</div>
                     </div>
-                    <div class="email-details-body">
-                        <div class="details-row">
-                            <div class="details-label">De :</div>
-                            <div class="details-value" id="detailsFrom"></div>
-                        </div>
-                        <div class="details-row">
-                            <div class="details-label">À :</div>
-                            <div class="details-value" id="detailsTo"></div>
-                        </div>
-                        <div class="details-row">
-                            <div class="details-label">Date :</div>
-                            <div class="details-value" id="detailsDate"></div>
-                        </div>
-                        <div class="details-row" style="margin-top: 30px;">
-                            <div class="details-label">Message :</div>
-                            <div class="details-value" id="detailsBody"></div>
-                        </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Genre</div>
+                        <div class="identity-value" id="gender">-</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Date de naissance</div>
+                        <div class="identity-value" id="birthDate">-</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Âge</div>
+                        <div class="identity-value" id="age">-</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Adresse</div>
+                        <div class="identity-value" id="address">-</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Ville</div>
+                        <div class="identity-value" id="city">-</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Code postal</div>
+                        <div class="identity-value" id="zipCode">-</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Pays</div>
+                        <div class="identity-value" id="country">France</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Téléphone</div>
+                        <div class="identity-value" id="phone">-</div>
+                    </div>
+                    <div class="identity-item">
+                        <div class="identity-label">Profession</div>
+                        <div class="identity-value" id="profession">-</div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- FEATURES -->
-        <div class="app-footer">
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Instant</h3>
-                    <p>Générez un email en un clic, sans inscription</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Sécurisé</h3>
-                    <p>Protégez votre vie privée et évitez le spam</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔄</div>
-                    <h3>Temps réel</h3>
-                    <p>Recevez les emails instantanément</p>
-                </div>
-            </div>
-            <p style="color: var(--gray); font-size: 14px;">
-                ⚠️ Cet email est temporaire et sera automatiquement détruit après 10 minutes.<br>
-                Ne l'utilisez pas pour des informations sensibles.
-            </p>
         </div>
     </div>
 
@@ -888,10 +668,19 @@
     <script>
         // ===== CONFIGURATION =====
         const CONFIG = {
-            DOMAINS: ['tempmail.dev', 'maildrop.cc', '10minutemail.net', 'guerrillamail.net', 'temp-mail.org'],
+            DOMAINS: ['tempmail.dev', 'maildrop.cc', '10minutemail.net', 'guerrillamail.net'],
             DURATION: 600, // 10 minutes en secondes
-            AUTO_REFRESH: 30000, // Rafraîchir automatiquement toutes les 30 secondes
-            MAX_EMAILS: 50
+            AUTO_REFRESH: 10000 // 10 secondes
+        };
+
+        // ===== DONNÉES POUR FAKE IDENTITY =====
+        const FAKE_DATA = {
+            maleFirstNames: ['Jean', 'Pierre', 'Paul', 'Michel', 'Thomas', 'Nicolas', 'François', 'David', 'Alexandre', 'Julien'],
+            femaleFirstNames: ['Marie', 'Julie', 'Sophie', 'Isabelle', 'Anne', 'Catherine', 'Claire', 'Émilie', 'Chloé', 'Laura'],
+            lastNames: ['Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand', 'Leroy', 'Moreau'],
+            cities: ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier', 'Bordeaux', 'Lille'],
+            streets: ['Rue de la Paix', 'Avenue des Champs-Élysées', 'Boulevard Saint-Germain', 'Rue du Faubourg Saint-Honoré', 'Place de la République'],
+            professions: ['Développeur', 'Designer', 'Commercial', 'Enseignant', 'Médecin', 'Ingénieur', 'Architecte', 'Avocat', 'Comptable', 'Chef de projet']
         };
 
         // ===== ÉTAT DE L'APPLICATION =====
@@ -900,47 +689,45 @@
             timeLeft: CONFIG.DURATION,
             timerInterval: null,
             emails: [],
-            autoRefreshInterval: null,
-            isRefreshing: false,
-            totalEmails: 0,
-            emailsToday: 0
+            autoRefreshInterval: null
         };
 
-        // ===== DOM ELEMENTS =====
+        // ===== ÉLÉMENTS DOM =====
         const elements = {
             generateBtn: document.getElementById('generateBtn'),
             emailDisplay: document.getElementById('emailDisplay'),
             emailAddress: document.getElementById('emailAddress'),
             copyBtn: document.getElementById('copyBtn'),
-            refreshEmailBtn: document.getElementById('refreshEmailBtn'),
-            shareBtn: document.getElementById('shareBtn'),
+            newEmailBtn: document.getElementById('newEmailBtn'),
+            timerContainer: document.getElementById('timerContainer'),
             timerDisplay: document.getElementById('timerDisplay'),
-            progressBar: document.getElementById('progressBar'),
-            refreshInboxBtn: document.getElementById('refreshInboxBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
             emailList: document.getElementById('emailList'),
             emailCount: document.getElementById('emailCount'),
-            emailDetails: document.getElementById('emailDetails'),
-            closeDetailsBtn: document.getElementById('closeDetailsBtn'),
-            notification: document.getElementById('notification'),
-            totalEmails: document.getElementById('totalEmails'),
-            activeTime: document.getElementById('activeTime'),
-            emailsToday: document.getElementById('emailsToday')
+            generateIdentityBtn: document.getElementById('generateIdentityBtn'),
+            notification: document.getElementById('notification')
         };
 
         // ===== INITIALISATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            // Charger l'état depuis le localStorage
-            loadState();
+            // Générer une identité au démarrage
+            generateFakeIdentity();
             
             // Configurer les événements
             setupEventListeners();
             
             // Démarrer le rafraîchissement automatique
             startAutoRefresh();
-            
-            // Afficher une notification de bienvenue
-            showNotification('👋 Bienvenue sur TempMail Pro !', 'info');
         });
+
+        // ===== CONFIGURATION DES ÉVÉNEMENTS =====
+        function setupEventListeners() {
+            elements.generateBtn.addEventListener('click', generateEmail);
+            elements.copyBtn.addEventListener('click', copyEmail);
+            elements.newEmailBtn.addEventListener('click', generateEmail);
+            elements.refreshBtn.addEventListener('click', refreshInbox);
+            elements.generateIdentityBtn.addEventListener('click', generateFakeIdentity);
+        }
 
         // ===== GÉNÉRATION D'EMAIL =====
         function generateEmail() {
@@ -950,31 +737,25 @@
             }
             
             // Générer un nouvel email
-            const randomId = Math.random().toString(36).substring(2, 12);
+            const randomId = Math.random().toString(36).substring(2, 10);
             const domain = CONFIG.DOMAINS[Math.floor(Math.random() * CONFIG.DOMAINS.length)];
             state.currentEmail = `${randomId}@${domain}`;
             state.timeLeft = CONFIG.DURATION;
             state.emails = [];
             
+            // Afficher l'email
+            elements.emailAddress.textContent = state.currentEmail;
+            elements.emailDisplay.classList.add('show');
+            elements.timerContainer.style.display = 'block';
+            
             // Mettre à jour l'interface
-            updateEmailDisplay();
             updateInbox();
-            updateStats();
             
             // Démarrer le timer
             startTimer();
             
-            // Sauvegarder l'état
-            saveState();
-            
             // Notification
-            showNotification(`✅ Nouvel email généré : ${state.currentEmail}`, 'success');
-        }
-
-        function updateEmailDisplay() {
-            elements.emailAddress.textContent = state.currentEmail;
-            elements.emailDisplay.style.display = 'block';
-            elements.generateBtn.innerHTML = '<i class="fas fa-redo"></i><span>Regénérer un Email</span>';
+            showNotification(`✅ Email généré : ${state.currentEmail}`, 'success');
         }
 
         // ===== TIMER =====
@@ -988,9 +769,8 @@
                 if (state.timeLeft <= 0) {
                     clearInterval(state.timerInterval);
                     showNotification('⏰ Votre email temporaire a expiré !', 'error');
-                    state.currentEmail = '';
-                    elements.emailDisplay.style.display = 'none';
-                    elements.generateBtn.innerHTML = '<i class="fas fa-plus-circle"></i><span>Générer un Nouvel Email</span>';
+                    elements.emailDisplay.classList.remove('show');
+                    elements.timerContainer.style.display = 'none';
                 }
             }, 1000);
         }
@@ -999,24 +779,236 @@
             const minutes = Math.floor(state.timeLeft / 60);
             const seconds = state.timeLeft % 60;
             elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // ===== COPIER EMAIL =====
+        function copyEmail() {
+            if (!state.currentEmail) return;
             
-            // Mettre à jour la barre de progression
-            const progress = (state.timeLeft / CONFIG.DURATION) * 100;
-            elements.progressBar.style.width = `${progress}%`;
-            
-            // Mettre à jour le temps actif
-            const activeMinutes = Math.floor((CONFIG.DURATION - state.timeLeft) / 60);
-            const activeSeconds = (CONFIG.DURATION - state.timeLeft) % 60;
-            elements.activeTime.textContent = `${activeMinutes.toString().padStart(2, '0')}:${activeSeconds.toString().padStart(2, '0')}`;
+            navigator.clipboard.writeText(state.currentEmail)
+                .then(() => {
+                    const originalText = elements.copyBtn.innerHTML;
+                    elements.copyBtn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                    showNotification('✅ Email copié dans le presse-papier !', 'success');
+                    
+                    setTimeout(() => {
+                        elements.copyBtn.innerHTML = originalText;
+                    }, 2000);
+                })
+                .catch(err => {
+                    showNotification('❌ Impossible de copier l\'email', 'error');
+                });
         }
 
         // ===== BOÎTE DE RÉCEPTION =====
-        async function refreshInbox() {
-            if (!state.currentEmail || state.isRefreshing) return;
+        function refreshInbox() {
+            if (!state.currentEmail) {
+                showNotification('❌ Veuillez générer un email d\'abord', 'error');
+                return;
+            }
             
-            state.isRefreshing = true;
-            elements.refreshInboxBtn.classList.add('spinning');
+            // Animation de rotation
+            elements.refreshBtn.classList.add('spinning');
             
-            try {
-                // SIMULATION D'API - À REMPLACER PAR UNE VRAIE API
-               
+            // Simuler la réception d'emails
+            setTimeout(() => {
+                simulateEmailReception();
+                elements.refreshBtn.classList.remove('spinning');
+            }, 1000);
+        }
+
+        function simulateEmailReception() {
+            // Nombre aléatoire d'emails à ajouter (0-3)
+            const newEmailsCount = Math.floor(Math.random() * 4);
+            
+            if (newEmailsCount === 0) {
+                showNotification('📭 Aucun nouvel email', 'info');
+                return;
+            }
+            
+            // Types d'emails possibles
+            const emailTypes = [
+                {
+                    from: 'newsletter@service.com',
+                    subject: '📰 Votre newsletter de la semaine',
+                    body: 'Découvrez les dernières actualités et promotions exclusives.'
+                },
+                {
+                    from: 'noreply@verification.com',
+                    subject: '🔐 Vérifiez votre compte',
+                    body: 'Cliquez sur le lien suivant pour vérifier votre adresse email.'
+                },
+                {
+                    from: 'welcome@platform.com',
+                    subject: '👋 Bienvenue sur notre plateforme !',
+                    body: 'Merci pour votre inscription. Votre compte a été créé avec succès.'
+                },
+                {
+                    from: 'security@alert.com',
+                    subject: '⚠️ Activité suspecte détectée',
+                    body: 'Une connexion inhabituelle a été détectée sur votre compte.'
+                },
+                {
+                    from: 'promo@store.com',
+                    subject: '🎁 Offre spéciale -50%',
+                    body: 'Profitez de notre offre spéciale limitée dans le temps.'
+                }
+            ];
+            
+            // Ajouter les nouveaux emails
+            for (let i = 0; i < newEmailsCount; i++) {
+                const randomEmail = emailTypes[Math.floor(Math.random() * emailTypes.length)];
+                const now = new Date();
+                
+                state.emails.unshift({
+                    id: Date.now() + i,
+                    from: randomEmail.from,
+                    subject: randomEmail.subject,
+                    body: randomEmail.body,
+                    time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                    unread: true
+                });
+            }
+            
+            // Limiter à 20 emails maximum
+            if (state.emails.length > 20) {
+                state.emails = state.emails.slice(0, 20);
+            }
+            
+            // Mettre à jour l'affichage
+            updateInbox();
+            
+            // Notification
+            showNotification(`📨 ${newEmailsCount} nouveau(x) email(s) reçu(s) !`, 'success');
+        }
+
+        function updateInbox() {
+            const emailList = elements.emailList;
+            const emailCount = elements.emailCount;
+            
+            if (state.emails.length === 0) {
+                emailList.innerHTML = `
+                    <div class="empty-inbox">
+                        <div class="empty-icon">📭</div>
+                        <h3>Aucun email reçu</h3>
+                        <p>Les emails envoyés à ${state.currentEmail || 'votre adresse'} apparaîtront ici</p>
+                    </div>
+                `;
+                emailCount.textContent = '(0 email)';
+                return;
+            }
+            
+            // Mettre à jour le compteur
+            emailCount.textContent = `(${state.emails.length} email${state.emails.length > 1 ? 's' : ''})`;
+            
+            // Générer la liste des emails
+            let emailsHTML = '';
+            
+            state.emails.forEach(email => {
+                emailsHTML += `
+                    <div class="email-item" onclick="viewEmail(${email.id})">
+                        <div class="email-item-header">
+                            <div class="email-sender">${email.from}</div>
+                            <div class="email-time">${email.time}</div>
+                        </div>
+                        <div class="email-subject">${email.subject}</div>
+                        <div class="email-preview">${email.body}</div>
+                    </div>
+                `;
+            });
+            
+            emailList.innerHTML = emailsHTML;
+        }
+
+        function viewEmail(emailId) {
+            const email = state.emails.find(e => e.id === emailId);
+            if (!email) return;
+            
+            // Marquer comme lu
+            email.unread = false;
+            
+            // Afficher une alerte avec les détails
+            alert(`📧 ${email.subject}\n\nDe: ${email.from}\n\n${email.body}\n\nReçu à: ${email.time}`);
+        }
+
+        // ===== FAKE IDENTITY GENERATOR =====
+        function generateFakeIdentity() {
+            // Choisir un genre aléatoire
+            const isMale = Math.random() > 0.5;
+            const gender = isMale ? 'Masculin' : 'Féminin';
+            
+            // Générer nom et prénom
+            const firstName = isMale 
+                ? FAKE_DATA.maleFirstNames[Math.floor(Math.random() * FAKE_DATA.maleFirstNames.length)]
+                : FAKE_DATA.femaleFirstNames[Math.floor(Math.random() * FAKE_DATA.femaleFirstNames.length)];
+            
+            const lastName = FAKE_DATA.lastNames[Math.floor(Math.random() * FAKE_DATA.lastNames.length)];
+            const fullName = `${firstName} ${lastName}`;
+            
+            // Générer date de naissance (18-65 ans)
+            const currentYear = new Date().getFullYear();
+            const age = Math.floor(Math.random() * (65 - 18 + 1)) + 18;
+            const birthYear = currentYear - age;
+            const birthMonth = Math.floor(Math.random() * 12) + 1;
+            const birthDay = Math.floor(Math.random() * 28) + 1;
+            const birthDate = `${birthDay.toString().padStart(2, '0')}/${birthMonth.toString().padStart(2, '0')}/${birthYear}`;
+            
+            // Générer adresse
+            const street = FAKE_DATA.streets[Math.floor(Math.random() * FAKE_DATA.streets.length)];
+            const streetNumber = Math.floor(Math.random() * 200) + 1;
+            const city = FAKE_DATA.cities[Math.floor(Math.random() * FAKE_DATA.cities.length)];
+            const zipCode = (Math.floor(Math.random() * 90000) + 10000).toString();
+            const address = `${streetNumber} ${street}`;
+            
+            // Générer téléphone
+            const phone = `+33 ${Math.floor(Math.random() * 9) + 1} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')} ${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
+            
+            // Générer profession
+            const profession = FAKE_DATA.professions[Math.floor(Math.random() * FAKE_DATA.professions.length)];
+            
+            // Mettre à jour l'interface
+            document.getElementById('fullName').textContent = fullName;
+            document.getElementById('gender').innerHTML = `${gender} <span class="gender-badge ${isMale ? 'male' : 'female'}">${isMale ? '♂' : '♀'}</span>`;
+            document.getElementById('birthDate').textContent = birthDate;
+            document.getElementById('age').textContent = `${age} ans`;
+            document.getElementById('address').textContent = address;
+            document.getElementById('city').textContent = city;
+            document.getElementById('zipCode').textContent = zipCode;
+            document.getElementById('phone').textContent = phone;
+            document.getElementById('profession').textContent = profession;
+            
+            // Notification
+            showNotification(`👤 Identité générée : ${fullName}`, 'success');
+        }
+
+        // ===== RAFFRAÎCHISSEMENT AUTOMATIQUE =====
+        function startAutoRefresh() {
+            state.autoRefreshInterval = setInterval(() => {
+                if (state.currentEmail && state.emails.length > 0) {
+                    // 30% de chance de recevoir un nouvel email automatiquement
+                    if (Math.random() < 0.3) {
+                        simulateEmailReception();
+                    }
+                }
+            }, CONFIG.AUTO_REFRESH);
+        }
+
+        // ===== NOTIFICATIONS =====
+        function showNotification(message, type = 'success') {
+            const notification = elements.notification;
+            notification.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add(type);
+            notification.classList.add('show');
+            
+            // Masquer après 3 secondes
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ===== EXPOSER LES FONCTIONS GLOBALEMENT =====
+        window.viewEmail = viewEmail;
+    </script>
+</body>
+</html>
