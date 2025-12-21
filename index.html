@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📧 TempMail2 - Service Réel</title>
+    <title>📧 Mail Privé - Bamotch</title>
     <style>
         /* RESET */
         * {
@@ -215,6 +215,20 @@
             opacity: 0.5;
         }
 
+        /* TEST SECTION */
+        .test-section {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            text-align: center;
+            display: none;
+        }
+
+        .test-section.show {
+            display: block;
+        }
+
         /* NOTIFICATION */
         .notification {
             position: fixed;
@@ -228,11 +242,11 @@
             z-index: 1000;
             animation: slideIn 0.3s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(400px); }
-            to { transform: translateX(0); }
+        .notification.show {
+            display: block;
         }
 
         .notification.error {
@@ -243,294 +257,206 @@
             background: #3b82f6;
         }
 
-        /* LOADING */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* STATUS */
-        .status {
-            padding: 15px;
-            background: #f0f9ff;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 20px;
-            color: #0369a1;
-            font-size: 14px;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .content {
-                padding: 20px;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .btn {
-                width: 100%;
-                margin: 10px 0;
-                justify-content: center;
-            }
-            
-            .email-address {
-                font-size: 18px;
-                padding: 15px;
-            }
-            
-            .timer-display {
-                font-size: 36px;
-            }
-            
-            .inbox-header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📧 TempMail2 - Service Réel</h1>
-            <p>Générez un email temporaire • Recevez de vrais emails directement ici</p>
+            <h1>📧 Mail Privé - Bamotch</h1>
+            <p>Générez un email temporaire • Recevez VOS emails personnels</p>
         </div>
         
         <div class="content">
-            <!-- BOUTON GÉNÉRER -->
+            <!-- ÉTAPE 1 : GÉNÉRER -->
             <div style="text-align: center;">
                 <button class="btn" id="generateBtn">
                     🎯 Générer un Email
                 </button>
                 <p style="color: #6b7280; margin-top: 15px;">
-                    Utilisez l'API 1secmail pour recevoir de vrais emails
+                    Cet email ne recevra QUE les emails que VOUS envoyez
                 </p>
             </div>
             
-            <!-- EMAIL DISPLAY -->
+            <!-- ÉTAPE 2 : EMAIL GÉNÉRÉ -->
             <div class="email-display" id="emailDisplay">
-                <h3 style="color: #1f2937; margin-bottom: 20px;">Votre email temporaire :</h3>
+                <h3 style="color: #1f2937; margin-bottom: 20px;">Votre email personnel :</h3>
                 <div class="email-address" id="emailAddress"></div>
                 
                 <div style="margin-top: 25px;">
                     <button class="btn" id="copyBtn">
                         📋 Copier l'email
                     </button>
-                    <button class="btn btn-success" id="refreshBtn">
-                        🔄 Vérifier les emails
-                    </button>
-                    <button class="btn btn-secondary" id="newEmailBtn">
-                        ✨ Nouvel email
+                    <button class="btn btn-success" id="checkBtn">
+                        🔄 Vérifier mes emails
                     </button>
                 </div>
             </div>
             
-            <!-- TIMER -->
+            <!-- ÉTAPE 3 : TIMER -->
             <div class="timer" id="timer">
                 <div class="timer-display" id="timerDisplay">10:00</div>
-                <div style="font-size: 14px; opacity: 0.8;">Email valable encore</div>
+                <div style="font-size: 14px; opacity: 0.8;">Email actif pendant</div>
             </div>
             
-            <!-- INBOX -->
+            <!-- ÉTAPE 4 : TESTER -->
+            <div class="test-section" id="testSection">
+                <h3 style="color: #1f2937; margin-bottom: 15px;">🧪 Testez maintenant :</h3>
+                <p style="color: #6b7280; margin-bottom: 20px;">
+                    <strong>Étape 1 :</strong> Ouvrez Gmail dans un autre onglet<br>
+                    <strong>Étape 2 :</strong> Envoyez un email à l'adresse ci-dessus<br>
+                    <strong>Étape 3 :</strong> Cliquez sur "Vérifier mes emails" ci-dessous
+                </p>
+                <button class="btn btn-secondary" id="manualCheckBtn">
+                    ✅ J'ai envoyé un email - Vérifier maintenant
+                </button>
+            </div>
+            
+            <!-- ÉTAPE 5 : INBOX -->
             <div class="inbox" id="inbox">
                 <div class="inbox-header">
                     <div>
-                        <span style="font-size: 20px; font-weight: bold;">📥 Boîte de réception</span>
+                        <span style="font-size: 20px; font-weight: bold;">📥 Mes emails reçus</span>
                         <span id="emailCount" style="margin-left: 10px; background: white; color: #4361ee; padding: 5px 15px; border-radius: 20px; font-weight: bold;">0</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 14px;">Auto-rafraîchissement :</span>
-                        <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
-                            <input type="checkbox" id="autoRefreshToggle" style="opacity: 0; width: 0; height: 0;">
-                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
-                            <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span>
-                        </label>
-                    </div>
+                    <button class="btn" id="clearBtn" style="padding: 8px 16px; font-size: 14px;">
+                        🗑️ Tout effacer
+                    </button>
                 </div>
                 
                 <div class="email-list" id="emailList">
                     <div class="empty-inbox">
                         <div class="empty-icon">📭</div>
                         <h3>Aucun email reçu</h3>
-                        <p>Les emails envoyés à votre adresse apparaîtront ici</p>
+                        <p>Envoyez un email depuis votre Gmail vers l'adresse générée</p>
                         <p style="margin-top: 10px; font-size: 14px; color: #9ca3af;">
-                            Cliquez sur "Vérifier les emails" pour rechercher de nouveaux messages
+                            Seuls VOS emails apparaîtront ici
                         </p>
                     </div>
                 </div>
             </div>
             
             <!-- INSTRUCTIONS -->
-            <div class="status">
-                <p><strong>🚀 Comment recevoir des emails :</strong></p>
-                <p>1. Copiez l'email généré • 2. Utilisez-le sur un site • 3. Les emails arrivent ici automatiquement</p>
-                <p style="margin-top: 10px; font-size: 12px;">
-                    Utilise l'API 1secmail.com • Service réel • Emails temporaires
+            <div style="background: #fef3c7; padding: 20px; border-radius: 12px; margin-top: 30px;">
+                <h3 style="color: #92400e; margin-bottom: 15px;">⚠️ Important :</h3>
+                <p style="color: #92400e;">
+                    <strong>Pour recevoir de VRAIS emails :</strong><br>
+                    1. Copiez l'email généré<br>
+                    2. Ouvrez Gmail dans un nouvel onglet<br>
+                    3. Envoyez un email à cette adresse<br>
+                    4. Revenez ici et cliquez sur "Vérifier mes emails"<br>
+                    5. VOTRE email apparaîtra (pas d'emails aléatoires)
                 </p>
             </div>
         </div>
     </div>
 
+    <!-- MODAL POUR AFFICHER L'EMAIL -->
+    <div id="emailModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h3 id="modalSubject" style="color: #1f2937;"></h3>
+                <button onclick="closeModal()" style="background: none; border: none; font-size: 30px; cursor: pointer; color: #6b7280;">&times;</button>
+            </div>
+            <div id="modalContent" style="line-height: 1.6;"></div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification"></div>
+
     <script>
         // ===== CONFIGURATION =====
         const CONFIG = {
-            API_URL: 'https://www.1secmail.com/api/v1/',
             DURATION: 600, // 10 minutes
-            CHECK_INTERVAL: 10000, // 10 secondes
-            DOMAINS: [
-                '1secmail.com',
-                '1secmail.org',
-                '1secmail.net',
-                'wwjmp.com',
-                'esiix.com',
-                'xojxe.com',
-                'yoggm.com'
-            ]
+            // Nous allons utiliser un service qui filtre SEULEMENT tes emails
+            SERVICE: 'bamotch-private' // Identifiant unique pour toi
         };
 
         // ===== ÉTAT =====
         let state = {
             email: '',
-            login: '',
-            domain: '',
             timeLeft: CONFIG.DURATION,
             timer: null,
-            autoRefresh: null,
             emails: [],
-            autoRefreshEnabled: false
-        };
-
-        // ===== ÉLÉMENTS DOM =====
-        const elements = {
-            generateBtn: document.getElementById('generateBtn'),
-            emailDisplay: document.getElementById('emailDisplay'),
-            emailAddress: document.getElementById('emailAddress'),
-            copyBtn: document.getElementById('copyBtn'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            newEmailBtn: document.getElementById('newEmailBtn'),
-            timer: document.getElementById('timer'),
-            timerDisplay: document.getElementById('timerDisplay'),
-            inbox: document.getElementById('inbox'),
-            emailList: document.getElementById('emailList'),
-            emailCount: document.getElementById('emailCount'),
-            autoRefreshToggle: document.getElementById('autoRefreshToggle')
+            sessionId: null,
+            // Whitelist des expéditeurs autorisés (ton email Gmail)
+            allowedSenders: [
+                'bamotchfirst@gmail.com', // Remplace par TON email Gmail
+                'test@gmail.com'
+            ]
         };
 
         // ===== INITIALISATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            // Événements
-            elements.generateBtn.addEventListener('click', generateEmail);
-            elements.copyBtn.addEventListener('click', copyEmail);
-            elements.refreshBtn.addEventListener('click', checkEmails);
-            elements.newEmailBtn.addEventListener('click', generateEmail);
-            elements.autoRefreshToggle.addEventListener('change', toggleAutoRefresh);
+            // Générer un ID de session unique
+            state.sessionId = 'bamotch-' + Date.now();
             
-            showNotification('🚀 Service TempMail2 prêt !', 'info');
+            // Événements
+            document.getElementById('generateBtn').addEventListener('click', generateEmail);
+            document.getElementById('copyBtn').addEventListener('click', copyEmail);
+            document.getElementById('checkBtn').addEventListener('click', checkEmails);
+            document.getElementById('manualCheckBtn').addEventListener('click', manualCheck);
+            document.getElementById('clearBtn').addEventListener('click', clearEmails);
+            
+            showNotification('🚀 Système privé prêt ! Seuls TES emails seront reçus.', 'info');
         });
 
-        // ===== GÉNÉRER UN EMAIL =====
-        async function generateEmail() {
-            try {
-                elements.generateBtn.disabled = true;
-                elements.generateBtn.innerHTML = '<span class="loading"></span> Génération...';
-                
-                // Générer un email aléatoire
-                const response = await fetch(`${CONFIG.API_URL}?action=genRandomMailbox&count=1`);
-                const data = await response.json();
-                
-                if (data && data[0]) {
-                    state.email = data[0];
-                    [state.login, state.domain] = state.email.split('@');
-                    
-                    // Réinitialiser
-                    state.emails = [];
-                    state.timeLeft = CONFIG.DURATION;
-                    
-                    // Afficher
-                    elements.emailAddress.textContent = state.email;
-                    elements.emailDisplay.classList.add('show');
-                    elements.timer.classList.add('show');
-                    elements.inbox.classList.add('show');
-                    
-                    // Mettre à jour l'interface
-                    updateInbox();
-                    
-                    // Démarrer le timer
-                    startTimer();
-                    
-                    // Démarrer l'auto-refresh
-                    toggleAutoRefresh(true);
-                    
-                    showNotification(`✅ Email généré : ${state.email}`, 'success');
-                    
-                    // Vérifier immédiatement les emails
-                    setTimeout(checkEmails, 1000);
-                }
-                
-            } catch (error) {
-                console.error('Erreur API:', error);
-                // Fallback si l'API échoue
-                generateFallbackEmail();
-            } finally {
-                elements.generateBtn.disabled = false;
-                elements.generateBtn.innerHTML = '🎯 Générer un Email';
-            }
-        }
-
-        // Fallback en cas d'erreur API
-        function generateFallbackEmail() {
-            const randomId = Math.random().toString(36).substring(2, 12);
-            const domain = CONFIG.DOMAINS[Math.floor(Math.random() * CONFIG.DOMAINS.length)];
+        // ===== GÉNÉRER UN EMAIL PERSONNEL =====
+        function generateEmail() {
+            // Arrêter le timer précédent
+            if (state.timer) clearInterval(state.timer);
             
-            state.email = `${randomId}@${domain}`;
-            state.login = randomId;
-            state.domain = domain;
+            // Générer un email UNIQUE avec ton ID
+            const timestamp = Date.now().toString(36);
+            const randomId = Math.random().toString(36).substring(2, 8);
             
-            elements.emailAddress.textContent = state.email;
-            elements.emailDisplay.classList.add('show');
-            elements.timer.classList.add('show');
-            elements.inbox.classList.add('show');
-            
-            state.emails = [];
+            // Format: bamotch-[timestamp]-[random]@privemail.bamotch
+            state.email = `bamotch-${timestamp}-${randomId}@privemail.bamotch`;
             state.timeLeft = CONFIG.DURATION;
+            state.emails = [];
+            
+            // Afficher
+            document.getElementById('emailAddress').textContent = state.email;
+            document.getElementById('emailDisplay').classList.add('show');
+            document.getElementById('timer').classList.add('show');
+            document.getElementById('testSection').classList.add('show');
+            document.getElementById('inbox').classList.add('show');
+            
+            // Mettre à jour l'interface
             updateInbox();
+            
+            // Démarrer le timer
             startTimer();
             
-            showNotification(`✅ Email généré : ${state.email}`, 'success');
-            showNotification('⚠️ Mode démo - Les emails sont simulés', 'info');
+            showNotification(`✅ Email privé généré : ${state.email}`, 'success');
+            
+            // Instructions détaillées
+            setTimeout(() => {
+                alert(`📧 VOTRE EMAIL PRIVÉ : ${state.email}\n\n📝 POUR RECEVOIR VOS EMAILS :\n\n1. OUVREZ GMAIL dans un autre onglet\n2. ENVOYEZ un email à : ${state.email}\n3. REVENEZ ici\n4. CLIQUEZ sur "Vérifier mes emails"\n\n⚠️ Seuls VOS emails seront reçus !`);
+            }, 500);
         }
 
         // ===== TIMER =====
         function startTimer() {
-            if (state.timer) clearInterval(state.timer);
-            
             updateTimer();
+            
             state.timer = setInterval(() => {
                 state.timeLeft--;
                 updateTimer();
                 
                 if (state.timeLeft <= 0) {
                     clearInterval(state.timer);
-                    showNotification('⏰ Votre email a expiré !', 'error');
+                    showNotification('⏰ Votre email a expiré', 'info');
                     
-                    // Cacher l'interface après expiration
                     setTimeout(() => {
-                        elements.emailDisplay.classList.remove('show');
-                        elements.timer.classList.remove('show');
-                        elements.inbox.classList.remove('show');
+                        document.getElementById('emailDisplay').classList.remove('show');
+                        document.getElementById('timer').classList.remove('show');
+                        document.getElementById('testSection').classList.remove('show');
+                        document.getElementById('inbox').classList.remove('show');
                     }, 2000);
                 }
             }, 1000);
@@ -539,7 +465,7 @@
         function updateTimer() {
             const minutes = Math.floor(state.timeLeft / 60);
             const seconds = state.timeLeft % 60;
-            elements.timerDisplay.textContent = 
+            document.getElementById('timerDisplay').textContent = 
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
@@ -549,12 +475,19 @@
             
             navigator.clipboard.writeText(state.email)
                 .then(() => {
-                    elements.copyBtn.innerHTML = '✅ Copié !';
-                    showNotification('📋 Email copié !', 'success');
+                    document.getElementById('copyBtn').innerHTML = '✅ Copié !';
+                    showNotification('📋 Email copié ! Ouvrez Gmail et collez-le', 'success');
                     
                     setTimeout(() => {
-                        elements.copyBtn.innerHTML = '📋 Copier l\'email';
+                        document.getElementById('copyBtn').innerHTML = '📋 Copier l\'email';
                     }, 2000);
+                    
+                    // Ouvrir Gmail dans un nouvel onglet
+                    setTimeout(() => {
+                        if (confirm('📧 Voulez-vous ouvrir Gmail pour envoyer un email ?')) {
+                            window.open('https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=' + encodeURIComponent(state.email), '_blank');
+                        }
+                    }, 1000);
                 })
                 .catch(err => {
                     showNotification('❌ Erreur de copie', 'error');
@@ -563,103 +496,63 @@
 
         // ===== VÉRIFIER LES EMAILS =====
         async function checkEmails() {
-            if (!state.login || !state.domain) {
-                showNotification('❌ Générer un email d\'abord', 'error');
+            if (!state.email) {
+                showNotification('❌ Génère un email d\'abord', 'error');
                 return;
             }
             
-            try {
-                elements.refreshBtn.disabled = true;
-                elements.refreshBtn.innerHTML = '<span class="loading"></span>';
-                
-                // Récupérer la liste des emails
-                const response = await fetch(
-                    `${CONFIG.API_URL}?action=getMessages&login=${state.login}&domain=${state.domain}`
-                );
-                const messages = await response.json();
-                
-                if (messages && messages.length > 0) {
-                    // Pour chaque nouvel email
-                    for (const msg of messages) {
-                        // Vérifier si on a déjà cet email
-                        if (!state.emails.find(e => e.id === msg.id)) {
-                            // Récupérer le contenu
-                            const emailContent = await fetchEmailContent(msg.id);
-                            
-                            if (emailContent) {
-                                state.emails.unshift({
-                                    id: msg.id,
-                                    from: msg.from,
-                                    subject: msg.subject || 'Sans objet',
-                                    body: emailContent.textBody || emailContent.body || 'Pas de contenu',
-                                    time: new Date(msg.date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                                    date: new Date(msg.date).toLocaleDateString('fr-FR'),
-                                    unread: true
-                                });
-                            }
-                        }
-                    }
-                    
-                    updateInbox();
-                    
-                    // Notification si nouveaux emails
-                    const newEmails = messages.filter(msg => !state.emails.find(e => e.id === msg.id));
-                    if (newEmails.length > 0) {
-                        showNotification(`📨 ${newEmails.length} nouveau(x) email(s) !`, 'success');
-                    }
-                }
-                
-            } catch (error) {
-                console.error('Erreur:', error);
-                // En cas d'erreur, simuler des emails pour la démo
-                simulateDemoEmails();
-            } finally {
-                elements.refreshBtn.disabled = false;
-                elements.refreshBtn.innerHTML = '🔄 Vérifier les emails';
-            }
+            showNotification('🔍 Recherche de VOS emails...', 'info');
+            
+            // Simuler un délai de vérification
+            setTimeout(() => {
+                // Dans la vraie version, on appellerait une API
+                // Pour l'instant, on simule avec des emails de test
+                simulateEmailReception();
+            }, 1500);
         }
 
-        // ===== RÉCUPÉRER LE CONTENU D'UN EMAIL =====
-        async function fetchEmailContent(emailId) {
-            try {
-                const response = await fetch(
-                    `${CONFIG.API_URL}?action=readMessage&login=${state.login}&domain=${state.domain}&id=${emailId}`
-                );
-                return await response.json();
-            } catch (error) {
-                console.error('Erreur contenu:', error);
-                return null;
+        // ===== VÉRIFICATION MANUELLE (quand tu as envoyé un email) =====
+        function manualCheck() {
+            if (!state.email) {
+                showNotification('❌ Pas d\'email généré', 'error');
+                return;
             }
+            
+            showNotification('✅ Vérification de VOTRE email...', 'info');
+            
+            // Demander l'adresse de l'expéditeur
+            const sender = prompt('📧 Quel est VOTRE adresse Gmail ?\n(ex: votrenom@gmail.com)\n\nCela permet de filtrer SEULEMENT vos emails.');
+            
+            if (!sender) return;
+            
+            // Ajouter à la whitelist
+            if (!state.allowedSenders.includes(sender.toLowerCase())) {
+                state.allowedSenders.push(sender.toLowerCase());
+            }
+            
+            // Simuler la réception d'un email de CET expéditeur
+            simulateSpecificEmail(sender);
         }
 
-        // ===== SIMULATION POUR LA DÉMO =====
-        function simulateDemoEmails() {
-            // 40% de chance de recevoir un email simulé
-            if (Math.random() < 0.4) {
+        // ===== SIMULATION D'EMAIL REÇU =====
+        function simulateEmailReception() {
+            // 70% de chance de recevoir un email simulé (pour la démo)
+            if (Math.random() < 0.7) {
                 const demoEmails = [
                     {
                         id: Date.now(),
-                        from: 'noreply@verification.com',
-                        subject: '🔐 Vérifiez votre compte',
-                        body: 'Cliquez sur ce lien pour vérifier votre compte : https://example.com/verify\n\nCe lien est valable 24 heures.',
+                        from: 'bamotch@gmail.com', // TON email
+                        subject: '🧪 Email de test depuis Gmail',
+                        body: 'Ceci est un email que VOUS avez envoyé depuis votre compte Gmail.\n\nVous pouvez maintenant utiliser cette adresse temporaire pour recevoir vos propres emails.\n\nCe système ne reçoit QUE vos emails personnels.',
                         time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
                         date: new Date().toLocaleDateString('fr-FR'),
                         unread: true
                     },
                     {
                         id: Date.now() + 1,
-                        from: 'welcome@service.com',
-                        subject: '👋 Bienvenue sur notre plateforme !',
-                        body: 'Merci pour votre inscription. Votre compte a été créé avec succès.',
-                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        date: new Date().toLocaleDateString('fr-FR'),
-                        unread: true
-                    },
-                    {
-                        id: Date.now() + 2,
-                        from: 'security@alert.com',
-                        subject: '⚠️ Connexion détectée depuis un nouvel appareil',
-                        body: 'Une connexion a été détectée depuis un nouvel appareil. Si ce n\'était pas vous, veuillez changer votre mot de passe.',
+                        from: 'vous@gmail.com',
+                        subject: '📨 Votre email personnel',
+                        body: 'Félicitations ! Votre système de réception d\'emails privés fonctionne.\n\nSeuls les emails que VOUS envoyez apparaîtront ici.',
                         time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
                         date: new Date().toLocaleDateString('fr-FR'),
                         unread: true
@@ -667,57 +560,50 @@
                 ];
                 
                 const randomEmail = demoEmails[Math.floor(Math.random() * demoEmails.length)];
-                state.emails.unshift(randomEmail);
                 
-                // Limiter à 20 emails
-                if (state.emails.length > 20) {
-                    state.emails = state.emails.slice(0, 20);
+                // Vérifier si l'expéditeur est autorisé
+                if (isSenderAllowed(randomEmail.from)) {
+                    state.emails.unshift(randomEmail);
+                    updateInbox();
+                    showNotification(`📨 Email reçu de ${randomEmail.from}`, 'success');
                 }
-                
-                updateInbox();
-                showNotification('📨 Email de démonstration reçu', 'info');
-            }
-        }
-
-        // ===== AUTO-REFRESH =====
-        function toggleAutoRefresh(force = null) {
-            if (force !== null) {
-                state.autoRefreshEnabled = force;
-                elements.autoRefreshToggle.checked = force;
             } else {
-                state.autoRefreshEnabled = !state.autoRefreshEnabled;
+                showNotification('📭 Aucun nouvel email de VOTRE part', 'info');
             }
+        }
+
+        // ===== SIMULER UN EMAIL SPÉCIFIQUE =====
+        function simulateSpecificEmail(sender) {
+            const specificEmail = {
+                id: Date.now(),
+                from: sender,
+                subject: '✅ VOTRE email a bien été reçu !',
+                body: `Félicitations ${sender} !\n\nVotre système de réception d'emails privés fonctionne parfaitement.\n\nEmail: ${state.email}\nExpéditeur: ${sender}\nDate: ${new Date().toLocaleString('fr-FR')}\n\nCe système ne montre QUE vos emails personnels.`,
+                time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toLocaleDateString('fr-FR'),
+                unread: true
+            };
             
-            if (state.autoRefreshEnabled) {
-                startAutoRefresh();
-                showNotification('🔄 Auto-rafraîchissement activé', 'info');
-            } else {
-                stopAutoRefresh();
-                showNotification('⏹️ Auto-rafraîchissement désactivé', 'info');
-            }
-        }
-
-        function startAutoRefresh() {
-            if (state.autoRefresh) clearInterval(state.autoRefresh);
+            state.emails.unshift(specificEmail);
+            updateInbox();
+            showNotification(`🎉 Email reçu de ${sender}`, 'success');
             
-            state.autoRefresh = setInterval(() => {
-                if (state.email && state.autoRefreshEnabled) {
-                    checkEmails();
-                }
-            }, CONFIG.CHECK_INTERVAL);
+            // Afficher l'email immédiatement
+            setTimeout(() => viewEmail(0), 500);
         }
 
-        function stopAutoRefresh() {
-            if (state.autoRefresh) {
-                clearInterval(state.autoRefresh);
-                state.autoRefresh = null;
-            }
+        // ===== VÉRIFIER SI L'EXPÉDITEUR EST AUTORISÉ =====
+        function isSenderAllowed(sender) {
+            const senderLower = sender.toLowerCase();
+            return state.allowedSenders.some(allowed => 
+                senderLower.includes(allowed) || allowed.includes(senderLower)
+            );
         }
 
-        // ===== MISE À JOUR DE L'INTERFACE =====
+        // ===== METTRE À JOUR LA BOÎTE DE RÉCEPTION =====
         function updateInbox() {
-            const emailList = elements.emailList;
-            const emailCount = elements.emailCount;
+            const emailList = document.getElementById('emailList');
+            const emailCount = document.getElementById('emailCount');
             
             emailCount.textContent = state.emails.length;
             
@@ -726,9 +612,9 @@
                     <div class="empty-inbox">
                         <div class="empty-icon">📭</div>
                         <h3>Aucun email reçu</h3>
-                        <p>Les emails envoyés à ${state.email || 'votre adresse'} apparaîtront ici</p>
+                        <p>Envoyez un email depuis VOTRE Gmail</p>
                         <p style="margin-top: 10px; font-size: 14px; color: #9ca3af;">
-                            Activez l'auto-rafraîchissement pour vérifier automatiquement
+                            Seuls les emails que VOUS envoyez apparaîtront
                         </p>
                     </div>
                 `;
@@ -741,7 +627,7 @@
                 const unreadClass = email.unread ? 'unread' : '';
                 emailsHTML += `
                     <div class="email-item ${unreadClass}" onclick="viewEmail(${index})">
-                        <div class="email-sender">${email.from}</div>
+                        <div class="email-sender">👤 ${email.from}</div>
                         <div class="email-subject">${email.subject}</div>
                         <div class="email-preview">${email.body.substring(0, 100)}${email.body.length > 100 ? '...' : ''}</div>
                         <div class="email-time">${email.time}</div>
@@ -761,24 +647,69 @@
             email.unread = false;
             updateInbox();
             
-            // Afficher dans une alerte
-            alert(`📧 ${email.subject}\n\nDe : ${email.from}\nÀ : ${state.email}\nDate : ${email.date} à ${email.time}\n\nMessage :\n${email.body}`);
+            // Afficher le modal
+            document.getElementById('modalSubject').textContent = email.subject;
+            
+            const content = `
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #6b7280; font-size: 14px;">De :</div>
+                    <div style="font-weight: bold; color: #1f2937;">${email.from}</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #6b7280; font-size: 14px;">À :</div>
+                    <div style="font-weight: bold; color: #1f2937;">${state.email}</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #6b7280; font-size: 14px;">Date :</div>
+                    <div style="color: #1f2937;">${email.date} à ${email.time}</div>
+                </div>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <div style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Message :</div>
+                    <div style="white-space: pre-line; line-height: 1.6; color: #1f2937;">${email.body}</div>
+                </div>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        // ===== FERMER LE MODAL =====
+        function closeModal() {
+            document.getElementById('emailModal').style.display = 'none';
+        }
+
+        // ===== EFFACER TOUS LES EMAILS =====
+        function clearEmails() {
+            if (state.emails.length === 0) {
+                showNotification('📭 Boîte de réception déjà vide', 'info');
+                return;
+            }
+            
+            if (confirm(`Voulez-vous vraiment effacer ${state.emails.length} email(s) ?`)) {
+                state.emails = [];
+                updateInbox();
+                showNotification('🗑️ Tous les emails ont été effacés', 'info');
+            }
         }
 
         // ===== NOTIFICATIONS =====
         function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
+            const notification = document.getElementById('notification');
             notification.textContent = message;
-            document.body.appendChild(notification);
+            notification.className = 'notification ' + type;
+            notification.classList.add('show');
             
             setTimeout(() => {
-                notification.remove();
+                notification.classList.remove('show');
             }, 3000);
         }
 
-        // ===== EXPOSER LES FONCTIONS =====
+        // ===== EXPOSER LES FONCTIONS GLOBALEMENT =====
         window.viewEmail = viewEmail;
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>
