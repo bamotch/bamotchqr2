@@ -3,7 +3,7 @@
 Une application web pour créer des emails temporaires valables 10 minutes.
 
 ## 🌐 Accéder à l'application
-[https://tpmail2.github.io/temp-mail-generator/](https://tpmail2.github.io/temp-mail-generator/)
+[https://bamotch.github.io/tpmail2/](https://bamotch.github.io/tpmail2/)
 
 ## ✨ Fonctionnalités
 - ✅ Génération instantanée d'email temporaire
