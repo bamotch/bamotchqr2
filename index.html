@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📧 Générateur de Mail Temporaire</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        // VOS CLÉS FIREBASE - REMPLACEZ LES VALEURS ENTRE ""
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpXr8eU9G9HjK1LmN2O3P4Q5R6S7T8U9V0W", // ← REMPLACEZ
+            authDomain: "temp-mail-generator-12345.firebaseapp.com", // ← REMPLACEZ
+            projectId: "temp-mail-generator-12345", // ← REMPLACEZ
+            storageBucket: "temp-mail-generator-12345.appspot.com", // ← REMPLACEZ
+            messagingSenderId: "123456789012", // ← REMPLACEZ
+            appId: "1:123456789012:web:abc123def456ghi789" // ← REMPLACEZ
+        };
+
+        // Initialiser Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
+        function App() {
+            const [currentEmail, setCurrentEmail] = React.useState('');
+            const [emails, setEmails] = React.useState([]);
+            const [timeLeft, setTimeLeft] = React.useState(600);
+            const [loading, setLoading] = React.useState(false);
+            const [copied, setCopied] = React.useState(false);
+
+            const emailDomains = [
+                'tempmail.dev',
+                '10minutemail.net',
+                'maildrop.cc'
+            ];
+
+            const generateRandomEmail = () => {
+                const randomString = Math.random().toString(36).substring(2, 10);
+                const domain = emailDomains[Math.floor(Math.random() * emailDomains.length)];
+                return `${randomString}@${domain}`;
+            };
+
+            const handleGenerateEmail = async () => {
+                setLoading(true);
+                const newEmail = generateRandomEmail();
+                setCurrentEmail(newEmail);
+                setTimeLeft(600);
+                setEmails([]);
+                
+                try {
+                    await db.collection('generated_emails').add({
+                        email: newEmail,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        expiresAt: new Date(Date.now() + 600000)
+                    });
+                } catch (error) {
+                    alert('Erreur Firebase');
+                }
+                
+                setLoading(false);
+            };
+
+            const copyToClipboard = () => {
+                if (!currentEmail) return;
+                navigator.clipboard.writeText(currentEmail);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            React.useEffect(() => {
+                if (!currentEmail) return;
+                
+                const unsubscribe = db.collection('incoming_emails')
+                    .where('to', '==', currentEmail)
+                    .orderBy('receivedAt', 'desc')
+                    .onSnapshot((snapshot) => {
+                        const emailList = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        setEmails(emailList);
+                    });
+                
+                return () => unsubscribe();
+            }, [currentEmail]);
+
+            React.useEffect(() => {
+                let interval = null;
+                if (currentEmail && timeLeft > 0) {
+                    interval = setInterval(() => {
+                        setTimeLeft(timeLeft => timeLeft - 1);
+                    }, 1000);
+                } else if (timeLeft === 0) {
+                    alert('Email expiré !');
+                }
+                return () => clearInterval(interval);
+            }, [currentEmail, timeLeft]);
+
+            const addTestEmail = async (type) => {
+                if (!currentEmail) {
+                    alert('Générez un email d\'abord !');
+                    return;
+                }
+                
+                const testEmails = {
+                    welcome: { subject: '👋 Bienvenue !', body: 'Merci !', from: 'welcome@test.com' },
+                    verification: { subject: '🔐 Vérification', body: 'Cliquez ici', from: 'verify@test.com' }
+                };
+                
+                const test = testEmails[type];
+                
+                try {
+                    await db.collection('incoming_emails').add({
+                        to: currentEmail,
+                        from: test.from,
+                        subject: test.subject,
+                        body: test.body,
+                        receivedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (error) {
+                    alert('Erreur');
+                }
+            };
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            return (
+                <div className="app-container">
+                    <header className="app-header">
+                        <h1>📧 Mail Temporaire</h1>
+                        <p>Gratuit • 10 minutes</p>
+                    </header>
+                    
+                    <main className="main-content">
+                        <div className="card">
+                            <button 
+                                onClick={handleGenerateEmail}
+                                disabled={loading}
+                                className="generate-button"
+                            >
+                                {loading ? '⏳ Génération...' : '🎯 Générer un email'}
+                            </button>
+                            
+                            {currentEmail && (
+                                <div className="email-display">
+                                    <div className="email-address">
+                                        <code>{currentEmail}</code>
+                                        <button 
+                                            onClick={copyToClipboard}
+                                            className="copy-button"
+                                        >
+                                            {copied ? '✅ Copié !' : '📋 Copier'}
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="timer">
+                                        ⏱️ {formatTime(timeLeft)}
+                                    </div>
+                                    
+                                    <div className="test-buttons">
+                                        <button onClick={() => addTestEmail('welcome')}>
+                                            ✉️ Test 1
+                                        </button>
+                                        <button onClick={() => addTestEmail('verification')}>
+                                            🔐 Test 2
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        {currentEmail && (
+                            <div className="card">
+                                <h2>📥 Boîte de réception ({emails.length})</h2>
+                                
+                                {emails.length === 0 ? (
+                                    <div className="empty-inbox">
+                                        <p>Aucun email reçu</p>
+                                    </div>
+                                ) : (
+                                    <div className="email-list">
+                                        {emails.map((email) => (
+                                            <div key={email.id} className="email-item">
+                                                <div className="email-from">
+                                                    <strong>De :</strong> {email.from}
+                                                </div>
+                                                <div className="email-subject">
+                                                    <strong>Objet :</strong> {email.subject}
+                                                </div>
+                                                <div className="email-body">
+                                                    {email.body}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </main>
+                    
+                    <footer className="app-footer">
+                        <p>⚠️ Usage temporaire uniquement</p>
+                    </footer>
+                </div>
+            );
+        }
+
+        // Rendre l'application
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+  </html>
