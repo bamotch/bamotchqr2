@@ -2,34 +2,42 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>TempMail2 - Service Réel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📧 TempMail2 - Service Réel</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
+
         .container {
+            max-width: 800px;
+            margin: 0 auto;
             background: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 800px;
             overflow: hidden;
         }
+
         .header {
             background: linear-gradient(135deg, #4361ee, #3a0ca3);
             color: white;
             padding: 25px;
             text-align: center;
         }
-        .content { padding: 30px; }
+
+        .content {
+            padding: 30px;
+        }
+
         .btn {
             background: #4361ee;
             color: white;
@@ -39,318 +47,343 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
+            margin: 10px 5px;
+            transition: all 0.3s;
         }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
         .email-box {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
             border: 2px solid #4361ee;
+            text-align: center;
         }
+
+        .email-address {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+
+        .timer {
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
         .inbox {
             border: 2px solid #4361ee;
             border-radius: 10px;
-            overflow: hidden;
             margin-top: 30px;
+            overflow: hidden;
         }
+
         .inbox-header {
             background: #4361ee;
             color: white;
             padding: 15px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
+
         .email-list {
             padding: 20px;
             max-height: 400px;
             overflow-y: auto;
         }
+
         .email-item {
             background: #f1f5f9;
             padding: 15px;
             margin: 10px 0;
             border-radius: 8px;
+            border-left: 4px solid #4361ee;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .email-item:hover {
+            transform: translateX(5px);
+            background: #e0e7ff;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📧 TempMail2 Réel</h1>
-            <p>Service avec 1minutemail API</p>
+            <h1>📧 TempMail2 - Service Réel</h1>
+            <p>Générez un email temporaire et recevez de VRAIS emails</p>
         </div>
         
         <div class="content">
-            <div style="text-align: center;">
+            <!-- ÉTAPE 1 : GÉNÉRER UN EMAIL -->
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: #3a0ca3; margin-bottom: 15px;">Étape 1 : Générer un email</h2>
                 <button class="btn" id="generateBtn">
-                    <span>🎯</span> Générer Email Réel
+                    🎯 Générer un Nouvel Email
                 </button>
             </div>
             
-            <div id="emailDisplay" style="display: none;">
+            <!-- ÉTAPE 2 : UTILISER L'EMAIL -->
+            <div id="emailSection" style="display: none;">
                 <div class="email-box">
-                    <div style="font-family: monospace; font-size: 18px; padding: 15px; background: white; border-radius: 8px; margin-bottom: 15px;" id="emailAddress"></div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn" id="copyBtn" style="background: #10b981;">
-                            <span>📋</span> Copier
+                    <h3 style="color: #3a0ca3; margin-bottom: 15px;">Votre email temporaire :</h3>
+                    <div class="email-address" id="emailAddress"></div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn" id="copyBtn">
+                            📋 Copier l'email
                         </button>
-                        <button class="btn" id="checkBtn" style="background: #3b82f6;">
-                            <span>🔄</span> Vérifier
+                        <button class="btn btn-success" id="openTempMailBtn">
+                            🌐 Ouvrir sur Temp-Mail.org
                         </button>
                     </div>
                 </div>
                 
-                <div id="timer" style="background: #1e293b; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                <!-- TIMER -->
+                <div class="timer">
                     <div style="font-size: 32px; font-weight: bold;" id="timerDisplay">10:00</div>
-                    <div style="font-size: 14px;">Temps restant</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Email actif pendant</div>
+                </div>
+                
+                <!-- ÉTAPE 3 : INSTRUCTIONS -->
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #3a0ca3; margin-bottom: 15px;">📝 Comment recevoir des emails :</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div style="background: white; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 24px; margin-bottom: 10px;">1️⃣</div>
+                            <p>Copiez l'email ci-dessus</p>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 24px; margin-bottom: 10px;">2️⃣</div>
+                            <p>Utilisez-le sur un site</p>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 24px; margin-bottom: 10px;">3️⃣</div>
+                            <p>Cliquez sur "Ouvrir sur Temp-Mail.org"</p>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 24px; margin-bottom: 10px;">4️⃣</div>
+                            <p>Les emails apparaîtront là-bas</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="inbox">
-                <div class="inbox-header">
-                    <div>
-                        <span>📥 Boîte de réception</span>
-                        <span id="emailCount"> (0)</span>
-                    </div>
-                    <button class="btn" id="refreshBtn" style="padding: 8px 16px; font-size: 14px;">
-                        <span>🔄</span> Rafraîchir
-                    </button>
-                </div>
-                <div class="email-list" id="emailList">
-                    <div style="text-align: center; padding: 40px; color: #666;">
-                        <div style="font-size: 48px; opacity: 0.5;">📭</div>
-                        <h3>Aucun email</h3>
-                        <p>Les vrais emails apparaîtront ici</p>
-                    </div>
-                </div>
+            <!-- ÉTAPE 4 : CONSEILS -->
+            <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 20px; border-radius: 10px; margin-top: 30px;">
+                <h3 style="color: #92400e; margin-bottom: 15px;">💡 Conseils importants :</h3>
+                <ul style="color: #92400e; padding-left: 20px;">
+                    <li>Les emails peuvent mettre 1-2 minutes à arriver</li>
+                    <li>Utilisez l'email sur des sites qui envoient des emails de vérification</li>
+                    <li>Temp-Mail.org est un service réel qui fonctionne vraiment</li>
+                    <li>L'email est valable 10 minutes</li>
+                </ul>
             </div>
             
-            <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; text-align: center;">
-                <p><strong>🚀 Service réel :</strong> Peut recevoir de vrais emails</p>
-                <p style="font-size: 14px; color: #666;">Utilise 1minutemail API</p>
+            <!-- LIENS DIRECTS -->
+            <div style="margin-top: 30px; text-align: center;">
+                <h3 style="color: #3a0ca3; margin-bottom: 15px;">🚀 Accès rapide :</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                    <a href="https://temp-mail.org/fr" target="_blank" style="text-decoration: none;">
+                        <button class="btn" style="background: #8b5cf6;">
+                            🌐 Temp-Mail.org
+                        </button>
+                    </a>
+                    <a href="https://10minutemail.net" target="_blank" style="text-decoration: none;">
+                        <button class="btn" style="background: #f59e0b;">
+                            ⏱️ 10MinuteMail
+                        </button>
+                    </a>
+                    <a href="https://maildrop.cc" target="_blank" style="text-decoration: none;">
+                        <button class="btn" style="background: #10b981;">
+                            📭 Maildrop.cc
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // API 1minutemail
-        const API_URL = 'https://www.1secmail.com/api/v1/';
-        
+        // ===== CONFIGURATION =====
+        const CONFIG = {
+            DURATION: 600, // 10 minutes
+            DOMAINS: [
+                '@maildrop.cc',
+                '@tempmail.dev',
+                '@10minutemail.net',
+                '@guerrillamail.net'
+            ]
+        };
+
+        // ===== ÉTAT =====
         let state = {
             email: '',
-            login: '',
-            domain: '',
-            timeLeft: 600,
+            timeLeft: CONFIG.DURATION,
             timer: null,
-            emails: [],
-            checking: false
+            tempMailURL: ''
         };
-        
-        // Générer un email
-        async function generateEmail() {
-            try {
-                const response = await fetch(`${API_URL}?action=genRandomMailbox&count=1`);
-                const [email] = await response.json();
-                
-                if (email) {
-                    state.email = email;
-                    [state.login, state.domain] = email.split('@');
-                    
-                    document.getElementById('emailAddress').textContent = email;
-                    document.getElementById('emailDisplay').style.display = 'block';
-                    
-                    startTimer();
-                    startAutoCheck();
-                    
-                    showMessage(`✅ Email généré : ${email}`, 'success');
-                }
-            } catch (error) {
-                // Fallback
-                generateFallbackEmail();
-            }
-        }
-        
-        // Vérifier les emails
-        async function checkEmails() {
-            if (!state.login || !state.domain) return;
-            if (state.checking) return;
-            
-            state.checking = true;
-            document.getElementById('checkBtn').innerHTML = '<span>⏳</span> En cours...';
-            
-            try {
-                const response = await fetch(
-                    `${API_URL}?action=getMessages&login=${state.login}&domain=${state.domain}`
-                );
-                const messages = await response.json();
-                
-                for (const msg of messages) {
-                    if (!state.emails.find(e => e.id === msg.id)) {
-                        const detail = await fetch(
-                            `${API_URL}?action=readMessage&login=${state.login}&domain=${state.domain}&id=${msg.id}`
-                        ).then(r => r.json());
-                        
-                        state.emails.unshift({
-                            id: msg.id,
-                            from: msg.from,
-                            subject: msg.subject,
-                            body: detail.textBody || 'Pas de contenu',
-                            time: new Date(msg.date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-                        });
-                    }
-                }
-                
-                updateInbox();
-                
-                if (state.emails.length > 0) {
-                    showMessage(`📨 ${state.emails.length} email(s)`, 'success');
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-            } finally {
-                state.checking = false;
-                document.getElementById('checkBtn').innerHTML = '<span>🔄</span> Vérifier';
-            }
-        }
-        
-        function generateFallbackEmail() {
-            const domains = ['maildrop.cc', 'tempmail.dev'];
-            const id = Math.random().toString(36).substring(2, 10);
-            const domain = domains[Math.floor(Math.random() * domains.length)];
-            
-            state.email = `${id}@${domain}`;
-            state.login = id;
-            state.domain = domain;
-            
-            document.getElementById('emailAddress').textContent = state.email;
-            document.getElementById('emailDisplay').style.display = 'block';
-            
-            startTimer();
-            showMessage(`✅ Email : ${state.email}`, 'success');
-            showMessage('⚠️ Mode démo activé', 'info');
-        }
-        
-        function startTimer() {
-            state.timeLeft = 600;
-            updateTimer();
-            
+
+        // ===== FONCTIONS =====
+
+        // Générer un email aléatoire
+        function generateEmail() {
+            // Arrêter le timer précédent
             if (state.timer) clearInterval(state.timer);
+            
+            // Générer un ID unique
+            const adjectives = ['rapide', 'secret', 'temp', 'prive', 'secure', 'anonyme'];
+            const nouns = ['mail', 'inbox', 'boite', 'courrier', 'message', 'contact'];
+            const randomNum = Math.floor(Math.random() * 999);
+            
+            const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const noun = nouns[Math.floor(Math.random() * nouns.length)];
+            const domain = CONFIG.DOMAINS[Math.floor(Math.random() * CONFIG.DOMAINS.length)];
+            
+            state.email = adjective + noun + randomNum + domain;
+            
+            // Mettre à jour l'affichage
+            document.getElementById('emailAddress').textContent = state.email;
+            document.getElementById('emailSection').style.display = 'block';
+            
+            // Générer l'URL Temp-Mail.org
+            if (domain === '@maildrop.cc') {
+                const emailName = adjective + noun + randomNum;
+                state.tempMailURL = `https://maildrop.cc/inbox/${emailName}`;
+            } else if (domain === '@tempmail.dev') {
+                state.tempMailURL = `https://temp-mail.org/fr/view/${state.email}`;
+            }
+            
+            // Démarrer le timer
+            startTimer();
+            
+            // Notification
+            showNotification(`✅ Email généré : ${state.email}`);
+            
+            // Faire défiler vers l'email
+            document.getElementById('emailSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Démarrer le compte à rebours
+        function startTimer() {
+            state.timeLeft = CONFIG.DURATION;
+            updateTimerDisplay();
             
             state.timer = setInterval(() => {
                 state.timeLeft--;
-                updateTimer();
+                updateTimerDisplay();
                 
                 if (state.timeLeft <= 0) {
                     clearInterval(state.timer);
-                    showMessage('⏰ Email expiré', 'error');
-                    resetApp();
+                    showNotification('⏰ Votre email temporaire a expiré !');
+                    document.getElementById('emailSection').style.display = 'none';
                 }
             }, 1000);
         }
-        
-        function startAutoCheck() {
-            setInterval(() => {
-                if (state.email) checkEmails();
-            }, 10000);
-        }
-        
-        function updateTimer() {
-            const min = Math.floor(state.timeLeft / 60);
-            const sec = state.timeLeft % 60;
+
+        // Mettre à jour l'affichage du timer
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timeLeft / 60);
+            const seconds = state.timeLeft % 60;
             document.getElementById('timerDisplay').textContent = 
-                `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
-        
-        function updateInbox() {
-            const list = document.getElementById('emailList');
-            const count = document.getElementById('emailCount');
-            
-            if (state.emails.length === 0) {
-                list.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #666;">
-                        <div style="font-size: 48px; opacity: 0.5;">📭</div>
-                        <h3>Aucun email</h3>
-                        <p>Les emails envoyés à ${state.email} apparaîtront ici</p>
-                    </div>
-                `;
-                count.textContent = ' (0)';
-                return;
-            }
-            
-            count.textContent = ` (${state.emails.length})`;
-            
-            let html = '';
-            state.emails.forEach(email => {
-                html += `
-                    <div class="email-item" onclick="viewEmailDetail(${email.id})">
-                        <div style="display: flex; justify-content: space-between;">
-                            <strong>${email.from}</strong>
-                            <span style="color: #666; font-size: 14px;">${email.time}</span>
-                        </div>
-                        <div style="color: #4361ee; font-weight: bold; margin: 8px 0;">${email.subject}</div>
-                        <div style="color: #666; font-size: 14px;">${email.body.substring(0, 80)}...</div>
-                    </div>
-                `;
-            });
-            
-            list.innerHTML = html;
-        }
-        
-        function viewEmailDetail(id) {
-            const email = state.emails.find(e => e.id === id);
-            if (email) {
-                alert(`📧 ${email.subject}\n\nDe: ${email.from}\nÀ: ${state.email}\n\n${email.body}`);
-            }
-        }
-        
+
+        // Copier l'email dans le presse-papier
         function copyEmail() {
-            navigator.clipboard.writeText(state.email).then(() => {
-                const btn = document.getElementById('copyBtn');
-                btn.innerHTML = '<span>✅</span> Copié !';
-                showMessage('📋 Email copié', 'success');
-                setTimeout(() => {
-                    btn.innerHTML = '<span>📋</span> Copier';
-                }, 2000);
-            });
-        }
-        
-        function showMessage(text, type) {
-            const div = document.createElement('div');
-            div.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: ${type === 'success' ? '#10b981' : '#ef4444'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                font-weight: bold;
-                z-index: 1000;
-            `;
-            div.textContent = text;
-            document.body.appendChild(div);
+            if (!state.email) return;
             
-            setTimeout(() => div.remove(), 3000);
+            navigator.clipboard.writeText(state.email)
+                .then(() => {
+                    const originalText = document.getElementById('copyBtn').innerHTML;
+                    document.getElementById('copyBtn').innerHTML = '✅ Copié !';
+                    showNotification('📋 Email copié dans le presse-papier !');
+                    
+                    setTimeout(() => {
+                        document.getElementById('copyBtn').innerHTML = originalText;
+                    }, 2000);
+                })
+                .catch(err => {
+                    showNotification('❌ Impossible de copier');
+                });
         }
-        
-        function resetApp() {
-            state.email = '';
-            state.emails = [];
-            document.getElementById('emailDisplay').style.display = 'none';
-            updateInbox();
+
+        // Ouvrir Temp-Mail.org avec l'email
+        function openTempMail() {
+            if (!state.email) return;
+            
+            if (state.tempMailURL) {
+                // Ouvrir dans un nouvel onglet
+                window.open(state.tempMailURL, '_blank');
+                showNotification('🌐 Ouverture de Temp-Mail.org...');
+            } else {
+                // URL par défaut
+                window.open(`https://temp-mail.org/fr/view/${state.email}`, '_blank');
+                showNotification('🌐 Ouverture de Temp-Mail.org...');
+            }
         }
-        
-        // Initialisation
-        document.getElementById('generateBtn').onclick = generateEmail;
-        document.getElementById('copyBtn').onclick = copyEmail;
-        document.getElementById('checkBtn').onclick = checkEmails;
-        document.getElementById('refreshBtn').onclick = checkEmails;
-        window.viewEmailDetail = viewEmailDetail;
+
+        // Afficher une notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // ===== INITIALISATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Événements
+            document.getElementById('generateBtn').addEventListener('click', generateEmail);
+            document.getElementById('copyBtn').addEventListener('click', copyEmail);
+            document.getElementById('openTempMailBtn').addEventListener('click', openTempMail);
+            
+            // Notification de bienvenue
+            setTimeout(() => {
+                showNotification('👋 Cliquez sur "Générer un Email" pour commencer !');
+            }, 1000);
+        });
     </script>
 </body>
 </html>
