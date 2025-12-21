@@ -71,8 +71,8 @@
             background: #10b981;
         }
 
-        .btn-secondary {
-            background: #6b7280;
+        .btn-warning {
+            background: #f59e0b;
         }
 
         /* EMAIL DISPLAY */
@@ -215,18 +215,32 @@
             opacity: 0.5;
         }
 
-        /* TEST SECTION */
-        .test-section {
-            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        /* SERVICE SELECTION */
+        .service-selection {
+            background: #f0f9ff;
             padding: 20px;
             border-radius: 12px;
-            margin-top: 25px;
-            text-align: center;
-            display: none;
+            margin: 20px 0;
         }
 
-        .test-section.show {
-            display: block;
+        .service-option {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .service-option:hover {
+            border-color: #4361ee;
+            transform: translateX(5px);
+        }
+
+        .service-option.selected {
+            border-color: #10b981;
+            background: #f0fdf4;
         }
 
         /* NOTIFICATION */
@@ -267,101 +281,148 @@
     <div class="container">
         <div class="header">
             <h1>📧 Mail Privé - Bamotch</h1>
-            <p>Générez un email temporaire • Recevez VOS emails personnels</p>
+            <p>Générez un email temporaire • Recevez VOS emails</p>
         </div>
         
         <div class="content">
-            <!-- ÉTAPE 1 : GÉNÉRER -->
+            <!-- SERVICE SELECTION -->
+            <div class="service-selection">
+                <h3 style="color: #1f2937; margin-bottom: 15px;">🌐 Choisissez un service :</h3>
+                
+                <div class="service-option" data-service="maildrop">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="font-size: 24px;">📭</div>
+                        <div>
+                            <h4 style="margin: 0; color: #1f2937;">Maildrop.cc</h4>
+                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">
+                                Domaine réel • Pas d'inscription • Email visible sur maildrop.cc
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-option" data-service="tempmail">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="font-size: 24px;">⏱️</div>
+                        <div>
+                            <h4 style="margin: 0; color: #1f2937;">10MinuteMail.net</h4>
+                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">
+                                Valable 10 minutes • Interface web • Email visible sur leur site
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-option" data-service="guerrilla">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="font-size: 24px;">🦍</div>
+                        <div>
+                            <h4 style="margin: 0; color: #1f2937;">GuerrillaMail.com</h4>
+                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">
+                                Service connu • Interface avancée • Email visible sur leur site
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BOUTON GÉNÉRER -->
             <div style="text-align: center;">
                 <button class="btn" id="generateBtn">
-                    🎯 Générer un Email
+                    🎯 Générer un Email Réel
                 </button>
                 <p style="color: #6b7280; margin-top: 15px;">
-                    Cet email ne recevra QUE les emails que VOUS envoyez
+                    Sélectionnez un service ci-dessus, puis générez un email
                 </p>
             </div>
             
-            <!-- ÉTAPE 2 : EMAIL GÉNÉRÉ -->
+            <!-- EMAIL DISPLAY -->
             <div class="email-display" id="emailDisplay">
-                <h3 style="color: #1f2937; margin-bottom: 20px;">Votre email personnel :</h3>
+                <h3 style="color: #1f2937; margin-bottom: 20px;">Votre email temporaire :</h3>
                 <div class="email-address" id="emailAddress"></div>
                 
                 <div style="margin-top: 25px;">
                     <button class="btn" id="copyBtn">
                         📋 Copier l'email
                     </button>
-                    <button class="btn btn-success" id="checkBtn">
-                        🔄 Vérifier mes emails
+                    <button class="btn btn-success" id="openServiceBtn">
+                        🌐 Ouvrir le service
                     </button>
+                    <button class="btn btn-warning" id="testBtn">
+                        🧪 Tester la réception
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px;">
+                    <p style="color: #92400e; margin: 0; font-size: 14px;">
+                        <strong>⚠️ Important :</strong> Les emails ne sont PAS visibles directement ici.<br>
+                        Ils sont visibles sur le site du service que vous avez choisi.
+                    </p>
                 </div>
             </div>
             
-            <!-- ÉTAPE 3 : TIMER -->
+            <!-- TIMER -->
             <div class="timer" id="timer">
                 <div class="timer-display" id="timerDisplay">10:00</div>
                 <div style="font-size: 14px; opacity: 0.8;">Email actif pendant</div>
             </div>
             
-            <!-- ÉTAPE 4 : TESTER -->
-            <div class="test-section" id="testSection">
-                <h3 style="color: #1f2937; margin-bottom: 15px;">🧪 Testez maintenant :</h3>
-                <p style="color: #6b7280; margin-bottom: 20px;">
-                    <strong>Étape 1 :</strong> Ouvrez Gmail dans un autre onglet<br>
-                    <strong>Étape 2 :</strong> Envoyez un email à l'adresse ci-dessus<br>
-                    <strong>Étape 3 :</strong> Cliquez sur "Vérifier mes emails" ci-dessous
-                </p>
-                <button class="btn btn-secondary" id="manualCheckBtn">
-                    ✅ J'ai envoyé un email - Vérifier maintenant
-                </button>
-            </div>
-            
-            <!-- ÉTAPE 5 : INBOX -->
+            <!-- INSTRUCTIONS -->
             <div class="inbox" id="inbox">
                 <div class="inbox-header">
                     <div>
-                        <span style="font-size: 20px; font-weight: bold;">📥 Mes emails reçus</span>
-                        <span id="emailCount" style="margin-left: 10px; background: white; color: #4361ee; padding: 5px 15px; border-radius: 20px; font-weight: bold;">0</span>
+                        <span style="font-size: 20px; font-weight: bold;">📝 Instructions</span>
                     </div>
-                    <button class="btn" id="clearBtn" style="padding: 8px 16px; font-size: 14px;">
-                        🗑️ Tout effacer
-                    </button>
                 </div>
                 
-                <div class="email-list" id="emailList">
-                    <div class="empty-inbox">
-                        <div class="empty-icon">📭</div>
-                        <h3>Aucun email reçu</h3>
-                        <p>Envoyez un email depuis votre Gmail vers l'adresse générée</p>
-                        <p style="margin-top: 10px; font-size: 14px; color: #9ca3af;">
-                            Seuls VOS emails apparaîtront ici
+                <div class="email-list">
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #1f2937; margin-bottom: 10px;">✅ Étape 1 : Générer un email</h4>
+                        <p style="color: #6b7280;">Choisissez un service et cliquez sur "Générer un Email Réel"</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #1f2937; margin-bottom: 10px;">✅ Étape 2 : Utiliser l'email</h4>
+                        <p style="color: #6b7280;">Copiez l'email et utilisez-le sur Gmail ou un autre site</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #1f2937; margin-bottom: 10px;">✅ Étape 3 : Voir les emails</h4>
+                        <p style="color: #6b7280;">Cliquez sur "Ouvrir le service" pour voir vos emails reçus</p>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #1f2937; margin-bottom: 10px;">ℹ️ Comment ça marche ?</h4>
+                        <p style="color: #6b7280; font-size: 14px;">
+                            Ces services existent réellement et ont leur propre interface web.<br>
+                            Votre email est créé sur LEUR serveur, pas sur le vôtre.<br>
+                            C'est pourquoi vous devez ouvrir leur site pour voir les emails.
                         </p>
                     </div>
                 </div>
             </div>
             
-            <!-- INSTRUCTIONS -->
-            <div style="background: #fef3c7; padding: 20px; border-radius: 12px; margin-top: 30px;">
-                <h3 style="color: #92400e; margin-bottom: 15px;">⚠️ Important :</h3>
-                <p style="color: #92400e;">
-                    <strong>Pour recevoir de VRAIS emails :</strong><br>
-                    1. Copiez l'email généré<br>
-                    2. Ouvrez Gmail dans un nouvel onglet<br>
-                    3. Envoyez un email à cette adresse<br>
-                    4. Revenez ici et cliquez sur "Vérifier mes emails"<br>
-                    5. VOTRE email apparaîtra (pas d'emails aléatoires)
-                </p>
+            <!-- SERVICES RÉELS -->
+            <div style="margin-top: 30px; text-align: center;">
+                <h3 style="color: #1f2937; margin-bottom: 15px;">🔗 Services réels disponibles :</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                    <a href="https://maildrop.cc" target="_blank" style="text-decoration: none;">
+                        <button class="btn" style="background: #8b5cf6;">
+                            📭 Maildrop.cc
+                        </button>
+                    </a>
+                    <a href="https://10minutemail.net" target="_blank" style="text-decoration: none;">
+                        <button class="btn" style="background: #f59e0b;">
+                            ⏱️ 10MinuteMail
+                        </button>
+                    </a>
+                    <a href="https://www.guerrillamail.com" target="_blank" style="text-decoration: none;">
+                        <button class="btn" style="background: #10b981;">
+                            🦍 GuerrillaMail
+                        </button>
+                    </a>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- MODAL POUR AFFICHER L'EMAIL -->
-    <div id="emailModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <h3 id="modalSubject" style="color: #1f2937;"></h3>
-                <button onclick="closeModal()" style="background: none; border: none; font-size: 30px; cursor: pointer; color: #6b7280;">&times;</button>
-            </div>
-            <div id="modalContent" style="line-height: 1.6;"></div>
         </div>
     </div>
 
@@ -370,73 +431,115 @@
 
     <script>
         // ===== CONFIGURATION =====
-        const CONFIG = {
-            DURATION: 600, // 10 minutes
-            // Nous allons utiliser un service qui filtre SEULEMENT tes emails
-            SERVICE: 'bamotch-private' // Identifiant unique pour toi
+        const SERVICES = {
+            maildrop: {
+                name: 'Maildrop.cc',
+                domains: ['maildrop.cc'],
+                inboxUrl: 'https://maildrop.cc/inbox/{username}',
+                generateUrl: null
+            },
+            tempmail: {
+                name: '10MinuteMail',
+                domains: ['10minutemail.net', '10minutemail.com'],
+                inboxUrl: 'https://10minutemail.net/',
+                generateUrl: null
+            },
+            guerrilla: {
+                name: 'GuerrillaMail',
+                domains: ['guerrillamail.com', 'grr.la', 'guerrillamail.net'],
+                inboxUrl: 'https://www.guerrillamail.com/inbox',
+                generateUrl: null
+            }
         };
 
         // ===== ÉTAT =====
         let state = {
             email: '',
-            timeLeft: CONFIG.DURATION,
-            timer: null,
-            emails: [],
-            sessionId: null,
-            // Whitelist des expéditeurs autorisés (ton email Gmail)
-            allowedSenders: [
-                'bamotchfirst@gmail.com', // Remplace par TON email Gmail
-                'test@gmail.com'
-            ]
+            service: null,
+            username: '',
+            domain: '',
+            timeLeft: 600,
+            timer: null
         };
 
         // ===== INITIALISATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            // Générer un ID de session unique
-            state.sessionId = 'bamotch-' + Date.now();
+            // Sélection des services
+            document.querySelectorAll('.service-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // Désélectionner tous
+                    document.querySelectorAll('.service-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Sélectionner celui-ci
+                    this.classList.add('selected');
+                    state.service = this.dataset.service;
+                    
+                    showNotification(`✅ Service sélectionné : ${SERVICES[state.service].name}`, 'info');
+                });
+            });
             
             // Événements
             document.getElementById('generateBtn').addEventListener('click', generateEmail);
             document.getElementById('copyBtn').addEventListener('click', copyEmail);
-            document.getElementById('checkBtn').addEventListener('click', checkEmails);
-            document.getElementById('manualCheckBtn').addEventListener('click', manualCheck);
-            document.getElementById('clearBtn').addEventListener('click', clearEmails);
+            document.getElementById('openServiceBtn').addEventListener('click', openService);
+            document.getElementById('testBtn').addEventListener('click', testEmail);
             
-            showNotification('🚀 Système privé prêt ! Seuls TES emails seront reçus.', 'info');
+            // Sélectionner Maildrop par défaut
+            setTimeout(() => {
+                document.querySelector('.service-option[data-service="maildrop"]').click();
+            }, 500);
         });
 
-        // ===== GÉNÉRER UN EMAIL PERSONNEL =====
+        // ===== GÉNÉRER UN EMAIL =====
         function generateEmail() {
+            if (!state.service) {
+                showNotification('❌ Sélectionnez un service d\'abord', 'error');
+                return;
+            }
+            
             // Arrêter le timer précédent
             if (state.timer) clearInterval(state.timer);
             
-            // Générer un email UNIQUE avec ton ID
+            // Générer un nom d'utilisateur unique
             const timestamp = Date.now().toString(36);
-            const randomId = Math.random().toString(36).substring(2, 8);
+            const randomId = Math.random().toString(36).substring(2, 6);
+            state.username = `bamotch-${timestamp}-${randomId}`;
             
-            // Format: bamotch-[timestamp]-[random]@privemail.bamotch
-            state.email = `bamotch-${timestamp}-${randomId}@privemail.bamotch`;
-            state.timeLeft = CONFIG.DURATION;
-            state.emails = [];
+            // Choisir un domaine du service
+            const service = SERVICES[state.service];
+            const domain = service.domains[Math.floor(Math.random() * service.domains.length)];
+            state.domain = domain;
+            
+            // Créer l'email
+            state.email = `${state.username}@${state.domain}`;
+            state.timeLeft = 600;
             
             // Afficher
             document.getElementById('emailAddress').textContent = state.email;
             document.getElementById('emailDisplay').classList.add('show');
             document.getElementById('timer').classList.add('show');
-            document.getElementById('testSection').classList.add('show');
             document.getElementById('inbox').classList.add('show');
-            
-            // Mettre à jour l'interface
-            updateInbox();
             
             // Démarrer le timer
             startTimer();
             
-            showNotification(`✅ Email privé généré : ${state.email}`, 'success');
+            showNotification(`✅ Email généré avec ${service.name}`, 'success');
             
-            // Instructions détaillées
+            // Instructions spécifiques
             setTimeout(() => {
-                alert(`📧 VOTRE EMAIL PRIVÉ : ${state.email}\n\n📝 POUR RECEVOIR VOS EMAILS :\n\n1. OUVREZ GMAIL dans un autre onglet\n2. ENVOYEZ un email à : ${state.email}\n3. REVENEZ ici\n4. CLIQUEZ sur "Vérifier mes emails"\n\n⚠️ Seuls VOS emails seront reçus !`);
+                let instructions = '';
+                
+                if (state.service === 'maildrop') {
+                    instructions = `📧 Votre email : ${state.email}\n\n📝 POUR VOIR LES EMAILS :\n1. Envoyez un email depuis Gmail\n2. Ouvrez : https://maildrop.cc/inbox/${state.username}\n3. Vos emails apparaîtront là-bas`;
+                } else if (state.service === 'tempmail') {
+                    instructions = `📧 Votre email : ${state.email}\n\n📝 POUR VOIR LES EMAILS :\n1. Envoyez un email depuis Gmail\n2. Ouvrez : https://10minutemail.net\n3. Votre email devrait apparaître automatiquement`;
+                } else if (state.service === 'guerrilla') {
+                    instructions = `📧 Votre email : ${state.email}\n\n📝 POUR VOIR LES EMAILS :\n1. Envoyez un email depuis Gmail\n2. Ouvrez : https://www.guerrillamail.com/inbox\n3. Votre email devrait apparaître`;
+                }
+                
+                alert(instructions);
             }, 500);
         }
 
@@ -451,13 +554,6 @@
                 if (state.timeLeft <= 0) {
                     clearInterval(state.timer);
                     showNotification('⏰ Votre email a expiré', 'info');
-                    
-                    setTimeout(() => {
-                        document.getElementById('emailDisplay').classList.remove('show');
-                        document.getElementById('timer').classList.remove('show');
-                        document.getElementById('testSection').classList.remove('show');
-                        document.getElementById('inbox').classList.remove('show');
-                    }, 2000);
                 }
             }, 1000);
         }
@@ -471,20 +567,23 @@
 
         // ===== COPIER EMAIL =====
         function copyEmail() {
-            if (!state.email) return;
+            if (!state.email) {
+                showNotification('❌ Génère un email d\'abord', 'error');
+                return;
+            }
             
             navigator.clipboard.writeText(state.email)
                 .then(() => {
                     document.getElementById('copyBtn').innerHTML = '✅ Copié !';
-                    showNotification('📋 Email copié ! Ouvrez Gmail et collez-le', 'success');
+                    showNotification('📋 Email copié !', 'success');
                     
                     setTimeout(() => {
                         document.getElementById('copyBtn').innerHTML = '📋 Copier l\'email';
                     }, 2000);
                     
-                    // Ouvrir Gmail dans un nouvel onglet
+                    // Proposer d'ouvrir Gmail
                     setTimeout(() => {
-                        if (confirm('📧 Voulez-vous ouvrir Gmail pour envoyer un email ?')) {
+                        if (confirm('📧 Voulez-vous ouvrir Gmail pour envoyer un email de test ?')) {
                             window.open('https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=' + encodeURIComponent(state.email), '_blank');
                         }
                     }, 1000);
@@ -494,204 +593,66 @@
                 });
         }
 
-        // ===== VÉRIFIER LES EMAILS =====
-        async function checkEmails() {
+        // ===== OUVRIR LE SERVICE =====
+        function openService() {
+            if (!state.email || !state.service) {
+                showNotification('❌ Génère un email d\'abord', 'error');
+                return;
+            }
+            
+            const service = SERVICES[state.service];
+            let url = '';
+            
+            if (state.service === 'maildrop') {
+                // Maildrop : https://maildrop.cc/inbox/username
+                url = `https://maildrop.cc/inbox/${state.username}`;
+            } else if (state.service === 'tempmail') {
+                // 10MinuteMail : leur site détecte automatiquement
+                url = 'https://10minutemail.net';
+            } else if (state.service === 'guerrilla') {
+                // GuerrillaMail : leur interface
+                url = 'https://www.guerrillamail.com/inbox';
+            }
+            
+            if (url) {
+                window.open(url, '_blank');
+                showNotification(`🌐 Ouverture de ${service.name}...`, 'info');
+            }
+        }
+
+        // ===== TESTER L'EMAIL =====
+        function testEmail() {
             if (!state.email) {
                 showNotification('❌ Génère un email d\'abord', 'error');
                 return;
             }
             
-            showNotification('🔍 Recherche de VOS emails...', 'info');
+            const service = SERVICES[state.service];
             
-            // Simuler un délai de vérification
-            setTimeout(() => {
-                // Dans la vraie version, on appellerait une API
-                // Pour l'instant, on simule avec des emails de test
-                simulateEmailReception();
-            }, 1500);
-        }
-
-        // ===== VÉRIFICATION MANUELLE (quand tu as envoyé un email) =====
-        function manualCheck() {
-            if (!state.email) {
-                showNotification('❌ Pas d\'email généré', 'error');
-                return;
+            let testInstructions = `🧪 TEST AVEC ${service.name.toUpperCase()} :\n\n`;
+            testInstructions += `Votre email : ${state.email}\n\n`;
+            testInstructions += `ÉTAPE 1 : Copiez cet email\n`;
+            testInstructions += `ÉTAPE 2 : Ouvrez Gmail dans un autre onglet\n`;
+            testInstructions += `ÉTAPE 3 : Envoyez un email à cette adresse\n`;
+            testInstructions += `ÉTAPE 4 : Ouvrez le service pour voir l'email\n\n`;
+            testInstructions += `URL du service : `;
+            
+            if (state.service === 'maildrop') {
+                testInstructions += `https://maildrop.cc/inbox/${state.username}`;
+            } else if (state.service === 'tempmail') {
+                testInstructions += `https://10minutemail.net`;
+            } else if (state.service === 'guerrilla') {
+                testInstructions += `https://www.guerrillamail.com/inbox`;
             }
             
-            showNotification('✅ Vérification de VOTRE email...', 'info');
-            
-            // Demander l'adresse de l'expéditeur
-            const sender = prompt('📧 Quel est VOTRE adresse Gmail ?\n(ex: votrenom@gmail.com)\n\nCela permet de filtrer SEULEMENT vos emails.');
-            
-            if (!sender) return;
-            
-            // Ajouter à la whitelist
-            if (!state.allowedSenders.includes(sender.toLowerCase())) {
-                state.allowedSenders.push(sender.toLowerCase());
-            }
-            
-            // Simuler la réception d'un email de CET expéditeur
-            simulateSpecificEmail(sender);
-        }
-
-        // ===== SIMULATION D'EMAIL REÇU =====
-        function simulateEmailReception() {
-            // 70% de chance de recevoir un email simulé (pour la démo)
-            if (Math.random() < 0.7) {
-                const demoEmails = [
-                    {
-                        id: Date.now(),
-                        from: 'bamotch@gmail.com', // TON email
-                        subject: '🧪 Email de test depuis Gmail',
-                        body: 'Ceci est un email que VOUS avez envoyé depuis votre compte Gmail.\n\nVous pouvez maintenant utiliser cette adresse temporaire pour recevoir vos propres emails.\n\nCe système ne reçoit QUE vos emails personnels.',
-                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        date: new Date().toLocaleDateString('fr-FR'),
-                        unread: true
-                    },
-                    {
-                        id: Date.now() + 1,
-                        from: 'vous@gmail.com',
-                        subject: '📨 Votre email personnel',
-                        body: 'Félicitations ! Votre système de réception d\'emails privés fonctionne.\n\nSeuls les emails que VOUS envoyez apparaîtront ici.',
-                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        date: new Date().toLocaleDateString('fr-FR'),
-                        unread: true
-                    }
-                ];
+            if (confirm(testInstructions)) {
+                // Copier l'email automatiquement
+                navigator.clipboard.writeText(state.email);
                 
-                const randomEmail = demoEmails[Math.floor(Math.random() * demoEmails.length)];
-                
-                // Vérifier si l'expéditeur est autorisé
-                if (isSenderAllowed(randomEmail.from)) {
-                    state.emails.unshift(randomEmail);
-                    updateInbox();
-                    showNotification(`📨 Email reçu de ${randomEmail.from}`, 'success');
-                }
-            } else {
-                showNotification('📭 Aucun nouvel email de VOTRE part', 'info');
-            }
-        }
-
-        // ===== SIMULER UN EMAIL SPÉCIFIQUE =====
-        function simulateSpecificEmail(sender) {
-            const specificEmail = {
-                id: Date.now(),
-                from: sender,
-                subject: '✅ VOTRE email a bien été reçu !',
-                body: `Félicitations ${sender} !\n\nVotre système de réception d'emails privés fonctionne parfaitement.\n\nEmail: ${state.email}\nExpéditeur: ${sender}\nDate: ${new Date().toLocaleString('fr-FR')}\n\nCe système ne montre QUE vos emails personnels.`,
-                time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                date: new Date().toLocaleDateString('fr-FR'),
-                unread: true
-            };
-            
-            state.emails.unshift(specificEmail);
-            updateInbox();
-            showNotification(`🎉 Email reçu de ${sender}`, 'success');
-            
-            // Afficher l'email immédiatement
-            setTimeout(() => viewEmail(0), 500);
-        }
-
-        // ===== VÉRIFIER SI L'EXPÉDITEUR EST AUTORISÉ =====
-        function isSenderAllowed(sender) {
-            const senderLower = sender.toLowerCase();
-            return state.allowedSenders.some(allowed => 
-                senderLower.includes(allowed) || allowed.includes(senderLower)
-            );
-        }
-
-        // ===== METTRE À JOUR LA BOÎTE DE RÉCEPTION =====
-        function updateInbox() {
-            const emailList = document.getElementById('emailList');
-            const emailCount = document.getElementById('emailCount');
-            
-            emailCount.textContent = state.emails.length;
-            
-            if (state.emails.length === 0) {
-                emailList.innerHTML = `
-                    <div class="empty-inbox">
-                        <div class="empty-icon">📭</div>
-                        <h3>Aucun email reçu</h3>
-                        <p>Envoyez un email depuis VOTRE Gmail</p>
-                        <p style="margin-top: 10px; font-size: 14px; color: #9ca3af;">
-                            Seuls les emails que VOUS envoyez apparaîtront
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let emailsHTML = '';
-            
-            state.emails.forEach((email, index) => {
-                const unreadClass = email.unread ? 'unread' : '';
-                emailsHTML += `
-                    <div class="email-item ${unreadClass}" onclick="viewEmail(${index})">
-                        <div class="email-sender">👤 ${email.from}</div>
-                        <div class="email-subject">${email.subject}</div>
-                        <div class="email-preview">${email.body.substring(0, 100)}${email.body.length > 100 ? '...' : ''}</div>
-                        <div class="email-time">${email.time}</div>
-                    </div>
-                `;
-            });
-            
-            emailList.innerHTML = emailsHTML;
-        }
-
-        // ===== AFFICHER UN EMAIL =====
-        function viewEmail(index) {
-            const email = state.emails[index];
-            if (!email) return;
-            
-            // Marquer comme lu
-            email.unread = false;
-            updateInbox();
-            
-            // Afficher le modal
-            document.getElementById('modalSubject').textContent = email.subject;
-            
-            const content = `
-                <div style="margin-bottom: 20px;">
-                    <div style="color: #6b7280; font-size: 14px;">De :</div>
-                    <div style="font-weight: bold; color: #1f2937;">${email.from}</div>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <div style="color: #6b7280; font-size: 14px;">À :</div>
-                    <div style="font-weight: bold; color: #1f2937;">${state.email}</div>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <div style="color: #6b7280; font-size: 14px;">Date :</div>
-                    <div style="color: #1f2937;">${email.date} à ${email.time}</div>
-                </div>
-                
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                    <div style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Message :</div>
-                    <div style="white-space: pre-line; line-height: 1.6; color: #1f2937;">${email.body}</div>
-                </div>
-            `;
-            
-            document.getElementById('modalContent').innerHTML = content;
-            document.getElementById('emailModal').style.display = 'flex';
-        }
-
-        // ===== FERMER LE MODAL =====
-        function closeModal() {
-            document.getElementById('emailModal').style.display = 'none';
-        }
-
-        // ===== EFFACER TOUS LES EMAILS =====
-        function clearEmails() {
-            if (state.emails.length === 0) {
-                showNotification('📭 Boîte de réception déjà vide', 'info');
-                return;
-            }
-            
-            if (confirm(`Voulez-vous vraiment effacer ${state.emails.length} email(s) ?`)) {
-                state.emails = [];
-                updateInbox();
-                showNotification('🗑️ Tous les emails ont été effacés', 'info');
+                // Ouvrir Gmail
+                setTimeout(() => {
+                    window.open('https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=' + encodeURIComponent(state.email), '_blank');
+                }, 500);
             }
         }
 
@@ -706,10 +667,6 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-
-        // ===== EXPOSER LES FONCTIONS GLOBALEMENT =====
-        window.viewEmail = viewEmail;
-        window.closeModal = closeModal;
     </script>
 </body>
 </html>
