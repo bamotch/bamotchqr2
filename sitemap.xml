@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    
+    <!-- Page principale -->
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        
+        <!-- Images pour le référencement d'images -->
+        <image:image>
+            <image:loc>https://bamotch.github.io/bamotchqr2/images/qr-code-example.png</image:loc>
+            <image:title>Exemple de QR code généré avec BAMOTCH QR</image:title>
+            <image:caption>QR code personnalisé avec logo et design avancé</image:caption>
+        </image:image>
+        
+        <!-- Version mobile -->
+        <xhtml:link rel="alternate" media="only screen and (max-width: 640px)" 
+                   href="https://bamotch.github.io/bamotchqr2/" />
+    </url>
+    
+    <!-- Pages virtuelles pour le référencement -->
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/generateur-qr-code-gratuit</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-avec-logo</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-wifi</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-contact</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-design</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/telecharger-qr-code</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+</urlset>
