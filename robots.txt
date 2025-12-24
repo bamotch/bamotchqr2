@@ -5,41 +5,66 @@ Allow: /style.css
 Allow: /script.js
 Allow: /sitemap.xml
 Allow: /google64cd5acc89515f42.html
+Allow: /robots.txt
+Allow: /site.webmanifest
 
 Disallow: /private/
 Disallow: /admin/
-Disallow: /tmp/
+Disallow: /cgi-bin/
 
 Sitemap: https://bamotch.github.io/bamotchqr2/sitemap.xml
 
-# Délai de crawl
-Crawl-delay: 2
-
-# Spécifique à Google
+# Google Specific
 User-agent: Googlebot
 Allow: /
-Disallow: /private/
 User-agent: Googlebot-Image
-Allow: /images/
-Disallow: /private/images/
+Allow: /
+User-agent: Googlebot-Mobile
+Allow: /
+User-agent: Mediapartners-Google
+Allow: /
 
-# Spécifique à Bing
+# Bing Specific
 User-agent: Bingbot
 Allow: /
-Disallow: /private/
+User-agent: msnbot
+Allow: /
+User-agent: adidxbot
+Allow: /
 
-# Spécifique à Yandex
+# Yandex Specific
 User-agent: YandexBot
 Allow: /
-Disallow: /private/
-Clean-param: ref /bamotchqr2/
+User-agent: YandexMobileBot
+Allow: /
+Clean-param: ref&source&utm_* /bamotchqr2/
 
-# Blocage des robots indésirables
+# Baidu
+User-agent: Baiduspider
+Allow: /
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# Block Bad Bots
+User-agent: MJ12bot
+Disallow: /
 User-agent: AhrefsBot
 Disallow: /
 User-agent: SemrushBot
 Disallow: /
-User-agent: MJ12bot
+User-agent: rogerbot
 Disallow: /
 User-agent: dotbot
 Disallow: /
+User-agent: gigabot
+Disallow: /
+User-agent: siteexplorer.info
+Disallow: /
+
+# Crawl delay for all bots
+Crawl-delay: 1
+
+# Mobile sitemap
+Sitemap: https://bamotch.github.io/bamotchqr2/sitemap-mobile.xml
