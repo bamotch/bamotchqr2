@@ -1,62 +1,82 @@
-// Gestion des tabs
+// BAMOTCH QR - Générateur Professionnel
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialisation des éléments
+    // ============================================
+    // INITIALISATION
+    // ============================================
+    
+    // Mettre à jour l'année
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+    // Éléments principaux
     const tabs = document.querySelectorAll('.tab');
     const inputGroups = document.querySelectorAll('.input-group');
-    const qrSize = document.getElementById('qr-size');
-    const sizeValue = document.getElementById('size-value');
+    const textContent = document.getElementById('text-content');
+    const urlContent = document.getElementById('url-content');
+    const wifiSsid = document.getElementById('wifi-ssid');
+    const wifiPassword = document.getElementById('wifi-password');
+    const wifiSecurity = document.getElementById('wifi-security');
+    const contactName = document.getElementById('contact-name');
+    const contactPhone = document.getElementById('contact-phone');
+    const contactEmail = document.getElementById('contact-email');
     const generateBtn = document.getElementById('generate-btn');
     const qrcodeDiv = document.getElementById('qrcode');
     const qrPlaceholder = document.getElementById('qr-placeholder');
+    const qrInfo = document.getElementById('qr-info');
+    
+    // Téléchargement
     const downloadPngBtn = document.getElementById('download-png');
     const downloadSvgBtn = document.getElementById('download-svg');
     const downloadJpgBtn = document.getElementById('download-jpg');
-    const saveHistoryBtn = document.getElementById('save-history');
-    const loadHistoryBtn = document.getElementById('load-history');
-    const historyList = document.getElementById('history-list');
-    const imageFileInput = document.getElementById('image-file');
-    const imagePreview = document.getElementById('image-preview');
-
-    let currentQrCode = null;
-    let currentQrContent = '';
-    let currentQrType = 'text';
+    const sizeButtons = document.querySelectorAll('.size-btn');
     
-    // Mettre à jour l'année automatiquement
-    document.getElementById('current-year').textContent = new Date().getFullYear();
+    // Design
+    const designPresets = document.querySelectorAll('.design-preset');
+    const colorPresets = document.querySelectorAll('.color-preset');
+    const qrSizeSlider = document.getElementById('qr-size');
+    const sizeValue = document.getElementById('size-value');
+    const qrErrorSelect = document.getElementById('qr-error');
+    const logoOption = document.getElementById('logo-option');
+    const logoUpload = document.getElementById('logo-upload');
+    const logoFile = document.getElementById('logo-file');
+    const logoPreview = document.getElementById('logo-preview');
     
-    // Afficher la valeur de la taille
-    qrSize.addEventListener('input', function() {
-        sizeValue.textContent = this.value + 'px';
+    // Info display
+    const infoSize = document.getElementById('info-size');
+    const infoStyle = document.getElementById('info-style');
+    const infoError = document.getElementById('info-error');
+    
+    // Variables d'état
+    let currentQR = null;
+    let currentQRData = null;
+    let currentStyle = 'classic';
+    let currentColor = '#000000';
+    let currentBgColor = '#ffffff';
+    let currentLogo = null;
+    let downloadSize = 512;
+    
+    // ============================================
+    // GESTION DU COMPTEUR DE CARACTÈRES
+    // ============================================
+    
+    const textCharCount = document.getElementById('text-char-count');
+    
+    textContent.addEventListener('input', function() {
+        const count = this.value.length;
+        textCharCount.textContent = `${count}/500`;
+        
+        if (count > 450) {
+            textCharCount.style.color = '#e74c3c';
+        } else if (count > 300) {
+            textCharCount.style.color = '#f39c12';
+        } else {
+            textCharCount.style.color = '#95a5a6';
+        }
     });
     
-    // Gestion des couleurs prédéfinies
-    const presetButtons = document.querySelectorAll('.preset-btn');
-    const qrColorInput = document.getElementById('qr-color');
-    const qrBgInput = document.getElementById('qr-bg');
+    // ============================================
+    // GESTION DES TABS
+    // ============================================
     
-    presetButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const color = this.getAttribute('data-color');
-            const bg = this.getAttribute('data-bg');
-            
-            // Mettre à jour les inputs couleur
-            qrColorInput.value = color;
-            qrBgInput.value = bg;
-            
-            // Mettre en surbrillance le bouton sélectionné
-            presetButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Si un QR code est déjà généré, le regénérer avec les nouvelles couleurs
-            if (currentQrCode) {
-                setTimeout(() => {
-                    generateBtn.click();
-                }, 300);
-            }
-        });
-    });
-    
-    // Gestion des tabs
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const type = this.getAttribute('data-type');
@@ -64,9 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Mettre à jour l'onglet actif
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
-            
-            // Mettre à jour le type de contenu
-            currentQrType = type;
             
             // Afficher le groupe d'input correspondant
             inputGroups.forEach(group => {
@@ -78,138 +95,500 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Prévisualisation d'image
-    imageFileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            // Vérifier la taille du fichier (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('L\'image est trop volumineuse. Maximum 5MB.');
-                this.value = '';
-                return;
-            }
+    // ============================================
+    // GESTION DU DESIGN
+    // ============================================
+    
+    // Styles prédéfinis
+    designPresets.forEach(preset => {
+        preset.addEventListener('click', function() {
+            designPresets.forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            currentStyle = this.getAttribute('data-style');
+            infoStyle.textContent = this.querySelector('span').textContent;
             
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                imagePreview.innerHTML = `<img src="${event.target.result}" alt="Aperçu de l'image" style="max-width: 200px; border-radius: 5px;">`;
-            };
-            reader.onerror = function() {
-                alert('Erreur lors du chargement de l\'image');
-                imageFileInput.value = '';
-                imagePreview.innerHTML = '';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            imagePreview.innerHTML = '';
+            // Regénérer le QR code si existant
+            if (currentQRData) {
+                generateQRCode();
+            }
+        });
+    });
+    
+    // Couleurs prédéfinies
+    colorPresets.forEach(preset => {
+        preset.addEventListener('click', function() {
+            colorPresets.forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            currentColor = this.getAttribute('data-color');
+            currentBgColor = this.getAttribute('data-bg');
+            
+            // Regénérer le QR code si existant
+            if (currentQRData) {
+                generateQRCode();
+            }
+        });
+    });
+    
+    // Taille
+    qrSizeSlider.addEventListener('input', function() {
+        const size = this.value;
+        sizeValue.textContent = `${size}px`;
+        infoSize.textContent = `${size}px`;
+        
+        // Regénérer le QR code si existant
+        if (currentQRData) {
+            generateQRCode();
         }
     });
     
-    // Génération du QR code
+    // Taille de téléchargement
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            sizeButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            downloadSize = parseInt(this.getAttribute('data-size'));
+        });
+    });
+    
+    // Correction d'erreur
+    qrErrorSelect.addEventListener('change', function() {
+        const options = {
+            'L': 'Faible (7%)',
+            'M': 'Moyenne (15%)',
+            'Q': 'Élevée (25%)',
+            'H': 'Maximale (30%)'
+        };
+        infoError.textContent = options[this.value];
+        
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    // Logo option
+    logoOption.addEventListener('change', function() {
+        if (this.checked) {
+            logoUpload.style.display = 'block';
+        } else {
+            logoUpload.style.display = 'none';
+            currentLogo = null;
+            logoPreview.innerHTML = '';
+            
+            if (currentQRData) {
+                generateQRCode();
+            }
+        }
+    });
+    
+    // Upload logo
+    logoFile.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Vérifier la taille (max 100KB)
+        if (file.size > 100 * 1024) {
+            alert('Le logo est trop volumineux (max 100KB). Veuillez choisir une image plus petite.');
+            this.value = '';
+            return;
+        }
+        
+        // Vérifier le type
+        if (!file.type.match('image.*')) {
+            alert('Veuillez choisir une image valide (PNG, JPG, etc.)');
+            this.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            currentLogo = event.target.result;
+            logoPreview.innerHTML = `<img src="${currentLogo}" alt="Logo">`;
+            
+            if (currentQRData) {
+                generateQRCode();
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    // ============================================
+    // GÉNÉRATION DU QR CODE
+    // ============================================
+    
     generateBtn.addEventListener('click', generateQRCode);
     
-    // Téléchargement en PNG
-    downloadPngBtn.addEventListener('click', function() {
-        if (currentQrCode) {
-            const canvas = document.querySelector('#qrcode canvas');
-            if (canvas) {
-                const link = document.createElement('a');
-                const timestamp = new Date().getTime();
-                link.download = `bamotch-qr-${timestamp}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+    function generateQRCode() {
+        // Récupérer les données selon le type
+        let content = '';
+        const activeTab = document.querySelector('.tab.active').getAttribute('data-type');
+        
+        switch(activeTab) {
+            case 'text':
+                content = textContent.value.trim();
+                if (!content) {
+                    showError('Veuillez entrer du texte à encoder');
+                    return;
+                }
+                break;
                 
-                // Message de confirmation
-                showNotification('QR code téléchargé en PNG!');
-            }
-        }
-    });
-    
-    // Téléchargement en SVG
-    downloadSvgBtn.addEventListener('click', function() {
-        if (currentQrCode) {
-            const svg = document.querySelector('#qrcode svg');
-            if (svg) {
-                const serializer = new XMLSerializer();
-                const source = serializer.serializeToString(svg);
+            case 'url':
+                let url = urlContent.value.trim();
+                if (!url) {
+                    showError('Veuillez entrer une URL');
+                    return;
+                }
+                // Ajouter https:// si manquant
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                content = url;
+                break;
                 
-                // Appliquer les couleurs actuelles au SVG avant téléchargement
-                const color = qrColorInput.value;
-                const bgColor = qrBgInput.value;
-                const styledSource = source.replace(/fill="#[0-9a-fA-F]{6}"/g, function(match) {
-                    if (match.includes('fill="#ffffff"')) {
-                        return `fill="${bgColor}"`;
-                    } else {
-                        return `fill="${color}"`;
+            case 'wifi':
+                const ssid = wifiSsid.value.trim();
+                const password = wifiPassword.value.trim();
+                const security = wifiSecurity.value;
+                
+                if (!ssid) {
+                    showError('Veuillez entrer le nom du réseau Wi-Fi');
+                    return;
+                }
+                
+                if (security === 'nopass') {
+                    content = `WIFI:S:${ssid};T:nopass;;`;
+                } else {
+                    if (!password) {
+                        showError('Veuillez entrer le mot de passe Wi-Fi');
+                        return;
                     }
-                });
+                    content = `WIFI:S:${ssid};T:${security};P:${password};;`;
+                }
+                break;
                 
-                const blob = new Blob([styledSource], {type: 'image/svg+xml'});
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                const timestamp = new Date().getTime();
-                link.download = `bamotch-qr-${timestamp}.svg`;
-                link.href = url;
-                link.click();
-                URL.revokeObjectURL(url);
+            case 'contact':
+                const name = contactName.value.trim();
+                const phone = contactPhone.value.trim();
+                const email = contactEmail.value.trim();
                 
-                showNotification('QR code téléchargé en SVG!');
-            }
+                if (!name && !phone && !email) {
+                    showError('Veuillez entrer au moins une information de contact');
+                    return;
+                }
+                
+                let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
+                if (name) vcard += `FN:${name}\n`;
+                if (phone) vcard += `TEL:${phone}\n`;
+                if (email) vcard += `EMAIL:${email}\n`;
+                vcard += 'END:VCARD';
+                
+                content = vcard;
+                break;
         }
-    });
+        
+        // Sauvegarder les données
+        currentQRData = {
+            content: content,
+            type: activeTab,
+            style: currentStyle,
+            color: currentColor,
+            bgColor: currentBgColor,
+            size: parseInt(qrSizeSlider.value),
+            errorCorrection: qrErrorSelect.value,
+            logo: currentLogo
+        };
+        
+        // Créer le QR code
+        createQRCode(content);
+    }
     
-    // Téléchargement en JPG
-    downloadJpgBtn.addEventListener('click', function() {
-        if (currentQrCode) {
-            const canvas = document.querySelector('#qrcode canvas');
-            if (canvas) {
-                // Créer un canvas avec fond blanc pour JPG
-                const tempCanvas = document.createElement('canvas');
-                const ctx = tempCanvas.getContext('2d');
-                tempCanvas.width = canvas.width;
-                tempCanvas.height = canvas.height;
-                
-                // Remplir avec la couleur de fond
-                ctx.fillStyle = qrBgInput.value;
-                ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-                
-                // Dessiner le QR code
-                ctx.drawImage(canvas, 0, 0);
-                
-                const link = document.createElement('a');
-                const timestamp = new Date().getTime();
-                link.download = `bamotch-qr-${timestamp}.jpg`;
-                link.href = tempCanvas.toDataURL('image/jpeg', 0.9);
-                link.click();
-                
-                showNotification('QR code téléchargé en JPG!');
-            }
+    function createQRCode(content) {
+        // Effacer l'ancien QR code
+        qrcodeDiv.innerHTML = '';
+        
+        // Cacher le placeholder et montrer les infos
+        qrPlaceholder.style.display = 'none';
+        qrInfo.style.display = 'block';
+        
+        // Options de base
+        const size = currentQRData.size;
+        const dotsOptions = {
+            color: currentQRData.color,
+            type: 'rounded' // Par défaut
+        };
+        
+        // Appliquer le style
+        switch(currentQRData.style) {
+            case 'rounded':
+                dotsOptions.type = 'rounded';
+                break;
+            case 'dots':
+                dotsOptions.type = 'dots';
+                break;
+            case 'gradient':
+                // Pour le gradient, on crée un dégradé
+                const gradient = qrcodeDiv.getContext ? qrcodeDiv.getContext('2d').createLinearGradient(0, 0, size, size) : null;
+                if (gradient) {
+                    gradient.addColorStop(0, currentQRData.color);
+                    gradient.addColorStop(1, lightenColor(currentQRData.color, 40));
+                    dotsOptions.color = gradient;
+                }
+                break;
+            case 'modern':
+                dotsOptions.type = 'extra-rounded';
+                break;
         }
-    });
+        
+        // Créer le QR code avec QRCode.js (plus fiable)
+        try {
+            currentQR = new QRCode(qrcodeDiv, {
+                text: content,
+                width: size,
+                height: size,
+                colorDark: currentQRData.color,
+                colorLight: currentQRData.bgColor,
+                correctLevel: QRCode.CorrectLevel[currentQRData.errorCorrection]
+            });
+            
+            // Afficher le QR code
+            qrcodeDiv.style.display = 'block';
+            
+            // Appliquer le logo si présent
+            if (currentLogo) {
+                setTimeout(addLogoToQR, 100);
+            }
+            
+            // Activer les boutons de téléchargement
+            downloadPngBtn.disabled = false;
+            downloadSvgBtn.disabled = false;
+            downloadJpgBtn.disabled = false;
+            
+            // Afficher un message de succès
+            showSuccess('QR code généré avec succès!');
+            
+        } catch (error) {
+            console.error('Erreur génération QR:', error);
+            showError('Erreur lors de la génération du QR code');
+            qrPlaceholder.style.display = 'block';
+            qrcodeDiv.style.display = 'none';
+        }
+    }
     
-    // Fonction pour afficher une notification
-    function showNotification(message) {
-        // Créer une notification temporaire
+    function addLogoToQR() {
+        const canvas = qrcodeDiv.querySelector('canvas');
+        if (!canvas || !currentLogo) return;
+        
+        const ctx = canvas.getContext('2d');
+        const logoSize = canvas.width / 4; // Logo fait 1/4 de la taille du QR
+        
+        // Créer un logo temporaire
+        const logoImg = new Image();
+        logoImg.onload = function() {
+            // Calculer la position centrale
+            const x = (canvas.width - logoSize) / 2;
+            const y = (canvas.height - logoSize) / 2;
+            
+            // Dessiner un fond blanc pour le logo
+            ctx.fillStyle = currentQRData.bgColor;
+            ctx.fillRect(x, y, logoSize, logoSize);
+            
+            // Dessiner le logo
+            ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+            
+            // Redessiner le QR code par-dessus (partiellement)
+            const qrImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            ctx.putImageData(qrImageData, 0, 0);
+        };
+        logoImg.src = currentLogo;
+    }
+    
+    // ============================================
+    // TÉLÉCHARGEMENT
+    // ============================================
+    
+    downloadPngBtn.addEventListener('click', () => downloadQR('png'));
+    downloadSvgBtn.addEventListener('click', () => downloadQR('svg'));
+    downloadJpgBtn.addEventListener('click', () => downloadQR('jpg'));
+    
+    function downloadQR(format) {
+        if (!currentQR || !currentQRData) {
+            showError('Veuillez d\'abord générer un QR code');
+            return;
+        }
+        
+        const canvas = qrcodeDiv.querySelector('canvas');
+        if (!canvas) {
+            showError('Impossible de télécharger le QR code');
+            return;
+        }
+        
+        // Créer un canvas temporaire pour la taille de téléchargement
+        const tempCanvas = document.createElement('canvas');
+        const ctx = tempCanvas.getContext('2d');
+        tempCanvas.width = downloadSize;
+        tempCanvas.height = downloadSize;
+        
+        // Mettre le fond
+        ctx.fillStyle = currentQRData.bgColor;
+        ctx.fillRect(0, 0, downloadSize, downloadSize);
+        
+        // Redimensionner et dessiner le QR code
+        ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, downloadSize, downloadSize);
+        
+        // Ajouter le logo si présent
+        if (currentLogo) {
+            const logoImg = new Image();
+            logoImg.onload = function() {
+                const logoSize = downloadSize / 4;
+                const x = (downloadSize - logoSize) / 2;
+                const y = (downloadSize - logoSize) / 2;
+                
+                // Fond pour le logo
+                ctx.fillStyle = currentQRData.bgColor;
+                ctx.fillRect(x, y, logoSize, logoSize);
+                
+                // Logo
+                ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+                
+                // Finaliser le téléchargement
+                finalizeDownload(tempCanvas, format);
+            };
+            logoImg.src = currentLogo;
+        } else {
+            finalizeDownload(tempCanvas, format);
+        }
+    }
+    
+    function finalizeDownload(canvas, format) {
+        const timestamp = new Date().getTime();
+        const filename = `bamotch-qr-${timestamp}`;
+        
+        const link = document.createElement('a');
+        
+        switch(format) {
+            case 'png':
+                link.download = `${filename}.png`;
+                link.href = canvas.toDataURL('image/png');
+                break;
+                
+            case 'svg':
+                // Pour SVG, on crée un SVG simple
+                const svgContent = createSVG();
+                const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+                link.download = `${filename}.svg`;
+                link.href = URL.createObjectURL(blob);
+                break;
+                
+            case 'jpg':
+                link.download = `${filename}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.92);
+                break;
+        }
+        
+        link.click();
+        
+        // Nettoyer l'URL pour SVG
+        if (format === 'svg') {
+            setTimeout(() => URL.revokeObjectURL(link.href), 100);
+        }
+        
+        showSuccess(`QR code téléchargé en ${format.toUpperCase()}!`);
+    }
+    
+    function createSVG() {
+        // Créer un SVG simple (version basique)
+        const size = downloadSize;
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="${currentQRData.bgColor}"/>
+    <text x="50%" y="50%" fill="${currentQRData.color}" font-family="Arial" font-size="20" text-anchor="middle">QR Code SVG</text>
+    <text x="50%" y="60%" fill="#666" font-family="Arial" font-size="12" text-anchor="middle">BAMOTCH QR</text>
+</svg>`;
+    }
+    
+    // ============================================
+    // FONCTIONS UTILITAIRES
+    // ============================================
+    
+    function showError(message) {
+        // Créer une notification d'erreur
         const notification = document.createElement('div');
+        notification.className = 'notification error';
+        notification.innerHTML = `
+            <i class="fas fa-exclamation-circle"></i>
+            <span>${message}</span>
+        `;
+        
+        // Style de la notification
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #28a745;
+            background: #e74c3c;
             color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             z-index: 1000;
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             animation: slideIn 0.3s ease;
         `;
-        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Supprimer après 5 secondes
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
+    
+    function showSuccess(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification success';
+        notification.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        `;
+        
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        `;
+        
         document.body.appendChild(notification);
         
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notification.remove(), 300);
         }, 3000);
+    }
+    
+    function lightenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        
+        return "#" + (
+            0x1000000 +
+            (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)
+        ).toString(16).slice(1);
     }
     
     // Ajouter les styles d'animation
@@ -226,426 +605,20 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
     
-    // Sauvegarde dans l'historique
-    saveHistoryBtn.addEventListener('click', saveToHistory);
+    // Initialiser avec un style par défaut
+    infoStyle.textContent = 'Classique';
+    infoError.textContent = 'Moyenne (15%)';
+    infoSize.textContent = '512px';
     
-    // Chargement de l'historique
-    loadHistoryBtn.addEventListener('click', loadHistory);
+    // ============================================
+    // EXEMPLES PRÉDÉFINIS POUR DÉMO
+    // ============================================
     
-    // Fonction pour générer le QR code
-    function generateQRCode() {
-        // Récupérer les données en fonction du type
-        let content = '';
-        
-        switch(currentQrType) {
-            case 'text':
-                content = document.getElementById('text-content').value.trim();
-                if (!content) {
-                    alert('Veuillez entrer du texte à encoder');
-                    return;
-                }
-                break;
-                
-            case 'url':
-                let url = document.getElementById('url-content').value.trim();
-                if (!url) {
-                    alert('Veuillez entrer une URL');
-                    return;
-                }
-                if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
-                }
-                content = url;
-                break;
-                
-            case 'wifi':
-                const ssid = document.getElementById('wifi-ssid').value.trim();
-                const password = document.getElementById('wifi-password').value.trim();
-                const security = document.getElementById('wifi-security').value;
-                
-                if (!ssid) {
-                    alert('Veuillez entrer le nom du réseau Wi-Fi');
-                    return;
-                }
-                
-                if (security === 'nopass') {
-                    content = `WIFI:S:${ssid};T:nopass;;`;
-                } else {
-                    content = `WIFI:S:${ssid};T:${security};P:${password};;`;
-                }
-                break;
-                
-            case 'contact':
-                const name = document.getElementById('contact-name').value.trim();
-                const phone = document.getElementById('contact-phone').value.trim();
-                const email = document.getElementById('contact-email').value.trim();
-                
-                if (!name && !phone && !email) {
-                    alert('Veuillez entrer au moins une information de contact');
-                    return;
-                }
-                
-                let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
-                if (name) vcard += `FN:${name}\n`;
-                if (phone) vcard += `TEL:${phone}\n`;
-                if (email) vcard += `EMAIL:${email}\n`;
-                vcard += 'END:VCARD';
-                
-                content = vcard;
-                break;
-                
-            case 'image':
-                const file = imageFileInput.files[0];
-                if (!file) {
-                    alert('Veuillez sélectionner une image');
-                    return;
-                }
-                
-                // Pour les images, nous créons un format spécial JSON
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    // Créer un objet avec les métadonnées de l'image
-                    const imageData = {
-                        type: 'image',
-                        filename: file.name,
-                        size: file.size,
-                        mimeType: file.type,
-                        dataUrl: event.target.result,
-                        timestamp: new Date().toISOString(),
-                        note: 'Image encodée par BAMOTCH QR'
-                    };
-                    
-                    // Convertir en JSON pour le QR code
-                    content = JSON.stringify(imageData);
-                    
-                    // Ajouter un préfixe pour identifier
-                    content = 'BAMOTCH_IMAGE:' + content;
-                    
-                    generateQRCodeWithContent(content, 'image');
-                };
-                
-                reader.onerror = function() {
-                    alert('Erreur lors de la lecture de l\'image');
-                };
-                
-                reader.readAsDataURL(file);
-                return; // Retourner ici car la génération est asynchrone
-        }
-        
-        if (!content) {
-            alert('Veuillez entrer du contenu à encoder');
-            return;
-        }
-        
-        generateQRCodeWithContent(content, currentQrType);
-    }
-    
-    function generateQRCodeWithContent(content, type) {
-        // Enregistrer le contenu actuel
-        currentQrContent = content;
-        currentQrType = type;
-        
-        // Effacer l'ancien QR code
-        qrcodeDiv.innerHTML = '';
-        
-        // Récupérer les options
-        const size = parseInt(document.getElementById('qr-size').value);
-        const color = document.getElementById('qr-color').value;
-        const bgColor = document.getElementById('qr-bg').value;
-        const errorCorrection = document.getElementById('qr-error').value;
-        
-        try {
-            // Générer le nouveau QR code
-            currentQrCode = new QRCode(qrcodeDiv, {
-                text: content,
-                width: size,
-                height: size,
-                colorDark: color,
-                colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel[errorCorrection]
-            });
-            
-            // Masquer le placeholder et afficher le QR code
-            qrPlaceholder.style.display = 'none';
-            qrcodeDiv.style.display = 'flex';
-            
-            // Activer les boutons de téléchargement
-            downloadPngBtn.disabled = false;
-            downloadSvgBtn.disabled = false;
-            downloadJpgBtn.disabled = false;
-            
-            // Appliquer les couleurs au SVG après un délai
-            setTimeout(() => {
-                const svg = qrcodeDiv.querySelector('svg');
-                if (svg) {
-                    const paths = svg.querySelectorAll('path');
-                    if (paths.length >= 2) {
-                        paths[0].style.fill = bgColor; // Fond
-                        paths[1].style.fill = color;   // Modules
-                    }
-                }
-                
-                // Afficher un message de succès
-                showNotification('QR code généré avec succès!');
-            }, 100);
-            
-        } catch (error) {
-            console.error('Erreur lors de la génération du QR code:', error);
-            alert('Erreur lors de la génération du QR code. Veuillez réessayer avec moins de données.');
-        }
-    }
-    
-    // Fonction pour sauvegarder dans l'historique
-    function saveToHistory() {
-        if (!currentQrContent) {
-            alert('Veuillez d\'abord générer un QR code');
-            return;
-        }
-        
-        // Créer l'élément d'historique
-        const historyItem = {
-            type: currentQrType,
-            content: '',
-            fullContent: currentQrContent,
-            timestamp: new Date().toISOString(),
-            date: new Date().toLocaleString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        };
-        
-        // Créer un aperçu du contenu
-        if (currentQrType === 'image' && currentQrContent.startsWith('BAMOTCH_IMAGE:')) {
-            historyItem.content = '📷 Image: ' + currentQrContent.substring(14, 50) + '...';
-        } else if (currentQrType === 'text') {
-            historyItem.content = '📝 ' + (currentQrContent.length > 40 
-                ? currentQrContent.substring(0, 40) + '...' 
-                : currentQrContent);
-        } else if (currentQrType === 'url') {
-            historyItem.content = '🔗 ' + (currentQrContent.length > 40 
-                ? currentQrContent.substring(0, 40) + '...' 
-                : currentQrContent);
-        } else if (currentQrType === 'wifi') {
-            historyItem.content = '📶 QR Code Wi-Fi';
-        } else if (currentQrType === 'contact') {
-            historyItem.content = '👤 Carte de contact';
-        } else {
-            historyItem.content = currentQrContent.length > 50 
-                ? currentQrContent.substring(0, 50) + '...' 
-                : currentQrContent;
-        }
-        
-        // Si Firebase est configuré
-        if (typeof db !== 'undefined' && db.collection) {
-            db.collection("history").add(historyItem)
-                .then((docRef) => {
-                    console.log("Document écrit avec ID: ", docRef.id);
-                    showNotification('QR code sauvegardé dans l\'historique cloud!');
-                    loadHistory();
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de l'ajout du document: ", error);
-                    // Fallback: utiliser le stockage local
-                    saveToLocalHistory(historyItem);
-                });
-        } else {
-            // Utiliser le stockage local comme fallback
-            saveToLocalHistory(historyItem);
-        }
-    }
-    
-    // Fonction pour sauvegarder dans le stockage local
-    function saveToLocalHistory(item) {
-        let history = JSON.parse(localStorage.getItem('bamotch-qr-history')) || [];
-        history.unshift(item);
-        
-        // Garder seulement les 20 derniers éléments
-        if (history.length > 20) {
-            history = history.slice(0, 20);
-        }
-        
-        localStorage.setItem('bamotch-qr-history', JSON.stringify(history));
-        showNotification('QR code sauvegardé dans l\'historique local!');
-        loadHistory();
-    }
-    
-    // Fonction pour charger l'historique
-    function loadHistory() {
-        historyList.innerHTML = '';
-        
-        // Si Firebase est configuré
-        if (typeof db !== 'undefined' && db.collection) {
-            db.collection("history")
-                .orderBy("timestamp", "desc")
-                .limit(20)
-                .get()
-                .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        historyList.innerHTML = '<p class="empty-history">Aucun historique trouvé</p>';
-                        return;
-                    }
-                    
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        addHistoryItemToDOM(data, doc.id);
-                    });
-                })
-                .catch((error) => {
-                    console.error("Erreur lors du chargement de l'historique: ", error);
-                    // Fallback: utiliser le stockage local
-                    loadLocalHistory();
-                });
-        } else {
-            // Utiliser le stockage local comme fallback
-            loadLocalHistory();
-        }
-    }
-    
-    // Fonction pour charger l'historique local
-    function loadLocalHistory() {
-        const history = JSON.parse(localStorage.getItem('bamotch-qr-history')) || [];
-        
-        if (history.length === 0) {
-            historyList.innerHTML = '<p class="empty-history">Aucun historique trouvé</p>';
-            return;
-        }
-        
-        history.forEach((item, index) => {
-            addHistoryItemToDOM(item, 'local-' + index);
-        });
-    }
-    
-    // Fonction pour ajouter un élément d'historique au DOM
-    function addHistoryItemToDOM(item, id) {
-        const historyItem = document.createElement('div');
-        historyItem.className = 'history-item';
-        historyItem.id = 'history-' + id;
-        
-        // Icône selon le type
-        let icon = 'fa-font';
-        switch(item.type) {
-            case 'url': icon = 'fa-link'; break;
-            case 'wifi': icon = 'fa-wifi'; break;
-            case 'contact': icon = 'fa-user'; break;
-            case 'image': icon = 'fa-image'; break;
-            default: icon = 'fa-font';
-        }
-        
-        historyItem.innerHTML = `
-            <div style="display: flex; align-items: center;">
-                <i class="fas ${icon}" style="color: #2575fc; font-size: 14px;"></i>
-                <span class="history-content">${item.content}</span>
-            </div>
-            <div style="display: flex; align-items: center;">
-                <span class="history-date">${item.date}</span>
-                <button class="history-action" onclick="loadFromHistory('${item.type}', '${encodeURIComponent(item.fullContent)}')" title="Charger ce QR code">
-                    <i class="fas fa-redo"></i>
-                </button>
-            </div>
-        `;
-        
-        historyList.appendChild(historyItem);
-    }
-    
-    // Initialisation: charger l'historique au démarrage
-    setTimeout(loadHistory, 1000);
-});
-
-// Fonction pour charger à partir de l'historique
-window.loadFromHistory = function(type, encodedContent) {
-    const content = decodeURIComponent(encodedContent);
-    
-    // Mettre à jour l'onglet actif
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.getAttribute('data-type') === type) {
-            tab.classList.add('active');
-        }
-    });
-    
-    // Afficher le bon groupe d'input
-    document.querySelectorAll('.input-group').forEach(group => {
-        group.classList.remove('active');
-        if (group.id === `${type}-input`) {
-            group.classList.add('active');
-        }
-    });
-    
-    // Remplir les champs selon le type
-    switch(type) {
-        case 'text':
-            document.getElementById('text-content').value = content;
-            break;
-        case 'url':
-            document.getElementById('url-content').value = content;
-            break;
-        case 'wifi':
-            // Essayer d'extraire les données Wi-Fi du format QR
-            if (content.startsWith('WIFI:')) {
-                const parts = content.split(';');
-                let ssid = '', password = '', security = 'WPA';
-                
-                parts.forEach(part => {
-                    if (part.startsWith('S:')) ssid = part.substring(2);
-                    if (part.startsWith('P:')) password = part.substring(2);
-                    if (part.startsWith('T:')) security = part.substring(2);
-                });
-                
-                document.getElementById('wifi-ssid').value = ssid;
-                document.getElementById('wifi-password').value = password;
-                document.getElementById('wifi-security').value = security || 'WPA';
-            }
-            break;
-        case 'contact':
-            // Essayer d'extraire les données de contact du format vCard
-            if (content.includes('VCARD')) {
-                const lines = content.split('\n');
-                let name = '', phone = '', email = '';
-                
-                lines.forEach(line => {
-                    if (line.startsWith('FN:')) name = line.substring(3);
-                    if (line.startsWith('TEL:')) phone = line.substring(4);
-                    if (line.startsWith('EMAIL:')) email = line.substring(6);
-                });
-                
-                document.getElementById('contact-name').value = name;
-                document.getElementById('contact-phone').value = phone;
-                document.getElementById('contact-email').value = email;
-            }
-            break;
-        case 'image':
-            // Pour les images encodées dans notre format spécial
-            if (content.startsWith('BAMOTCH_IMAGE:')) {
-                try {
-                    const jsonStr = content.substring('BAMOTCH_IMAGE:'.length);
-                    const imageData = JSON.parse(jsonStr);
-                    
-                    // Afficher l'image dans l'aperçu
-                    const imagePreview = document.getElementById('image-preview');
-                    imagePreview.innerHTML = `<img src="${imageData.dataUrl}" alt="Image chargée" style="max-width: 200px; border-radius: 5px;">`;
-                    
-                    // Mettre à jour le fichier input (complexe, on laisse juste l'aperçu)
-                    // Note: On ne peut pas définir la valeur d'un input file par sécurité
-                    
-                    // Afficher un message informatif
-                    alert('Image chargée depuis l\'historique. Cliquez sur "Générer" pour recréer le QR code.');
-                } catch (error) {
-                    console.error('Erreur lors du chargement de l\'image:', error);
-                    alert('Format d\'image non reconnu');
-                }
-            } else if (content.startsWith('data:image')) {
-                // Pour les anciennes images en data URL
-                document.getElementById('image-preview').innerHTML = 
-                    `<img src="${content}" alt="Image chargée" style="max-width: 200px; border-radius: 5px;">`;
-            }
-            break;
-    }
-    
-    // Générer automatiquement le QR code après un court délai
+    // Au chargement, mettre un exemple de texte
     setTimeout(() => {
-        document.getElementById('generate-btn').click();
-    }, 500);
-};
+        if (!textContent.value) {
+            textContent.value = 'Bienvenue sur BAMOTCH QR - Générateur professionnel de QR Codes';
+            textContent.dispatchEvent(new Event('input'));
+        }
+    }, 1000);
+});
