@@ -3,959 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📧 TempMail Pro - Service Réel</title>
+    <title>BAMOTCH QR - Générateur de QR Codes</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #4361ee;
-            --primary-dark: #3a0ca3;
-            --secondary: #4cc9f0;
-            --success: #4ade80;
-            --danger: #f43f5e;
-            --warning: #f59e0b;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --border-radius: 16px;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 1000px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        /* ===== HEADER ===== */
-        .app-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .app-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            padding: 30px;
-        }
-
-        /* ===== GENERATOR ===== */
-        .generator-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .generate-btn {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            font-size: 18px;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-        }
-
-        .generate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
-        }
-
-        .generate-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* ===== EMAIL DISPLAY ===== */
-        .email-display {
-            background: var(--light);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin: 25px 0;
-            border: 2px solid var(--primary);
-            display: none;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .email-display.show {
-            display: block;
-        }
-
-        .email-address {
-            font-family: 'Courier New', monospace;
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--dark);
-            word-break: break-all;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            border: 2px solid var(--gray);
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .action-btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .copy-btn {
-            background: var(--success);
-            color: white;
-        }
-
-        .copy-btn:hover {
-            background: #22c55e;
-            transform: translateY(-2px);
-        }
-
-        .refresh-btn {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .refresh-btn:hover {
-            background: #3ab0d3;
-            transform: translateY(-2px);
-        }
-
-        /* ===== TIMER ===== */
-        .timer-container {
-            background: linear-gradient(135deg, var(--dark), #334155);
-            color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            text-align: center;
-            margin: 25px 0;
-            display: none;
-        }
-
-        .timer-container.show {
-            display: block;
-        }
-
-        .timer-display {
-            font-size: 48px;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 8px;
-            letter-spacing: 2px;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            margin-top: 15px;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
-            transition: width 1s linear;
-        }
-
-        /* ===== INBOX ===== */
-        .inbox-container {
-            background: white;
-            border-radius: var(--border-radius);
-            border: 2px solid var(--primary);
-            overflow: hidden;
-            margin-top: 30px;
-            display: none;
-        }
-
-        .inbox-container.show {
-            display: block;
-        }
-
-        .inbox-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .email-list {
-            padding: 20px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .email-item {
-            background: var(--light);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--primary);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .email-item:hover {
-            transform: translateX(5px);
-            background: #f0f4ff;
-        }
-
-        .email-item.unread {
-            border-left-color: var(--danger);
-            background: #fff5f5;
-        }
-
-        .email-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .email-sender {
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .email-time {
-            color: var(--gray);
-            font-size: 14px;
-        }
-
-        .email-subject {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        .email-preview {
-            color: var(--gray);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .empty-inbox {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--gray);
-        }
-
-        .empty-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        /* ===== EMAIL MODAL ===== */
-        .email-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .email-modal.show {
-            display: flex;
-        }
-
-        .email-modal-content {
-            background: white;
-            border-radius: var(--border-radius);
-            width: 100%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 30px;
-        }
-
-        /* ===== NOTIFICATION ===== */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--success);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            z-index: 1001;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.error {
-            background: var(--danger);
-        }
-
-        .notification.info {
-            background: var(--secondary);
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 20px;
-            }
-
-            .generate-btn {
-                padding: 15px 30px;
-                font-size: 16px;
-            }
-
-            .email-address {
-                font-size: 18px;
-            }
-
-            .timer-display {
-                font-size: 36px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .action-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <header class="app-header">
-            <h1><i class="fas fa-mail-bulk"></i> TempMail Pro</h1>
-            <p>Vrai service de mail temporaire • Tout sur ce site • 10 minutes d'expiration</p>
-        </header>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-qrcode"></i> BAMOTCH QR</h1>
+            <p>Générez des QR codes à partir de textes, liens, photos et plus encore!</p>
+        </div>
+    </header>
 
-        <div class="main-content">
-            <!-- GENERATOR -->
-            <section class="generator-section">
-                <button class="generate-btn" id="generateBtn">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Générer un Vrai Email</span>
-                </button>
-                <p style="color: var(--gray); margin-top: 15px;">
-                    Utilisez cet email pour vous inscrire sur des sites • Recevez les emails ici
-                </p>
-            </section>
+    <main class="container">
+        <div class="app-container">
+            <div class="input-section">
+                <div class="tabs">
+                    <button class="tab active" data-type="text">Texte</button>
+                    <button class="tab" data-type="url">Lien URL</button>
+                    <button class="tab" data-type="wifi">Wi-Fi</button>
+                    <button class="tab" data-type="contact">Contact</button>
+                    <button class="tab" data-type="image">Image</button>
+                </div>
 
-            <!-- EMAIL DISPLAY -->
-            <div class="email-display" id="emailDisplay">
-                <h3 style="color: var(--primary-dark); margin-bottom: 15px; text-align: center;">
-                    <i class="fas fa-envelope"></i> Votre email temporaire
-                </h3>
-                <div class="email-address" id="emailAddress"></div>
-                
-                <div class="action-buttons">
-                    <button class="action-btn copy-btn" id="copyBtn">
-                        <i class="fas fa-copy"></i> Copier
-                    </button>
-                    <button class="action-btn refresh-btn" id="refreshBtn">
-                        <i class="fas fa-sync-alt"></i> Vérifier les emails
-                    </button>
+                <div class="content-input">
+                    <div class="input-group active" id="text-input">
+                        <label for="text-content"><i class="fas fa-font"></i> Texte à encoder</label>
+                        <textarea id="text-content" placeholder="Entrez le texte que vous souhaitez convertir en QR code..."></textarea>
+                    </div>
+
+                    <div class="input-group" id="url-input">
+                        <label for="url-content"><i class="fas fa-link"></i> Adresse URL</label>
+                        <input type="url" id="url-content" placeholder="https://exemple.com">
+                    </div>
+
+                    <div class="input-group" id="wifi-input">
+                        <label for="wifi-ssid"><i class="fas fa-wifi"></i> Nom du réseau (SSID)</label>
+                        <input type="text" id="wifi-ssid" placeholder="Nom de votre réseau Wi-Fi">
+                        <label for="wifi-password">Mot de passe</label>
+                        <input type="text" id="wifi-password" placeholder="Mot de passe Wi-Fi">
+                        <label for="wifi-security">Type de sécurité</label>
+                        <select id="wifi-security">
+                            <option value="WPA">WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">Aucune</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group" id="contact-input">
+                        <label for="contact-name"><i class="fas fa-user"></i> Nom</label>
+                        <input type="text" id="contact-name" placeholder="Nom complet">
+                        <label for="contact-phone">Téléphone</label>
+                        <input type="tel" id="contact-phone" placeholder="Numéro de téléphone">
+                        <label for="contact-email">Email</label>
+                        <input type="email" id="contact-email" placeholder="Adresse email">
+                    </div>
+
+                    <div class="input-group" id="image-input">
+                        <label><i class="fas fa-image"></i> Image à convertir en QR code</label>
+                        <p class="info-note">Pour les images, nous générerons un QR code avec un lien vers l'image</p>
+                        <input type="file" id="image-file" accept="image/*">
+                        <div class="image-preview" id="image-preview"></div>
+                    </div>
+                </div>
+
+                <div class="qr-options">
+                    <h3><i class="fas fa-sliders-h"></i> Options du QR code</h3>
+                    <div class="options-grid">
+                        <div class="option">
+                            <label for="qr-size">Taille</label>
+                            <input type="range" id="qr-size" min="100" max="400" value="200">
+                            <span id="size-value">200px</span>
+                        </div>
+                        <div class="option">
+                            <label for="qr-color">Couleur</label>
+                            <input type="color" id="qr-color" value="#000000">
+                        </div>
+                        <div class="option">
+                            <label for="qr-bg">Fond</label>
+                            <input type="color" id="qr-bg" value="#ffffff">
+                        </div>
+                        <div class="option">
+                            <label for="qr-error">Correction d'erreur</label>
+                            <select id="qr-error">
+                                <option value="L">Faible (7%)</option>
+                                <option value="M" selected>Moyenne (15%)</option>
+                                <option value="Q">Élevée (25%)</option>
+                                <option value="H">Maximale (30%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="generate-btn">
+                    <button id="generate-btn"><i class="fas fa-bolt"></i> Générer le QR Code</button>
                 </div>
             </div>
 
-            <!-- TIMER -->
-            <div class="timer-container" id="timerContainer">
-                <div class="timer-display" id="timerDisplay">10:00</div>
-                <div style="font-size: 14px; opacity: 0.8;">Email actif pendant</div>
-                <div class="progress-bar">
-                    <div class="progress" id="progressBar"></div>
+            <div class="output-section">
+                <div class="qr-container">
+                    <h3><i class="fas fa-qrcode"></i> QR Code Généré</h3>
+                    <div id="qrcode"></div>
+                    <div class="qr-placeholder" id="qr-placeholder">
+                        <i class="fas fa-qrcode"></i>
+                        <p>Votre QR code apparaîtra ici</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- INBOX -->
-            <div class="inbox-container" id="inboxContainer">
-                <div class="inbox-header">
-                    <div style="font-size: 18px; font-weight: 600;">
-                        <i class="fas fa-inbox"></i> Boîte de réception
-                        <span id="emailCount" style="margin-left: 10px; background: white; color: var(--primary); padding: 4px 12px; border-radius: 20px;">0</span>
+                <div class="download-options">
+                    <h3><i class="fas fa-download"></i> Télécharger</h3>
+                    <div class="download-buttons">
+                        <button id="download-png" disabled><i class="fas fa-file-image"></i> PNG</button>
+                        <button id="download-svg" disabled><i class="fas fa-file-code"></i> SVG</button>
+                        <button id="download-jpg" disabled><i class="fas fa-file-image"></i> JPG</button>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 14px;">Auto-refresh</span>
-                        <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
-                            <input type="checkbox" id="autoRefreshToggle">
-                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
-                            <span style="position: absolute; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="email-list" id="emailList">
-                    <div class="empty-inbox">
-                        <div class="empty-icon">📭</div>
-                        <h3>Aucun email reçu</h3>
-                        <p>Utilisez l'email généré pour vous inscrire sur des sites</p>
-                        <p style="margin-top: 10px; font-size: 14px; color: #9ca3af;">
-                            Les emails de vérification apparaîtront ici
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- INSTRUCTIONS -->
-            <div style="margin-top: 30px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 25px; border-radius: var(--border-radius);">
-                <h3 style="color: var(--primary-dark); margin-bottom: 15px; text-align: center;">
-                    <i class="fas fa-info-circle"></i> Comment ça marche ?
-                </h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 32px; margin-bottom: 10px;">1️⃣</div>
-                        <p><strong>Générez</strong> un email temporaire</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 32px; margin-bottom: 10px;">2️⃣</div>
-                        <p><strong>Utilisez-le</strong> sur un site (Twitter, etc.)</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 32px; margin-bottom: 10px;">3️⃣</div>
-                        <p><strong>Recevez</strong> l'email de vérification ici</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 32px; margin-bottom: 10px;">4️⃣</div>
-                        <p><strong>Expire</strong> automatiquement après 10min</p>
+                    
+                    <div class="history-section">
+                        <h3><i class="fas fa-history"></i> Historique</h3>
+                        <div class="history-controls">
+                            <button id="save-history"><i class="fas fa-save"></i> Sauvegarder</button>
+                            <button id="load-history"><i class="fas fa-history"></i> Charger</button>
+                        </div>
+                        <div id="history-list"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- EMAIL MODAL -->
-    <div class="email-modal" id="emailModal">
-        <div class="email-modal-content">
-            <div class="modal-header">
-                <h3 id="modalSubject" style="margin: 0; flex: 1;"></h3>
-                <button class="close-modal" id="closeModalBtn">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Email content will be here -->
+        
+        <div class="about-section">
+            <h3><i class="fas fa-info-circle"></i> Comment utiliser BAMOTCH QR</h3>
+            <div class="steps">
+                <div class="step"><div class="step-number">1</div><h4>Choisissez le type</h4><p>Sélectionnez l'onglet correspondant à vos données.</p></div>
+                <div class="step"><div class="step-number">2</div><h4>Entrez vos données</h4><p>Saisissez le texte, l'URL, ou téléversez une image.</p></div>
+                <div class="step"><div class="step-number">3</div><h4>Personnalisez</h4><p>Ajustez la taille et les couleurs du QR code.</p></div>
+                <div class="step"><div class="step-number">4</div><h4>Générez</h4><p>Cliquez sur "Générer" puis téléchargez votre QR code.</p></div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- NOTIFICATION -->
-    <div class="notification" id="notification"></div>
+    <footer>
+        <div class="container">
+            <p>BAMOTCH QR &copy; 2023 - Générateur de QR Codes gratuit</p>
+            <p>Déployé sur GitHub Pages</p>
+        </div>
+    </footer>
 
-    <script>
-        // ===== CONFIGURATION =====
-        const CONFIG = {
-            // Service réel pour générer des emails
-            EMAIL_SERVICE: 'temp-mail.org', // Service existant
-            DURATION: 600, // 10 minutes
-            CHECK_INTERVAL: 5000, // 5 secondes
-            // Domaines réels qui existent
-            REAL_DOMAINS: [
-                'tempmail.dev',
-                'maildrop.cc',
-                '10minutemail.net',
-                'guerrillamail.com'
-            ]
-        };
-
-        // ===== ÉTAT =====
-        let state = {
-            currentEmail: '',
-            timeLeft: CONFIG.DURATION,
-            timerInterval: null,
-            autoRefreshInterval: null,
-            emails: [],
-            autoRefreshEnabled: false,
-            emailId: '' // Identifiant unique pour cet email
-        };
-
-        // ===== ÉLÉMENTS DOM =====
-        const elements = {
-            generateBtn: document.getElementById('generateBtn'),
-            emailDisplay: document.getElementById('emailDisplay'),
-            emailAddress: document.getElementById('emailAddress'),
-            copyBtn: document.getElementById('copyBtn'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            timerContainer: document.getElementById('timerContainer'),
-            timerDisplay: document.getElementById('timerDisplay'),
-            progressBar: document.getElementById('progressBar'),
-            inboxContainer: document.getElementById('inboxContainer'),
-            emailList: document.getElementById('emailList'),
-            emailCount: document.getElementById('emailCount'),
-            autoRefreshToggle: document.getElementById('autoRefreshToggle'),
-            emailModal: document.getElementById('emailModal'),
-            closeModalBtn: document.getElementById('closeModalBtn'),
-            modalSubject: document.getElementById('modalSubject'),
-            modalBody: document.getElementById('modalBody'),
-            notification: document.getElementById('notification')
-        };
-
-        // ===== INITIALISATION =====
-        document.addEventListener('DOMContentLoaded', () => {
-            setupEventListeners();
-            showNotification('🚀 Service TempMail Pro prêt !', 'info');
-        });
-
-        // ===== CONFIGURATION DES ÉVÉNEMENTS =====
-        function setupEventListeners() {
-            elements.generateBtn.addEventListener('click', generateRealEmail);
-            elements.copyBtn.addEventListener('click', copyEmail);
-            elements.refreshBtn.addEventListener('click', checkForRealEmails);
-            elements.autoRefreshToggle.addEventListener('change', toggleAutoRefresh);
-            elements.closeModalBtn.addEventListener('click', closeEmailModal);
-            
-            // Fermer le modal en cliquant à l'extérieur
-            elements.emailModal.addEventListener('click', (e) => {
-                if (e.target === elements.emailModal) {
-                    closeEmailModal();
-                }
-            });
-        }
-
-        // ===== GÉNÉRER UN VRAI EMAIL =====
-        async function generateRealEmail() {
-            try {
-                elements.generateBtn.disabled = true;
-                elements.generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération...';
-                
-                // Générer un ID unique pour cet email
-                const emailId = 'bamotch-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
-                state.emailId = emailId;
-                
-                // Choisir un domaine réel
-                const domain = CONFIG.REAL_DOMAINS[0]; // tempmail.dev
-                state.currentEmail = `${emailId}@${domain}`;
-                state.timeLeft = CONFIG.DURATION;
-                state.emails = [];
-                
-                // Afficher l'email
-                elements.emailAddress.textContent = state.currentEmail;
-                elements.emailDisplay.classList.add('show');
-                elements.timerContainer.classList.add('show');
-                elements.inboxContainer.classList.add('show');
-                
-                // Mettre à jour l'interface
-                updateInbox();
-                
-                // Démarrer le timer
-                startTimer();
-                
-                // Activer l'auto-refresh
-                toggleAutoRefresh(true);
-                
-                showNotification(`✅ Vrai email généré : ${state.currentEmail}`, 'success');
-                
-                // Instructions
-                setTimeout(() => {
-                    alert(`📧 VOTRE EMAIL : ${state.currentEmail}\n\n📝 UTILISATION :\n\n1. Copiez cet email\n2. Inscrivez-vous sur un site (Twitter, Reddit, etc.)\n3. L'email de vérification apparaîtra ici\n4. Cliquez sur le lien de vérification\n\n⚠️ L'email expirera dans 10 minutes`);
-                }, 500);
-                
-            } catch (error) {
-                console.error('Erreur:', error);
-                showNotification('❌ Erreur lors de la génération', 'error');
-            } finally {
-                elements.generateBtn.disabled = false;
-                elements.generateBtn.innerHTML = '<i class="fas fa-plus-circle"></i><span>Générer un Vrai Email</span>';
-            }
-        }
-
-        // ===== TIMER =====
-        function startTimer() {
-            updateTimerDisplay();
-            
-            if (state.timerInterval) clearInterval(state.timerInterval);
-            
-            state.timerInterval = setInterval(() => {
-                state.timeLeft--;
-                updateTimerDisplay();
-                
-                if (state.timeLeft <= 0) {
-                    clearInterval(state.timerInterval);
-                    toggleAutoRefresh(false);
-                    showNotification('⏰ Votre email temporaire a expiré !', 'warning');
-                    
-                    setTimeout(() => {
-                        elements.emailDisplay.classList.remove('show');
-                        elements.timerContainer.classList.remove('show');
-                        elements.inboxContainer.classList.remove('show');
-                        state.emails = [];
-                        updateInbox();
-                    }, 1000);
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(state.timeLeft / 60);
-            const seconds = state.timeLeft % 60;
-            elements.timerDisplay.textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            // Mettre à jour la barre de progression
-            const progress = (state.timeLeft / CONFIG.DURATION) * 100;
-            elements.progressBar.style.width = `${progress}%`;
-        }
-
-        // ===== COPIER EMAIL =====
-        function copyEmail() {
-            if (!state.currentEmail) return;
-            
-            navigator.clipboard.writeText(state.currentEmail)
-                .then(() => {
-                    const originalText = elements.copyBtn.innerHTML;
-                    elements.copyBtn.innerHTML = '<i class="fas fa-check"></i> Copié !';
-                    showNotification('📋 Email copié ! Utilisez-le sur un site', 'success');
-                    
-                    setTimeout(() => {
-                        elements.copyBtn.innerHTML = originalText;
-                    }, 2000);
-                })
-                .catch(err => {
-                    showNotification('❌ Impossible de copier', 'error');
-                });
-        }
-
-        // ===== VÉRIFIER LES EMAILS (SIMULATION POUR LA DÉMO) =====
-        async function checkForRealEmails() {
-            if (!state.currentEmail) {
-                showNotification('❌ Génère un email d\'abord', 'error');
-                return;
-            }
-            
-            elements.refreshBtn.disabled = true;
-            elements.refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            
-            // Simuler une vérification d'emails
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Simulation d'emails reçus (dans la vraie version, ce serait une API)
-            simulateRealEmails();
-            
-            elements.refreshBtn.disabled = false;
-            elements.refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Vérifier les emails';
-        }
-
-        // ===== SIMULATION D'EMAILS RÉELS =====
-        function simulateRealEmails() {
-            // 40% de chance de recevoir un email de vérification
-            if (Math.random() < 0.4) {
-                const verificationEmails = [
-                    {
-                        id: Date.now(),
-                        from: 'noreply@twitter.com',
-                        subject: 'Vérifiez votre adresse email Twitter',
-                        body: 'Cliquez sur le lien suivant pour vérifier votre adresse email : https://twitter.com/i/verify-email?token=abc123\n\nCe lien expirera dans 24 heures.',
-                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        unread: true
-                    },
-                    {
-                        id: Date.now() + 1,
-                        from: 'security@facebook.com',
-                        subject: 'Confirmez votre adresse email Facebook',
-                        body: 'Veuillez confirmer votre adresse email en cliquant sur ce lien : https://facebook.com/confirmemail?code=xyz789\n\nSi vous n\'avez pas créé de compte, ignorez cet email.',
-                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        unread: true
-                    },
-                    {
-                        id: Date.now() + 2,
-                        from: 'no-reply@github.com',
-                        subject: '[GitHub] Veuillez vérifier votre adresse email',
-                        body: 'Pour terminer la configuration de votre compte GitHub, veuillez vérifier votre adresse email : https://github.com/verify-email?token=github123\n\nMerci de votre inscription !',
-                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        unread: true
-                    },
-                    {
-                        id: Date.now() + 3,
-                        from: 'noreply@reddit.com',
-                        subject: 'Vérifiez votre email Reddit',
-                        body: 'Cliquez ici pour vérifier votre adresse email et compléter votre inscription sur Reddit : https://reddit.com/verify-email\n\nBienvenue sur Reddit !',
-                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        unread: true
-                    }
-                ];
-                
-                const randomEmail = verificationEmails[Math.floor(Math.random() * verificationEmails.length)];
-                
-                // Vérifier si on a déjà cet email
-                if (!state.emails.find(e => e.id === randomEmail.id)) {
-                    state.emails.unshift(randomEmail);
-                    updateInbox();
-                    showNotification(`📨 Email de vérification reçu de ${randomEmail.from}`, 'success');
-                    
-                    // Jouer un son de notification (optionnel)
-                    playNotificationSound();
-                }
-            } else {
-                showNotification('📭 Aucun nouvel email pour le moment', 'info');
-            }
-        }
-
-        // ===== AUTO-REFRESH =====
-        function toggleAutoRefresh(enabled = null) {
-            if (enabled !== null) {
-                state.autoRefreshEnabled = enabled;
-                elements.autoRefreshToggle.checked = enabled;
-            } else {
-                state.autoRefreshEnabled = !state.autoRefreshEnabled;
-            }
-            
-            if (state.autoRefreshEnabled) {
-                startAutoRefresh();
-                showNotification('🔄 Auto-rafraîchissement activé (toutes les 5s)', 'info');
-            } else {
-                stopAutoRefresh();
-                showNotification('⏹️ Auto-rafraîchissement désactivé', 'info');
-            }
-        }
-
-        function startAutoRefresh() {
-            if (state.autoRefreshInterval) clearInterval(state.autoRefreshInterval);
-            
-            state.autoRefreshInterval = setInterval(() => {
-                if (state.currentEmail && state.autoRefreshEnabled) {
-                    simulateRealEmails();
-                }
-            }, CONFIG.CHECK_INTERVAL);
-        }
-
-        function stopAutoRefresh() {
-            if (state.autoRefreshInterval) {
-                clearInterval(state.autoRefreshInterval);
-                state.autoRefreshInterval = null;
-            }
-        }
-
-        // ===== MISE À JOUR DE LA BOÎTE DE RÉCEPTION =====
-        function updateInbox() {
-            const emailCount = elements.emailCount;
-            const emailList = elements.emailList;
-            
-            // Mettre à jour le compteur
-            emailCount.textContent = state.emails.length;
-            
-            if (state.emails.length === 0) {
-                emailList.innerHTML = `
-                    <div class="empty-inbox">
-                        <div class="empty-icon">📭</div>
-                        <h3>Aucun email reçu</h3>
-                        <p>Utilisez ${state.currentEmail || 'votre email'} pour vous inscrire sur des sites</p>
-                        <p style="margin-top: 10px; font-size: 14px; color: #9ca3af;">
-                            Activez l'auto-refresh pour vérifier automatiquement
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Générer la liste des emails
-            let emailsHTML = '';
-            
-            state.emails.forEach((email, index) => {
-                const unreadClass = email.unread ? 'unread' : '';
-                emailsHTML += `
-                    <div class="email-item ${unreadClass}" onclick="viewEmail(${index})">
-                        <div class="email-header">
-                            <div class="email-sender">${email.from}</div>
-                            <div class="email-time">${email.time}</div>
-                        </div>
-                        <div class="email-subject">${email.subject}</div>
-                        <div class="email-preview">
-                            ${email.body.substring(0, 100)}${email.body.length > 100 ? '...' : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            emailList.innerHTML = emailsHTML;
-        }
-
-        // ===== AFFICHER UN EMAIL =====
-        function viewEmail(index) {
-            const email = state.emails[index];
-            if (!email) return;
-            
-            // Marquer comme lu
-            email.unread = false;
-            updateInbox();
-            
-            // Afficher le modal
-            elements.modalSubject.textContent = email.subject;
-            
-            const modalContent = `
-                <div style="margin-bottom: 20px;">
-                    <div style="font-weight: 600; color: var(--gray); margin-bottom: 5px;">De :</div>
-                    <div style="color: var(--dark); font-size: 16px;">${email.from}</div>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <div style="font-weight: 600; color: var(--gray); margin-bottom: 5px;">À :</div>
-                    <div style="color: var(--dark); font-size: 16px;">${state.currentEmail}</div>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <div style="font-weight: 600; color: var(--gray); margin-bottom: 5px;">Heure :</div>
-                    <div style="color: var(--dark); font-size: 16px;">${email.time}</div>
-                </div>
-                
-                <div style="margin-top: 30px;">
-                    <div style="font-weight: 600; color: var(--gray); margin-bottom: 10px;">Message :</div>
-                    <div style="background: var(--light); padding: 20px; border-radius: 8px; white-space: pre-line; line-height: 1.6;">
-                        ${email.body}
-                    </div>
-                </div>
-                
-                ${email.body.includes('http') ? `
-                    <div style="margin-top: 30px; text-align: center;">
-                        <a href="${extractUrl(email.body)}" target="_blank" style="display: inline-block; background: var(--primary); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
-                            <i class="fas fa-external-link-alt"></i> Ouvrir le lien de vérification
-                        </a>
-                        <p style="color: var(--gray); font-size: 12px; margin-top: 10px;">
-                            S'ouvrira dans un nouvel onglet
-                        </p>
-                    </div>
-                ` : ''}
-            `;
-            
-            elements.modalBody.innerHTML = modalContent;
-            elements.emailModal.classList.add('show');
-        }
-
-        // ===== EXTRACT URL FROM TEXT =====
-        function extractUrl(text) {
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            const matches = text.match(urlRegex);
-            return matches ? matches[0] : '#';
-        }
-
-        // ===== FERMER LE MODAL =====
-        function closeEmailModal() {
-            elements.emailModal.classList.remove('show');
-        }
-
-        // ===== NOTIFICATION SOUND =====
-        function playNotificationSound() {
-            // Créer un son de notification simple
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 800;
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
-                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.3);
-            } catch (e) {
-                // Si Web Audio API n'est pas supporté, ignorer
-            }
-        }
-
-        // ===== NOTIFICATIONS =====
-        function showNotification(message, type = 'success') {
-            const notification = elements.notification;
-            notification.textContent = message;
-            notification.className = 'notification';
-            notification.classList.add(type);
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // ===== EXPOSER LES FONCTIONS GLOBALEMENT =====
-        window.viewEmail = viewEmail;
-    </script>
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
 </body>
-</
+</html>
