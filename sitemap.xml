@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-        <loc>https://bamotch.github.io/bamotchqr2/</loc>
-        <lastmod>2024-01-15</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>1.0</priority>
-    </url>
-</urlset>
+{
+    "name": "BAMOTCH QR",
+    "short_name": "BAMOTCH QR",
+    "description": "Générateur gratuit de QR codes personnalisés",
+    "start_url": "/bamotchqr2/",
+    "display": "standalone",
+    "background_color": "#6a11cb",
+    "theme_color": "#2575fc",
+    "icons": []
+}
