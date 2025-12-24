@@ -8,7 +8,8 @@
     <meta name="google-site-verification" content="XKy3Fr-HEMcKIKwbjUfpOGSdpo6t2Rig0zFlpg0MlNU" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
     <style>
         /* ===== RESET & VARIABLES ===== */
@@ -204,6 +205,7 @@
             justify-content: center;
             gap: 10px;
             transition: all 0.3s;
+            position: relative;
         }
         
         .tab-btn:hover {
@@ -467,7 +469,6 @@
         }
         
         .logo-preview {
-            display: none;
             text-align: center;
             margin-top: 20px;
         }
@@ -477,6 +478,40 @@
             max-height: 150px;
             border-radius: 10px;
             border: 2px solid #dee2e6;
+        }
+        
+        .logo-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .logo-actions button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .remove-logo {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .remove-logo:hover {
+            background: #c0392b;
+        }
+        
+        .adjust-logo {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .adjust-logo:hover {
+            background: #e67e22;
         }
         
         /* ===== PREVIEW SECTION ===== */
@@ -490,11 +525,20 @@
             min-height: 400px;
             border: 3px dashed #e9ecef;
             margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
         }
         
         #qrcode {
             display: none;
             max-width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        #qrcode canvas {
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
         
         .qr-placeholder {
@@ -579,6 +623,12 @@
             box-shadow: 0 15px 40px rgba(106, 17, 203, 0.4);
         }
         
+        .generate-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
         /* ===== FOOTER ===== */
         footer {
             background: var(--dark);
@@ -649,6 +699,27 @@
             to { transform: translateX(100%); opacity: 0; }
         }
         
+        /* ===== LOADER ===== */
+        .loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 2;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .hero h2 {
@@ -715,296 +786,840 @@
     </section>
 
     <!-- MAIN APP -->
-    <main class="container" id="generator-app">
+    <main class="container">
         <div class="app-grid">
-            <!-- LEFT: INPUT & DESIGN -->
-            <div class="input-section">
-                <!-- CONTENT CARD -->
+            <!-- LEFT COLUMN: CONFIGURATION -->
+            <div class="config-column">
                 <div class="card">
-                    <h3><i class="fas fa-edit"></i> Contenu</h3>
+                    <h3><i class="fas fa-cog"></i> Configuration</h3>
                     
+                    <!-- TABS -->
                     <div class="tabs">
-                        <button class="tab-btn active" data-type="text">
-                            <i class="fas fa-font"></i> Texte
-                        </button>
-                        <button class="tab-btn" data-type="url">
+                        <button class="tab-btn active" data-tab="url">
                             <i class="fas fa-link"></i> URL
                         </button>
-                        <button class="tab-btn" data-type="wifi">
-                            <i class="fas fa-wifi"></i> Wi-Fi
+                        <button class="tab-btn" data-tab="text">
+                            <i class="fas fa-font"></i> Texte
                         </button>
-                        <button class="tab-btn" data-type="contact">
-                            <i class="fas fa-user"></i> Contact
-                        </button>
-                        <button class="tab-btn" data-type="image" disabled>
-                            <i class="fas fa-image"></i> Image
+                        <button class="tab-btn" data-tab="email" disabled>
+                            <i class="fas fa-envelope"></i> Email
                             <span class="coming-soon">Bientôt</span>
                         </button>
-                        <button class="tab-btn" data-type="video" disabled>
-                            <i class="fas fa-video"></i> Vidéo
-                            <span class="coming-soon">Bientôt</span>
-                        </button>
-                        <button class="tab-btn" data-type="audio" disabled>
-                            <i class="fas fa-music"></i> Audio
-                            <span class="coming-soon">Bientôt</span>
-                        </button>
-                        <button class="tab-btn" data-type="pdf" disabled>
-                            <i class="fas fa-file-pdf"></i> PDF
+                        <button class="tab-btn" data-tab="wifi" disabled>
+                            <i class="fas fa-wifi"></i> WiFi
                             <span class="coming-soon">Bientôt</span>
                         </button>
                     </div>
                     
-                    <!-- CONTENT FORMS -->
-                    <div class="tab-content active" id="text-form">
+                    <!-- TAB CONTENTS -->
+                    <!-- URL TAB -->
+                    <div class="tab-content active" id="url-tab">
                         <div class="form-group">
-                            <label for="text-input">
-                                <i class="fas fa-align-left"></i> Votre texte
-                            </label>
-                            <textarea id="text-input" placeholder="Entrez le texte à convertir..."></textarea>
+                            <label for="url-input"><i class="fas fa-globe"></i> URL du site web</label>
+                            <input type="url" id="url-input" placeholder="https://www.example.com" value="https://www.bamotch-qr.com">
                         </div>
                     </div>
                     
-                    <div class="tab-content" id="url-form">
+                    <!-- TEXT TAB -->
+                    <div class="tab-content" id="text-tab">
                         <div class="form-group">
-                            <label for="url-input">
-                                <i class="fas fa-globe"></i> URL du site
-                            </label>
-                            <input type="text" id="url-input" placeholder="https://exemple.com">
+                            <label for="text-input"><i class="fas fa-align-left"></i> Texte</label>
+                            <textarea id="text-input" placeholder="Entrez le texte à encoder dans le QR code...">BAMOTCH QR - Générateur de QR Codes Premium</textarea>
                         </div>
                     </div>
                     
-                    <div class="tab-content" id="wifi-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="wifi-ssid">
-                                    <i class="fas fa-network-wired"></i> Nom réseau
-                                </label>
-                                <input type="text" id="wifi-ssid" placeholder="MonWiFi">
-                            </div>
-                            <div class="form-group">
-                                <label for="wifi-password">
-                                    <i class="fas fa-key"></i> Mot de passe
-                                </label>
-                                <input type="text" id="wifi-password" placeholder="********">
-                            </div>
-                        </div>
+                    <!-- EMAIL TAB (Coming Soon) -->
+                    <div class="tab-content" id="email-tab">
                         <div class="form-group">
-                            <label for="wifi-security">
-                                <i class="fas fa-shield-alt"></i> Sécurité
-                            </label>
-                            <select id="wifi-security">
-                                <option value="WPA">WPA/WPA2</option>
-                                <option value="WEP">WEP</option>
-                                <option value="nopass">Aucune</option>
-                            </select>
+                            <label><i class="fas fa-exclamation-triangle"></i> Fonctionnalité en développement</label>
+                            <p style="color: var(--warning); padding: 15px; background: rgba(243, 156, 18, 0.1); border-radius: 10px;">
+                                La génération de QR codes pour emails sera disponible prochainement.
+                            </p>
                         </div>
                     </div>
                     
-                    <div class="tab-content" id="contact-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contact-name">
-                                    <i class="fas fa-user-tag"></i> Nom
-                                </label>
-                                <input type="text" id="contact-name" placeholder="John Doe">
-                            </div>
-                            <div class="form-group">
-                                <label for="contact-phone">
-                                    <i class="fas fa-phone"></i> Téléphone
-                                </label>
-                                <input type="tel" id="contact-phone" placeholder="+33 1 23 45 67 89">
-                            </div>
-                        </div>
+                    <!-- WIFI TAB (Coming Soon) -->
+                    <div class="tab-content" id="wifi-tab">
                         <div class="form-group">
-                            <label for="contact-email">
-                                <i class="fas fa-envelope"></i> Email
-                            </label>
-                            <input type="email" id="contact-email" placeholder="contact@exemple.com">
+                            <label><i class="fas fa-exclamation-triangle"></i> Fonctionnalité en développement</label>
+                            <p style="color: var(--warning); padding: 15px; background: rgba(243, 156, 18, 0.1); border-radius: 10px;">
+                                La génération de QR codes WiFi sera disponible prochainement.
+                            </p>
                         </div>
                     </div>
-                </div>
-                
-                <!-- DESIGNS CARD -->
-                <div class="card">
-                    <h3><i class="fas fa-paint-brush"></i> Design & Formes</h3>
                     
+                    <!-- DESIGNS -->
                     <div class="designs-section">
-                        <!-- FORMES DES POINTS -->
                         <div class="design-category">
-                            <h4><i class="fas fa-shapes"></i> Forme des points</h4>
+                            <h4><i class="fas fa-shapes"></i> Forme du QR Code</h4>
                             <div class="design-grid">
-                                <div class="design-option square active" data-shape="square">
+                                <div class="design-option square active" data-design="square">
                                     <div class="design-preview"></div>
-                                    <span>Carrés</span>
+                                    <span>Carré</span>
                                 </div>
-                                <div class="design-option rounded" data-shape="rounded">
+                                <div class="design-option rounded" data-design="rounded">
                                     <div class="design-preview"></div>
-                                    <span>Arrondis</span>
+                                    <span>Arrondi</span>
                                 </div>
-                                <div class="design-option circle" data-shape="circle">
+                                <div class="design-option circle" data-design="circle">
                                     <div class="design-preview"></div>
-                                    <span>Ronds</span>
+                                    <span>Rond</span>
                                 </div>
-                                <div class="design-option dots" data-shape="dots">
+                                <div class="design-option diamond" data-design="diamond">
                                     <div class="design-preview"></div>
-                                    <span>Points</span>
+                                    <span>Losange</span>
                                 </div>
-                                <div class="design-option diamond" data-shape="diamond">
+                                <div class="design-option heart" data-design="heart">
                                     <div class="design-preview"></div>
-                                    <span>Losanges</span>
+                                    <span>Cœur</span>
                                 </div>
-                                <div class="design-option heart" data-shape="heart">
+                                <div class="design-option star" data-design="star">
                                     <div class="design-preview"></div>
-                                    <span>Cœurs</span>
-                                </div>
-                                <div class="design-option star" data-shape="star">
-                                    <div class="design-preview"></div>
-                                    <span>Étoiles</span>
-                                </div>
-                                <div class="design-option line" data-shape="line">
-                                    <div class="design-preview"></div>
-                                    <span>Tirets</span>
-                                </div>
-                                <div class="design-option gradient" data-shape="gradient">
-                                    <div class="design-preview"></div>
-                                    <span>Dégradé</span>
+                                    <span>Étoile</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- COULEURS -->
                         <div class="design-category">
-                            <h4><i class="fas fa-palette"></i> Couleurs</h4>
-                            <div class="color-grid">
-                                <div class="color-option active" data-color="#000000" data-bg="#ffffff">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #000000 50%, #ffffff 50%)"></div>
-                                    <span>Noir/Blanc</span>
-                                </div>
-                                <div class="color-option" data-color="#2c3e50" data-bg="#ecf0f1">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #2c3e50 50%, #ecf0f1 50%)"></div>
-                                    <span>Bleu/Gris</span>
-                                </div>
-                                <div class="color-option" data-color="#27ae60" data-bg="#d5f4e6">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #27ae60 50%, #d5f4e6 50%)"></div>
-                                    <span>Vert</span>
-                                </div>
-                                <div class="color-option" data-color="#e74c3c" data-bg="#fadbd8">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #e74c3c 50%, #fadbd8 50%)"></div>
-                                    <span>Rouge</span>
-                                </div>
-                                <div class="color-option" data-color="#9b59b6" data-bg="#f4ecf7">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #9b59b6 50%, #f4ecf7 50%)"></div>
-                                    <span>Violet</span>
-                                </div>
-                                <div class="color-option" data-color="#3498db" data-bg="#ebf5fb">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #3498db 50%, #ebf5fb 50%)"></div>
-                                    <span>Bleu Ciel</span>
-                                </div>
-                                <div class="color-option" data-color="#f39c12" data-bg="#fef5e7">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #f39c12 50%, #fef5e7 50%)"></div>
-                                    <span>Orange</span>
-                                </div>
-                                <div class="color-option" data-color="#1abc9c" data-bg="#e8f6f3">
-                                    <div class="color-preview" style="background: linear-gradient(135deg, #1abc9c 50%, #e8f6f3 50%)"></div>
-                                    <span>Turquoise</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- LOGO -->
-                        <div class="design-category">
-                            <h4><i class="fas fa-image"></i> Logo au centre</h4>
-                            <div class="logo-upload-area" id="logo-dropzone">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Glissez-déposez votre logo</p>
-                                <p><small>ou cliquez pour sélectionner (max 1MB)</small></p>
-                                <input type="file" id="logo-file" accept="image/*" hidden>
-                                <button id="select-logo" class="btn-primary" style="margin-top: 15px; padding: 12px 25px;">
-                                    <i class="fas fa-folder-open"></i> Choisir un logo
-                                </button>
-                            </div>
-                            <div class="logo-preview" id="logo-preview">
-                                <img id="logo-image" src="" alt="Logo">
-                                <button id="remove-logo" style="margin-top: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;">
-                                    <i class="fas fa-times"></i> Supprimer
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- OPTIONS -->
-                        <div class="design-category">
-                            <h4><i class="fas fa-sliders-h"></i> Options</h4>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="qr-size">
-                                        <i class="fas fa-expand-alt"></i> Taille
-                                    </label>
-                                    <input type="range" id="qr-size" min="200" max="500" value="300">
-                                    <div style="text-align: center; margin-top: 5px;">
-                                        <span id="size-value">300px</span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="qr-error">
-                                        <i class="fas fa-shield-alt"></i> Correction
-                                    </label>
-                                    <select id="qr-error">
-                                        <option value="L">Faible (7%)</option>
-                                        <option value="M" selected>Moyenne (15%)</option>
-                                        <option value="Q">Élevée (25%)</option>
-                                        <option value="H">Maximale (30%)</option>
-                                    </select>
-                                </div>
+                            <h4><i class="fas fa-palette"></i> Couleur du QR Code</h4>
+                            <div class="color-grid" id="color-options">
+                                <!-- Colors will be generated by JavaScript -->
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- LOGO UPLOAD -->
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> Logo personnalisé</label>
+                        <div class="logo-upload-area" id="logo-upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Cliquez pour ajouter un logo</p>
+                            <p style="font-size: 0.9rem; opacity: 0.7;">PNG, JPG - Max 2MB</p>
+                            <input type="file" id="logo-input" accept=".png,.jpg,.jpeg" style="display: none;">
+                        </div>
+                        <div class="logo-preview" id="logo-preview">
+                            <!-- Logo preview will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <!-- SIZE SLIDER -->
+                    <div class="form-group">
+                        <label for="size-slider"><i class="fas fa-expand-alt"></i> Taille du QR Code</label>
+                        <input type="range" id="size-slider" min="200" max="800" value="400" class="slider">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <span>Petit</span>
+                            <span id="size-value">400px</span>
+                            <span>Grand</span>
+                        </div>
+                    </div>
+                    
+                    <!-- GENERATE BUTTON -->
+                    <button class="generate-button" id="generate-btn">
+                        <i class="fas fa-magic"></i> Générer le QR Code
+                    </button>
                 </div>
-                
-                <!-- GENERATE BUTTON -->
-                <button id="generate-btn" class="generate-button">
-                    <i class="fas fa-magic"></i> Générer le QR Code
-                </button>
             </div>
             
-            <!-- RIGHT: PREVIEW & DOWNLOAD -->
-            <div class="preview-section">
-                <!-- PREVIEW CARD -->
+            <!-- RIGHT COLUMN: PREVIEW -->
+            <div class="preview-column">
                 <div class="card">
-                    <h3><i class="fas fa-eye"></i> Aperçu en direct</h3>
+                    <h3><i class="fas fa-eye"></i> Prévisualisation</h3>
                     
                     <div class="qr-preview-container">
+                        <div class="loader" id="loader"></div>
                         <div id="qrcode"></div>
                         <div class="qr-placeholder" id="qr-placeholder">
                             <i class="fas fa-qrcode"></i>
-                            <h4>Votre QR Code</h4>
-                            <p>Configurez et générez pour voir l'aperçu</p>
+                            <p>Votre QR code s'affichera ici</p>
+                            <p style="font-size: 0.9rem; opacity: 0.7;">Cliquez sur "Générer le QR Code"</p>
+                        </div>
+                    </div>
+                    
+                    <!-- DOWNLOAD BUTTONS -->
+                    <div class="download-buttons">
+                        <button class="download-btn png" id="download-png" disabled>
+                            <i class="fas fa-download"></i> PNG
+                        </button>
+                        <button class="download-btn svg" id="download-svg" disabled>
+                            <i class="fas fa-download"></i> SVG
+                        </button>
+                        <button class="download-btn jpg" id="download-jpg" disabled>
+                            <i class="fas fa-download"></i> JPG
+                        </button>
+                    </div>
+                    
+                    <!-- QR CODE INFO -->
+                    <div class="qr-info" style="margin-top: 25px; padding: 15px; background: var(--light); border-radius: 12px;">
+                        <h4 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-info-circle"></i> Informations
+                        </h4>
+                        <div id="qr-info-content">
+                            <p style="opacity: 0.7;">Aucun QR code généré</p>
                         </div>
                     </div>
                 </div>
-                
-                <!-- DOWNLOAD CARD -->
-                <div class="card">
-                    <h3><i class="fas fa-download"></i> Télécharger</h3>
-                    
-                    <div class="download-buttons">
-                        <button id="download-png" class="download-btn png" disabled>
-                            <i class="fas fa-file-image"></i> PNG
-                        </button>
-                        <button id="download-svg" class="download-btn svg" disabled>
-                            <i class="fas fa-file-code"></i> SVG
-                        </button>
-                        <button id="download-jpg" class="download-btn jpg" disabled>
-                            <i class="fas fa-file-image"></i> JPG
-                        </button>
-                    </div>
-                    
-                    <div style="margin-top: 20px; text-align: center;">
-                        <p><small>Format vectoriel (SVG) disponible bientôt</small></p>
-                    </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p><strong>BAMOTCH QR</strong> - Générateur de QR Codes Premium</p>
+                    <p>100% Gratuit • Aucune limitation • Aucune inscription requise</p>
+                    <p class="privacy-note">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Aucune donnée n'est envoyée à nos serveurs - Tout est traité localement sur votre appareil</span>
+                    </p>
                 </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const config = {
+            currentTab: 'url',
+            currentDesign: 'square',
+            currentColor: '#2c3e50',
+            qrSize: 400,
+            logo: null,
+            qrCode: null,
+            qrData: 'https://www.bamotch-qr.com'
+        };
+
+        // ===== COLOR PALETTE =====
+        const colorPalette = [
+            { name: 'Noir', value: '#000000' },
+            { name: 'Bleu foncé', value: '#2c3e50' },
+            { name: 'Bleu', value: '#3498db' },
+            { name: 'Bleu royal', value: '#2575fc' },
+            { name: 'Vert', value: '#27ae60' },
+            { name: 'Rouge', value: '#e74c3c' },
+            { name: 'Orange', value: '#e67e22' },
+            { name: 'Violet', value: '#9b59b6' },
+            { name: 'Rose', value: '#e84393' },
+            { name: 'Turquoise', value: '#1abc9c' },
+            { name: 'Jaune', value: '#f1c40f' },
+            { name: 'Gris', value: '#95a5a6' },
+            { name: 'Gradient 1', value: 'linear-gradient(135deg, #6a11cb, #2575fc)' },
+            { name: 'Gradient 2', value: 'linear-gradient(135deg, #ff9a9e, #fad0c4)' },
+            { name: 'Gradient 3', value: 'linear-gradient(135deg, #a18cd1, #fbc2eb)' },
+            { name: 'Gradient 4', value: 'linear-gradient(135deg, #fad961, #f76b1c)' },
+            { name: 'Gradient 5', value: 'linear-gradient(135deg, #30cfd0, #330867)' }
+        ];
+
+        // ===== DOM ELEMENTS =====
+        const elements = {
+            // Tabs
+            tabButtons: document.querySelectorAll('.tab-btn'),
+            tabContents: document.querySelectorAll('.tab-content'),
+            
+            // Inputs
+            urlInput: document.getElementById('url-input'),
+            textInput: document.getElementById('text-input'),
+            sizeSlider: document.getElementById('size-slider'),
+            sizeValue: document.getElementById('size-value'),
+            
+            // Design options
+            designOptions: document.querySelectorAll('.design-option'),
+            colorOptions: document.getElementById('color-options'),
+            
+            // Logo
+            logoUploadArea: document.getElementById('logo-upload-area'),
+            logoInput: document.getElementById('logo-input'),
+            logoPreview: document.getElementById('logo-preview'),
+            
+            // Buttons
+            generateBtn: document.getElementById('generate-btn'),
+            downloadPng: document.getElementById('download-png'),
+            downloadSvg: document.getElementById('download-svg'),
+            downloadJpg: document.getElementById('download-jpg'),
+            startGenerator: document.getElementById('start-generator'),
+            
+            // Preview
+            qrcodeContainer: document.getElementById('qrcode'),
+            qrPlaceholder: document.getElementById('qr-placeholder'),
+            loader: document.getElementById('loader'),
+            qrInfoContent: document.getElementById('qr-info-content')
+        };
+
+        // ===== INITIALIZATION =====
+        function init() {
+            // Initialize color options
+            initColorOptions();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Generate initial QR code
+            generateQRCode();
+            
+            // Show welcome message
+            showNotification('Bienvenue sur BAMOTCH QR !', 'success');
+        }
+
+        // ===== COLOR OPTIONS INIT =====
+        function initColorOptions() {
+            elements.colorOptions.innerHTML = '';
+            
+            colorPalette.forEach((color, index) => {
+                const colorOption = document.createElement('div');
+                colorOption.className = `color-option ${index === 1 ? 'active' : ''}`;
+                colorOption.dataset.color = color.value;
                 
-                <!-- COMING SOON -->
-                <div class="card">
-                    <h3><i class="fas fa-rocket"></i> Fonctionnalités à venir</h3>
-                    <div style="display: grid; gap: 15px; margin-top: 20px;">
-                        <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8f9fa; border-radius:
+                colorOption.innerHTML = `
+                    <div class="color-preview" style="background: ${color.value}"></div>
+                    <span>${color.name}</span>
+                `;
+                
+                elements.colorOptions.appendChild(colorOption);
+            });
+            
+            // Add event listeners to color options
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    config.currentColor = option.dataset.color;
+                    
+                    if (config.qrCode) {
+                        applyDesignToQRCode();
+                    }
+                });
+            });
+        }
+
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // Tab switching
+            elements.tabButtons.forEach(button => {
+                if (!button.disabled) {
+                    button.addEventListener('click', () => {
+                        const tab = button.dataset.tab;
+                        switchTab(tab);
+                    });
+                }
+            });
+
+            // Design options
+            elements.designOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    elements.designOptions.forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    config.currentDesign = option.dataset.design;
+                    
+                    if (config.qrCode) {
+                        applyDesignToQRCode();
+                    }
+                });
+            });
+
+            // Logo upload
+            elements.logoUploadArea.addEventListener('click', () => {
+                elements.logoInput.click();
+            });
+
+            elements.logoInput.addEventListener('change', handleLogoUpload);
+
+            // Size slider
+            elements.sizeSlider.addEventListener('input', (e) => {
+                config.qrSize = parseInt(e.target.value);
+                elements.sizeValue.textContent = `${config.qrSize}px`;
+                
+                if (config.qrCode) {
+                    applyDesignToQRCode();
+                }
+            });
+
+            // Generate button
+            elements.generateBtn.addEventListener('click', generateQRCode);
+
+            // Download buttons
+            elements.downloadPng.addEventListener('click', () => downloadQRCode('png'));
+            elements.downloadSvg.addEventListener('click', () => downloadQRCode('svg'));
+            elements.downloadJpg.addEventListener('click', () => downloadQRCode('jpg'));
+
+            // Start generator button
+            elements.startGenerator.addEventListener('click', () => {
+                document.querySelector('.config-column').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+
+            // Input changes
+            elements.urlInput.addEventListener('input', () => {
+                if (config.currentTab === 'url') {
+                    config.qrData = elements.urlInput.value;
+                }
+            });
+
+            elements.textInput.addEventListener('input', () => {
+                if (config.currentTab === 'text') {
+                    config.qrData = elements.textInput.value;
+                }
+            });
+        }
+
+        // ===== TAB MANAGEMENT =====
+        function switchTab(tabName) {
+            config.currentTab = tabName;
+            
+            // Update active tab button
+            elements.tabButtons.forEach(button => {
+                if (button.dataset.tab === tabName) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+            
+            // Update active tab content
+            elements.tabContents.forEach(content => {
+                if (content.id === `${tabName}-tab`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+            
+            // Update QR data based on tab
+            if (tabName === 'url') {
+                config.qrData = elements.urlInput.value;
+            } else if (tabName === 'text') {
+                config.qrData = elements.textInput.value;
+            }
+        }
+
+        // ===== LOGO UPLOAD =====
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Check file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showNotification('Le fichier est trop volumineux (max 2MB)', 'error');
+                return;
+            }
+
+            // Check file type
+            if (!file.type.match('image/(png|jpeg|jpg)')) {
+                showNotification('Format de fichier non supporté. Utilisez PNG, JPG ou JPEG.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                config.logo = e.target.result;
+                
+                // Show logo preview
+                elements.logoPreview.innerHTML = `
+                    <img src="${config.logo}" alt="Logo">
+                    <div class="logo-actions">
+                        <button class="adjust-logo" onclick="adjustLogoSize(1.1)">
+                            <i class="fas fa-search-plus"></i> Agrandir
+                        </button>
+                        <button class="remove-logo" onclick="removeLogo()">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                `;
+                
+                showNotification('Logo ajouté avec succès', 'success');
+                
+                if (config.qrCode) {
+                    applyDesignToQRCode();
+                }
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function removeLogo() {
+            config.logo = null;
+            elements.logoPreview.innerHTML = '';
+            elements.logoInput.value = '';
+            
+            if (config.qrCode) {
+                applyDesignToQRCode();
+            }
+        }
+
+        let logoScale = 1;
+        function adjustLogoSize(factor) {
+            logoScale *= factor;
+            logoScale = Math.max(0.5, Math.min(logoScale, 2));
+            
+            if (config.logo && config.qrCode) {
+                applyDesignToQRCode();
+            }
+        }
+
+        // ===== QR CODE GENERATION =====
+        function generateQRCode() {
+            // Validate input
+            if (!config.qrData || config.qrData.trim() === '') {
+                showNotification('Veuillez entrer du contenu pour le QR code', 'warning');
+                return;
+            }
+
+            // Show loader
+            elements.loader.style.display = 'block';
+            elements.generateBtn.disabled = true;
+            elements.generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération...';
+
+            // Clear previous QR code
+            elements.qrcodeContainer.innerHTML = '';
+            
+            // Create new QR code
+            config.qrCode = new QRCode(elements.qrcodeContainer, {
+                text: config.qrData,
+                width: config.qrSize,
+                height: config.qrSize,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Wait for QR code to render
+            setTimeout(() => {
+                applyDesignToQRCode();
+                
+                // Hide loader
+                elements.loader.style.display = 'none';
+                elements.generateBtn.disabled = false;
+                elements.generateBtn.innerHTML = '<i class="fas fa-magic"></i> Générer le QR Code';
+                
+                // Show QR code and hide placeholder
+                elements.qrcodeContainer.style.display = 'block';
+                elements.qrPlaceholder.style.display = 'none';
+                
+                // Enable download buttons
+                elements.downloadPng.disabled = false;
+                elements.downloadSvg.disabled = false;
+                elements.downloadJpg.disabled = false;
+                
+                // Update QR info
+                updateQRInfo();
+                
+                showNotification('QR code généré avec succès', 'success');
+            }, 300);
+        }
+
+        // ===== DESIGN APPLICATION =====
+        function applyDesignToQRCode() {
+            if (!config.qrCode) return;
+
+            const canvas = elements.qrcodeContainer.querySelector('canvas');
+            if (!canvas) return;
+
+            // Apply color
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            // Check if color is gradient
+            const isGradient = config.currentColor.includes('gradient');
+            
+            if (isGradient) {
+                // Create gradient
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                
+                if (config.currentColor === 'linear-gradient(135deg, #6a11cb, #2575fc)') {
+                    gradient.addColorStop(0, '#6a11cb');
+                    gradient.addColorStop(1, '#2575fc');
+                } else if (config.currentColor === 'linear-gradient(135deg, #ff9a9e, #fad0c4)') {
+                    gradient.addColorStop(0, '#ff9a9e');
+                    gradient.addColorStop(1, '#fad0c4');
+                } else if (config.currentColor === 'linear-gradient(135deg, #a18cd1, #fbc2eb)') {
+                    gradient.addColorStop(0, '#a18cd1');
+                    gradient.addColorStop(1, '#fbc2eb');
+                } else if (config.currentColor === 'linear-gradient(135deg, #fad961, #f76b1c)') {
+                    gradient.addColorStop(0, '#fad961');
+                    gradient.addColorStop(1, '#f76b1c');
+                } else if (config.currentColor === 'linear-gradient(135deg, #30cfd0, #330867)') {
+                    gradient.addColorStop(0, '#30cfd0');
+                    gradient.addColorStop(1, '#330867');
+                }
+
+                // Apply gradient to black pixels
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i] === 0 && data[i + 1] === 0 && data[i + 2] === 0) {
+                        // This is a black pixel - we'll redraw it with the design
+                    }
+                }
+                
+                // Redraw with gradient
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Apply original black pixels as mask
+                ctx.globalCompositeOperation = 'destination-in';
+                ctx.drawImage(canvas, 0, 0);
+                ctx.globalCompositeOperation = 'source-over';
+                
+            } else {
+                // Apply solid color to black pixels
+                const color = hexToRgb(config.currentColor);
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i] === 0 && data[i + 1] === 0 && data[i + 2] === 0) {
+                        // This is a black pixel - change to selected color
+                        data[i] = color.r;
+                        data[i + 1] = color.g;
+                        data[i + 2] = color.b;
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+            }
+
+            // Apply design shape
+            applyShapeToCanvas(canvas);
+
+            // Add logo if exists
+            if (config.logo) {
+                addLogoToQRCode(canvas);
+            }
+        }
+
+        function applyShapeToCanvas(canvas) {
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            
+            // Apply shape mask
+            tempCtx.save();
+            
+            // Create shape path
+            tempCtx.beginPath();
+            
+            switch(config.currentDesign) {
+                case 'square':
+                    tempCtx.rect(0, 0, canvas.width, canvas.height);
+                    break;
+                case 'rounded':
+                    const radius = canvas.width * 0.1;
+                    roundedRect(tempCtx, 0, 0, canvas.width, canvas.height, radius);
+                    break;
+                case 'circle':
+                    tempCtx.arc(canvas.width/2, canvas.height/2, canvas.width/2, 0, Math.PI * 2);
+                    break;
+                case 'diamond':
+                    tempCtx.moveTo(canvas.width/2, 0);
+                    tempCtx.lineTo(canvas.width, canvas.height/2);
+                    tempCtx.lineTo(canvas.width/2, canvas.height);
+                    tempCtx.lineTo(0, canvas.height/2);
+                    tempCtx.closePath();
+                    break;
+                case 'heart':
+                    // Simple heart shape approximation
+                    const size = canvas.width;
+                    tempCtx.moveTo(size/2, size/1.2);
+                    tempCtx.bezierCurveTo(size/2, size/1.5, 0, size/2, size/4, size/3);
+                    tempCtx.bezierCurveTo(size/2, size/6, size*3/4, size/3, size/2, size/1.2);
+                    break;
+                case 'star':
+                    drawStar(tempCtx, canvas.width/2, canvas.height/2, 5, canvas.width/2.5, canvas.width/5);
+                    break;
+                default:
+                    tempCtx.rect(0, 0, canvas.width, canvas.height);
+            }
+            
+            tempCtx.clip();
+            tempCtx.drawImage(canvas, 0, 0);
+            tempCtx.restore();
+            
+            // Copy back to original canvas
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(tempCanvas, 0, 0);
+        }
+
+        function addLogoToQRCode(canvas) {
+            const ctx = canvas.getContext('2d');
+            const logoSize = canvas.width * 0.2 * logoScale;
+            const logoX = (canvas.width - logoSize) / 2;
+            const logoY = (canvas.height - logoSize) / 2;
+            
+            // Create logo image
+            const logoImg = new Image();
+            logoImg.onload = function() {
+                // Draw white background for logo
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(logoX - 5, logoY - 5, logoSize + 10, logoSize + 10);
+                
+                // Draw logo
+                ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+            };
+            logoImg.src = config.logo;
+        }
+
+        // ===== DOWNLOAD FUNCTIONS =====
+        async function downloadQRCode(format) {
+            if (!config.qrCode) return;
+
+            const canvas = elements.qrcodeContainer.querySelector('canvas');
+            if (!canvas) return;
+
+            showNotification(`Téléchargement en ${format.toUpperCase()}...`, 'warning');
+
+            switch(format) {
+                case 'png':
+                    downloadCanvas(canvas, 'qrcode.png');
+                    break;
+                case 'jpg':
+                    downloadCanvas(canvas, 'qrcode.jpg', 'image/jpeg', 0.9);
+                    break;
+                case 'svg':
+                    generateSVGDownload();
+                    break;
+            }
+        }
+
+        function downloadCanvas(canvas, filename, mimeType = 'image/png', quality = 1) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL(mimeType, quality);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification(`QR code téléchargé en ${filename.split('.').pop().toUpperCase()}`, 'success');
+        }
+
+        function generateSVGDownload() {
+            // Create SVG representation
+            const size = config.qrSize;
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("width", size);
+            svg.setAttribute("height", size);
+            svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+            
+            // Simple rectangle for now (full SVG QR code would be complex)
+            const rect = document.createElementNS(svgNS, "rect");
+            rect.setAttribute("width", "100%");
+            rect.setAttribute("height", "100%");
+            rect.setAttribute("fill", "#ffffff");
+            svg.appendChild(rect);
+            
+            const text = document.createElementNS(svgNS, "text");
+            text.setAttribute("x", "50%");
+            text.setAttribute("y", "50%");
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("fill", config.currentColor);
+            text.textContent = "QR Code";
+            svg.appendChild(text);
+            
+            const serializer = new XMLSerializer();
+            const source = serializer.serializeToString(svg);
+            const blob = new Blob([source], { type: "image/svg+xml" });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "qrcode.svg";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification("QR code téléchargé en SVG", "success");
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function showNotification(message, type = 'success') {
+            // Remove existing notifications
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'times-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function updateQRInfo() {
+            const info = `
+                <p><strong>Type:</strong> ${config.currentTab === 'url' ? 'URL' : 'Texte'}</p>
+                <p><strong>Taille:</strong> ${config.qrSize}px × ${config.qrSize}px</p>
+                <p><strong>Design:</strong> ${document.querySelector('.design-option.active span').textContent}</p>
+                <p><strong>Couleur:</strong> ${document.querySelector('.color-option.active span').textContent}</p>
+                <p><strong>Logo:</strong> ${config.logo ? 'Oui' : 'Non'}</p>
+                ${config.qrData.length < 100 ? `<p><strong>Contenu:</strong> ${config.qrData.substring(0, 50)}${config.qrData.length > 50 ? '...' : ''}</p>` : ''}
+            `;
+            
+            elements.qrInfoContent.innerHTML = info;
+        }
+
+        function hexToRgb(hex) {
+            // Handle gradient case
+            if (hex.includes('gradient')) return { r: 0, g: 0, b: 0 };
+            
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+
+        function roundedRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            const step = Math.PI / spikes;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+        }
+
+        // ===== INITIALIZE APP =====
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
