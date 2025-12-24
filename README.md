@@ -85,7 +85,7 @@ Pour activer l'historique cloud:
 ## Auteur
 
 **Développé par TAHIROU DESIGN STUDIO**  
-© 2024 BAMOTCH QR - Tous droits réservés
+© 2025 BAMOTCH QR - Tous droits réservés
 
 ## Licence
 
