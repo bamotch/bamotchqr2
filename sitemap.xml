@@ -1,68 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     
-    <!-- Page principale -->
+    <!-- URL Principale - Priorité MAX -->
     <url>
         <loc>https://bamotch.github.io/bamotchqr2/</loc>
-        <lastmod>2024-01-15</lastmod>
+        <lastmod>2024-01-16</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
         
-        <!-- Images pour le référencement d'images -->
+        <!-- Images pour référencement visuel -->
         <image:image>
-            <image:loc>https://bamotch.github.io/bamotchqr2/images/qr-code-example.png</image:loc>
-            <image:title>Exemple de QR code généré avec BAMOTCH QR</image:title>
-            <image:caption>QR code personnalisé avec logo et design avancé</image:caption>
+            <image:loc>https://bamotch.github.io/bamotchqr2/og-image.jpg</image:loc>
+            <image:title>BAMOTCH QR - Générateur QR Code Professionnel</image:title>
+            <image:caption>Créez des QR codes uniques gratuitement avec BAMOTCH QR</image:caption>
+            <image:license>https://creativecommons.org/licenses/by/4.0/</image:license>
         </image:image>
         
         <!-- Version mobile -->
         <xhtml:link rel="alternate" media="only screen and (max-width: 640px)" 
                    href="https://bamotch.github.io/bamotchqr2/" />
+        <xhtml:link rel="alternate" media="only screen and (max-width: 640px)" 
+                   href="https://bamotch.github.io/bamotchqr2/?mobile=1" />
+        
+        <!-- Version AMP (si disponible) -->
+        <xhtml:link rel="amphtml" 
+                   href="https://bamotch.github.io/bamotchqr2/amp/" />
     </url>
     
-    <!-- Pages virtuelles pour le référencement -->
+    <!-- Pages de catégories - Priorité Élevée -->
     <url>
         <loc>https://bamotch.github.io/bamotchqr2/generateur-qr-code-gratuit</loc>
-        <lastmod>2024-01-15</lastmod>
+        <lastmod>2024-01-16</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     
     <url>
         <loc>https://bamotch.github.io/bamotchqr2/qr-code-avec-logo</loc>
-        <lastmod>2024-01-15</lastmod>
+        <lastmod>2024-01-16</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     
     <url>
-        <loc>https://bamotch.github.io/bamotchqr2/qr-code-wifi</loc>
-        <lastmod>2024-01-15</lastmod>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-wifi-gratuit</loc>
+        <lastmod>2024-01-16</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>https://bamotch.github.io/bamotchqr2/qr-code-contact</loc>
-        <lastmod>2024-01-15</lastmod>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-contact-vcard</loc>
+        <lastmod>2024-01-16</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
+    <!-- Pages thématiques - Priorité Moyenne -->
     <url>
-        <loc>https://bamotch.github.io/bamotchqr2/qr-code-design</loc>
-        <lastmod>2024-01-15</lastmod>
+        <loc>https://bamotch.github.io/bamotchqr2/design-qr-code-personnalise</loc>
+        <lastmod>2024-01-16</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     
     <url>
-        <loc>https://bamotch.github.io/bamotchqr2/telecharger-qr-code</loc>
-        <lastmod>2024-01-15</lastmod>
+        <loc>https://bamotch.github.io/bamotchqr2/telecharger-qr-code-png-svg-jpg</loc>
+        <lastmod>2024-01-16</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
+    </url>
+    
+    <!-- Pages d'aide - Priorité Basse -->
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/comment-creer-qr-code</loc>
+        <lastmod>2024-01-16</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/faq-qr-code</loc>
+        <lastmod>2024-01-16</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    
+    <!-- Pages de formats -->
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-png</loc>
+        <lastmod>2024-01-16</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-svg</loc>
+        <lastmod>2024-01-16</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-jpg</loc>
+        <lastmod>2024-01-16</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
     </url>
     
 </urlset>
