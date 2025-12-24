@@ -3,22 +3,672 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SEO -->
-    <title>BAMOTCH QR - Générateur Avancé de QR Codes avec Designs Premium</title>
-    <meta name="description" content="Créez des QR codes UNIQUES avec BAMOTCH QR ! Designs avancés, formes spéciales, dégradés, logos intégrés. 100% gratuit, sans inscription.">
+    <title>BAMOTCH QR | Générateur de QR Codes avec Designs Premium</title>
+    <meta name="description" content="Créez des QR codes UNIQUES avec 15+ designs : arrondis, carrés, ronds, losanges, cœurs, étoiles, dégradés. Logo intégré, 100% gratuit.">
     <meta name="google-site-verification" content="XKy3Fr-HEMcKIKwbjUfpOGSdpo6t2Rig0zFlpg0MlNU" />
     
-    <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
     
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
-    <meta name="theme-color" content="#6a11cb">
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #00d2ff;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+        
+        .logo span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* ===== HERO ===== */
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            margin-bottom: 40px;
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .hero h2 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.15);
+            padding: 15px 25px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .feature i {
+            font-size: 1.5rem;
+        }
+        
+        /* ===== APP GRID ===== */
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        @media (min-width: 1200px) {
+            .app-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* ===== CARDS ===== */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .card h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            color: var(--dark);
+            font-size: 1.4rem;
+        }
+        
+        .card h3 i {
+            color: var(--primary);
+        }
+        
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.2);
+        }
+        
+        .tab-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .tab-btn:disabled:hover {
+            transform: none;
+            background: var(--light);
+        }
+        
+        .coming-soon {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--warning);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        /* ===== FORMS ===== */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: var(--light);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        /* ===== DESIGNS SECTION ===== */
+        .designs-section {
+            margin-top: 30px;
+        }
+        
+        .design-category {
+            margin-bottom: 30px;
+        }
+        
+        .design-category h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .design-category h4 i {
+            color: var(--primary);
+        }
+        
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
+        
+        .design-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .design-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            background: white;
+        }
+        
+        .design-option.active {
+            border-color: var(--primary);
+            background: rgba(106, 17, 203, 0.05);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.1);
+        }
+        
+        .design-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--dark);
+            position: relative;
+        }
+        
+        /* Formes spécifiques */
+        .square .design-preview { border-radius: 0; }
+        .rounded .design-preview { border-radius: 15px; }
+        .circle .design-preview { border-radius: 50%; }
+        
+        .dots .design-preview {
+            background: radial-gradient(circle at 30% 30%, var(--dark) 15%, transparent 16%),
+                        radial-gradient(circle at 70% 30%, var(--dark) 15%, transparent 16%),
+                        radial-gradient(circle at 30% 70%, var(--dark) 15%, transparent 16%),
+                        radial-gradient(circle at 70% 70%, var(--dark) 15%, transparent 16%);
+            background-color: white;
+        }
+        
+        .diamond .design-preview {
+            background: var(--dark);
+            transform: rotate(45deg);
+        }
+        
+        .heart .design-preview::before {
+            content: '❤';
+            font-size: 2rem;
+            color: var(--dark);
+        }
+        
+        .star .design-preview::before {
+            content: '★';
+            font-size: 2rem;
+            color: var(--dark);
+        }
+        
+        .gradient .design-preview {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
+        
+        .line .design-preview {
+            background: repeating-linear-gradient(
+                90deg,
+                var(--dark),
+                var(--dark) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+        }
+        
+        /* ===== COLORS SECTION ===== */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        
+        .color-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .color-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .color-option.active {
+            border-color: var(--primary);
+            background: rgba(106, 17, 203, 0.05);
+        }
+        
+        .color-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+        }
+        
+        /* ===== LOGO SECTION ===== */
+        .logo-upload-area {
+            border: 3px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .logo-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(106, 17, 203, 0.05);
+        }
+        
+        .logo-upload-area i {
+            font-size: 3rem;
+            color: #95a5a6;
+            margin-bottom: 15px;
+        }
+        
+        .logo-preview {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .logo-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+        
+        /* ===== PREVIEW SECTION ===== */
+        .qr-preview-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            border: 3px dashed #e9ecef;
+            margin-bottom: 25px;
+        }
+        
+        #qrcode {
+            display: none;
+            max-width: 100%;
+        }
+        
+        .qr-placeholder {
+            text-align: center;
+            color: #95a5a6;
+        }
+        
+        .qr-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+        
+        /* ===== DOWNLOAD SECTION ===== */
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+        
+        .download-btn {
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .download-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .download-btn:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .download-btn.png {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .download-btn.svg {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+        
+        .download-btn.jpg {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+        
+        /* ===== GENERATE BUTTON ===== */
+        .generate-button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(106, 17, 203, 0.3);
+        }
+        
+        .generate-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(106, 17, 203, 0.4);
+        }
+        
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            text-align: center;
+        }
+        
+        .footer-info p {
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .footer-info strong {
+            color: var(--accent);
+        }
+        
+        .privacy-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* ===== NOTIFICATIONS ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .notification.success {
+            background: var(--success);
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+        }
+        
+        .notification.error {
+            background: var(--danger);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .design-grid,
+            .color-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .download-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- HEADER -->
@@ -26,14 +676,8 @@
         <div class="container">
             <div class="logo">
                 <i class="fas fa-qrcode"></i>
-                <h1>BAMOTCH <span class="highlight">QR</span></h1>
-                <span class="version">ULTIME</span>
+                <h1>BAMOTCH <span>QR</span></h1>
             </div>
-            <nav class="nav">
-                <button class="nav-btn" id="theme-btn" title="Changer de thème">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </nav>
         </div>
     </header>
 
@@ -41,298 +685,267 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h2>Créez des QR Codes <span class="gradient-text">STYLÉS & UNIQUES</span></h2>
-                <p class="subtitle">Personnalisez chaque détail avec notre générateur avancé</p>
+                <h2>Créez des QR Codes <span class="gradient-text">UNIQUES</span></h2>
+                <p class="subtitle">15+ designs • Logo intégré • 100% Gratuit</p>
                 
-                <div class="hero-stats">
-                    <div class="stat">
+                <button id="start-generator" class="btn-primary">
+                    <i class="fas fa-bolt"></i> Essayer Gratuitement
+                </button>
+                
+                <div class="features">
+                    <div class="feature">
                         <i class="fas fa-shapes"></i>
-                        <span>15+ Formes</span>
+                        <span>15+ Designs</span>
                     </div>
-                    <div class="stat">
+                    <div class="feature">
                         <i class="fas fa-palette"></i>
-                        <span>30+ Couleurs</span>
+                        <span>20+ Couleurs</span>
                     </div>
-                    <div class="stat">
-                        <i class="fas fa-star"></i>
-                        <span>10+ Motifs</span>
-                    </div>
-                    <div class="stat">
+                    <div class="feature">
                         <i class="fas fa-image"></i>
                         <span>Logo intégré</span>
                     </div>
+                    <div class="feature">
+                        <i class="fas fa-download"></i>
+                        <span>3 Formats</span>
+                    </div>
                 </div>
-                
-                <button id="start-btn" class="btn-hero">
-                    <i class="fas fa-rocket"></i> Commencer Gratuitement
-                </button>
             </div>
         </div>
     </section>
 
-    <!-- GENERATOR -->
-    <main class="container">
-        <div class="generator" id="generator">
-            <div class="generator-grid">
-                <!-- LEFT: CONFIGURATION -->
-                <div class="config-section">
-                    <!-- Content Type -->
-                    <div class="card">
-                        <h3><i class="fas fa-edit"></i> Type de contenu</h3>
-                        
-                        <div class="content-tabs">
-                            <button class="content-tab active" data-type="text">
-                                <i class="fas fa-font"></i> Texte
-                            </button>
-                            <button class="content-tab" data-type="url">
-                                <i class="fas fa-link"></i> Lien
-                            </button>
-                            <button class="content-tab" data-type="wifi">
-                                <i class="fas fa-wifi"></i> Wi-Fi
-                            </button>
-                            <button class="content-tab" data-type="contact">
-                                <i class="fas fa-address-card"></i> Contact
-                            </button>
-                            <button class="content-tab coming-soon" data-type="image">
-                                <i class="fas fa-image"></i> Image
-                                <span class="badge">Bientôt</span>
-                            </button>
-                            <button class="content-tab coming-soon" data-type="video">
-                                <i class="fas fa-video"></i> Vidéo
-                                <span class="badge">Bientôt</span>
-                            </button>
-                            <button class="content-tab coming-soon" data-type="audio">
-                                <i class="fas fa-music"></i> Audio
-                                <span class="badge">Bientôt</span>
-                            </button>
-                            <button class="content-tab coming-soon" data-type="pdf">
-                                <i class="fas fa-file-pdf"></i> PDF
-                                <span class="badge">Bientôt</span>
-                            </button>
-                        </div>
-                        
-                        <div class="content-forms">
-                            <!-- Text Form -->
-                            <div class="content-form active" id="text-form">
-                                <div class="form-group">
-                                    <label><i class="fas fa-align-left"></i> Votre texte</label>
-                                    <textarea id="text-input" placeholder="Entrez votre texte ici..."></textarea>
-                                </div>
-                            </div>
-                            
-                            <!-- URL Form -->
-                            <div class="content-form" id="url-form">
-                                <div class="form-group">
-                                    <label><i class="fas fa-globe"></i> URL du site</label>
-                                    <input type="text" id="url-input" placeholder="https://exemple.com">
-                                </div>
-                            </div>
-                            
-                            <!-- Wi-Fi Form -->
-                            <div class="content-form" id="wifi-form">
-                                <div class="form-group">
-                                    <label><i class="fas fa-network-wired"></i> Nom du réseau</label>
-                                    <input type="text" id="wifi-ssid" placeholder="MonRéseauWiFi">
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label><i class="fas fa-shield-alt"></i> Sécurité</label>
-                                        <select id="wifi-security">
-                                            <option value="WPA">WPA/WPA2</option>
-                                            <option value="WEP">WEP</option>
-                                            <option value="nopass">Aucune</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label><i class="fas fa-key"></i> Mot de passe</label>
-                                        <input type="text" id="wifi-password" placeholder="Votre mot de passe">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Contact Form -->
-                            <div class="content-form" id="contact-form">
-                                <div class="form-group">
-                                    <label><i class="fas fa-user"></i> Nom complet</label>
-                                    <input type="text" id="contact-name" placeholder="John Doe">
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label><i class="fas fa-phone"></i> Téléphone</label>
-                                        <input type="tel" id="contact-phone" placeholder="+33 1 23 45 67 89">
-                                    </div>
-                                    <div class="form-group">
-                                        <label><i class="fas fa-envelope"></i> Email</label>
-                                        <input type="email" id="contact-email" placeholder="contact@exemple.com">
-                                    </div>
-                                </div>
-                            </div>
+    <!-- MAIN APP -->
+    <main class="container" id="generator-app">
+        <div class="app-grid">
+            <!-- LEFT: INPUT & DESIGN -->
+            <div class="input-section">
+                <!-- CONTENT CARD -->
+                <div class="card">
+                    <h3><i class="fas fa-edit"></i> Contenu</h3>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn active" data-type="text">
+                            <i class="fas fa-font"></i> Texte
+                        </button>
+                        <button class="tab-btn" data-type="url">
+                            <i class="fas fa-link"></i> URL
+                        </button>
+                        <button class="tab-btn" data-type="wifi">
+                            <i class="fas fa-wifi"></i> Wi-Fi
+                        </button>
+                        <button class="tab-btn" data-type="contact">
+                            <i class="fas fa-user"></i> Contact
+                        </button>
+                        <button class="tab-btn" data-type="image" disabled>
+                            <i class="fas fa-image"></i> Image
+                            <span class="coming-soon">Bientôt</span>
+                        </button>
+                        <button class="tab-btn" data-type="video" disabled>
+                            <i class="fas fa-video"></i> Vidéo
+                            <span class="coming-soon">Bientôt</span>
+                        </button>
+                        <button class="tab-btn" data-type="audio" disabled>
+                            <i class="fas fa-music"></i> Audio
+                            <span class="coming-soon">Bientôt</span>
+                        </button>
+                        <button class="tab-btn" data-type="pdf" disabled>
+                            <i class="fas fa-file-pdf"></i> PDF
+                            <span class="coming-soon">Bientôt</span>
+                        </button>
+                    </div>
+                    
+                    <!-- CONTENT FORMS -->
+                    <div class="tab-content active" id="text-form">
+                        <div class="form-group">
+                            <label for="text-input">
+                                <i class="fas fa-align-left"></i> Votre texte
+                            </label>
+                            <textarea id="text-input" placeholder="Entrez le texte à convertir..."></textarea>
                         </div>
                     </div>
                     
-                    <!-- Design Options -->
-                    <div class="card">
-                        <h3><i class="fas fa-paint-brush"></i> Design avancé</h3>
-                        
-                        <!-- Shape Selection -->
-                        <div class="option-group">
+                    <div class="tab-content" id="url-form">
+                        <div class="form-group">
+                            <label for="url-input">
+                                <i class="fas fa-globe"></i> URL du site
+                            </label>
+                            <input type="text" id="url-input" placeholder="https://exemple.com">
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="wifi-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="wifi-ssid">
+                                    <i class="fas fa-network-wired"></i> Nom réseau
+                                </label>
+                                <input type="text" id="wifi-ssid" placeholder="MonWiFi">
+                            </div>
+                            <div class="form-group">
+                                <label for="wifi-password">
+                                    <i class="fas fa-key"></i> Mot de passe
+                                </label>
+                                <input type="text" id="wifi-password" placeholder="********">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="wifi-security">
+                                <i class="fas fa-shield-alt"></i> Sécurité
+                            </label>
+                            <select id="wifi-security">
+                                <option value="WPA">WPA/WPA2</option>
+                                <option value="WEP">WEP</option>
+                                <option value="nopass">Aucune</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact-name">
+                                    <i class="fas fa-user-tag"></i> Nom
+                                </label>
+                                <input type="text" id="contact-name" placeholder="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-phone">
+                                    <i class="fas fa-phone"></i> Téléphone
+                                </label>
+                                <input type="tel" id="contact-phone" placeholder="+33 1 23 45 67 89">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" id="contact-email" placeholder="contact@exemple.com">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DESIGNS CARD -->
+                <div class="card">
+                    <h3><i class="fas fa-paint-brush"></i> Design & Formes</h3>
+                    
+                    <div class="designs-section">
+                        <!-- FORMES DES POINTS -->
+                        <div class="design-category">
                             <h4><i class="fas fa-shapes"></i> Forme des points</h4>
-                            <div class="shape-grid">
-                                <div class="shape-option active" data-shape="square">
-                                    <div class="shape-preview square"></div>
+                            <div class="design-grid">
+                                <div class="design-option square active" data-shape="square">
+                                    <div class="design-preview"></div>
                                     <span>Carrés</span>
                                 </div>
-                                <div class="shape-option" data-shape="circle">
-                                    <div class="shape-preview circle"></div>
-                                    <span>Ronds</span>
-                                </div>
-                                <div class="shape-option" data-shape="rounded">
-                                    <div class="shape-preview rounded"></div>
+                                <div class="design-option rounded" data-shape="rounded">
+                                    <div class="design-preview"></div>
                                     <span>Arrondis</span>
                                 </div>
-                                <div class="shape-option" data-shape="diamond">
-                                    <div class="shape-preview diamond"></div>
+                                <div class="design-option circle" data-shape="circle">
+                                    <div class="design-preview"></div>
+                                    <span>Ronds</span>
+                                </div>
+                                <div class="design-option dots" data-shape="dots">
+                                    <div class="design-preview"></div>
+                                    <span>Points</span>
+                                </div>
+                                <div class="design-option diamond" data-shape="diamond">
+                                    <div class="design-preview"></div>
                                     <span>Losanges</span>
                                 </div>
-                                <div class="shape-option" data-shape="heart">
-                                    <div class="shape-preview heart"></div>
+                                <div class="design-option heart" data-shape="heart">
+                                    <div class="design-preview"></div>
                                     <span>Cœurs</span>
                                 </div>
-                                <div class="shape-option" data-shape="star">
-                                    <div class="shape-preview star"></div>
+                                <div class="design-option star" data-shape="star">
+                                    <div class="design-preview"></div>
                                     <span>Étoiles</span>
                                 </div>
-                                <div class="shape-option" data-shape="dot">
-                                    <div class="shape-preview dot"></div>
-                                    <span>Points fins</span>
-                                </div>
-                                <div class="shape-option" data-shape="line">
-                                    <div class="shape-preview line"></div>
+                                <div class="design-option line" data-shape="line">
+                                    <div class="design-preview"></div>
                                     <span>Tirets</span>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Pattern Selection -->
-                        <div class="option-group">
-                            <h4><i class="fas fa-star"></i> Motifs spéciaux</h4>
-                            <div class="pattern-grid">
-                                <div class="pattern-option active" data-pattern="solid">
-                                    <div class="pattern-preview solid"></div>
-                                    <span>Plein</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="dots">
-                                    <div class="pattern-preview dots"></div>
-                                    <span>Pointillés</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="grid">
-                                    <div class="pattern-preview grid"></div>
-                                    <span>Grille</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="wave">
-                                    <div class="pattern-preview wave"></div>
-                                    <span>Vagues</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="zigzag">
-                                    <div class="pattern-preview zigzag"></div>
-                                    <span>Zigzag</span>
+                                <div class="design-option gradient" data-shape="gradient">
+                                    <div class="design-preview"></div>
+                                    <span>Dégradé</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Color Selection -->
-                        <div class="option-group">
-                            <h4><i class="fas fa-palette"></i> Couleurs & Dégradés</h4>
+                        <!-- COULEURS -->
+                        <div class="design-category">
+                            <h4><i class="fas fa-palette"></i> Couleurs</h4>
                             <div class="color-grid">
-                                <!-- Solid Colors -->
-                                <div class="color-option active" data-type="solid" data-color="#000000" data-bg="#ffffff">
+                                <div class="color-option active" data-color="#000000" data-bg="#ffffff">
                                     <div class="color-preview" style="background: linear-gradient(135deg, #000000 50%, #ffffff 50%)"></div>
                                     <span>Noir/Blanc</span>
                                 </div>
-                                <div class="color-option" data-type="solid" data-color="#2c3e50" data-bg="#ecf0f1">
+                                <div class="color-option" data-color="#2c3e50" data-bg="#ecf0f1">
                                     <div class="color-preview" style="background: linear-gradient(135deg, #2c3e50 50%, #ecf0f1 50%)"></div>
-                                    <span>Bleu Nuit</span>
+                                    <span>Bleu/Gris</span>
                                 </div>
-                                <div class="color-option" data-type="solid" data-color="#27ae60" data-bg="#d5f4e6">
+                                <div class="color-option" data-color="#27ae60" data-bg="#d5f4e6">
                                     <div class="color-preview" style="background: linear-gradient(135deg, #27ae60 50%, #d5f4e6 50%)"></div>
-                                    <span>Vert Émeraude</span>
+                                    <span>Vert</span>
                                 </div>
-                                <div class="color-option" data-type="solid" data-color="#9b59b6" data-bg="#f4ecf7">
+                                <div class="color-option" data-color="#e74c3c" data-bg="#fadbd8">
+                                    <div class="color-preview" style="background: linear-gradient(135deg, #e74c3c 50%, #fadbd8 50%)"></div>
+                                    <span>Rouge</span>
+                                </div>
+                                <div class="color-option" data-color="#9b59b6" data-bg="#f4ecf7">
                                     <div class="color-preview" style="background: linear-gradient(135deg, #9b59b6 50%, #f4ecf7 50%)"></div>
-                                    <span>Violet Royal</span>
+                                    <span>Violet</span>
                                 </div>
-                                
-                                <!-- Gradients -->
-                                <div class="color-option" data-type="gradient" data-gradient="blue-purple">
-                                    <div class="color-preview gradient blue-purple"></div>
-                                    <span>Bleu-Violet</span>
+                                <div class="color-option" data-color="#3498db" data-bg="#ebf5fb">
+                                    <div class="color-preview" style="background: linear-gradient(135deg, #3498db 50%, #ebf5fb 50%)"></div>
+                                    <span>Bleu Ciel</span>
                                 </div>
-                                <div class="color-option" data-type="gradient" data-gradient="sunset">
-                                    <div class="color-preview gradient sunset"></div>
-                                    <span>Couché de soleil</span>
+                                <div class="color-option" data-color="#f39c12" data-bg="#fef5e7">
+                                    <div class="color-preview" style="background: linear-gradient(135deg, #f39c12 50%, #fef5e7 50%)"></div>
+                                    <span>Orange</span>
                                 </div>
-                                <div class="color-option" data-type="gradient" data-gradient="ocean">
-                                    <div class="color-preview gradient ocean"></div>
-                                    <span>Océan</span>
-                                </div>
-                                <div class="color-option" data-type="gradient" data-gradient="forest">
-                                    <div class="color-preview gradient forest"></div>
-                                    <span>Forêt</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Custom Colors -->
-                            <div class="custom-colors">
-                                <div class="color-picker">
-                                    <label><i class="fas fa-fill-drip"></i> Couleur QR</label>
-                                    <input type="color" id="qr-color" value="#000000">
-                                </div>
-                                <div class="color-picker">
-                                    <label><i class="fas fa-square-full"></i> Fond</label>
-                                    <input type="color" id="qr-bg" value="#ffffff">
+                                <div class="color-option" data-color="#1abc9c" data-bg="#e8f6f3">
+                                    <div class="color-preview" style="background: linear-gradient(135deg, #1abc9c 50%, #e8f6f3 50%)"></div>
+                                    <span>Turquoise</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Logo Upload -->
-                        <div class="option-group">
+                        <!-- LOGO -->
+                        <div class="design-category">
                             <h4><i class="fas fa-image"></i> Logo au centre</h4>
                             <div class="logo-upload-area" id="logo-dropzone">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Glissez votre logo ici</p>
-                                <p class="file-info">PNG, JPG - Max 1MB</p>
+                                <p>Glissez-déposez votre logo</p>
+                                <p><small>ou cliquez pour sélectionner (max 1MB)</small></p>
                                 <input type="file" id="logo-file" accept="image/*" hidden>
-                                <button class="btn-secondary" id="select-logo">
-                                    <i class="fas fa-folder-open"></i> Choisir un fichier
+                                <button id="select-logo" class="btn-primary" style="margin-top: 15px; padding: 12px 25px;">
+                                    <i class="fas fa-folder-open"></i> Choisir un logo
                                 </button>
                             </div>
-                            <div class="logo-preview" id="logo-preview" style="display: none;">
-                                <div class="preview-container">
-                                    <img id="logo-img" src="" alt="Logo">
-                                    <button class="remove-logo" id="remove-logo">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                                <div class="logo-details">
-                                    <span id="logo-name">logo.png</span>
-                                    <span id="logo-size">256 KB</span>
-                                </div>
+                            <div class="logo-preview" id="logo-preview">
+                                <img id="logo-image" src="" alt="Logo">
+                                <button id="remove-logo" style="margin-top: 10px; background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;">
+                                    <i class="fas fa-times"></i> Supprimer
+                                </button>
                             </div>
                         </div>
                         
-                        <!-- Advanced Settings -->
-                        <div class="option-group">
-                            <h4><i class="fas fa-sliders-h"></i> Options avancées</h4>
-                            <div class="advanced-grid">
-                                <div class="setting">
-                                    <label>
+                        <!-- OPTIONS -->
+                        <div class="design-category">
+                            <h4><i class="fas fa-sliders-h"></i> Options</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="qr-size">
                                         <i class="fas fa-expand-alt"></i> Taille
-                                        <span id="size-value">400px</span>
                                     </label>
-                                    <input type="range" id="qr-size" min="200" max="800" value="400" step="50">
+                                    <input type="range" id="qr-size" min="200" max="500" value="300">
+                                    <div style="text-align: center; margin-top: 5px;">
+                                        <span id="size-value">300px</span>
+                                    </div>
                                 </div>
-                                <div class="setting">
-                                    <label>
+                                <div class="form-group">
+                                    <label for="qr-error">
                                         <i class="fas fa-shield-alt"></i> Correction
                                     </label>
                                     <select id="qr-error">
@@ -345,526 +958,53 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Generate Button -->
-                    <button id="generate-btn" class="btn-generate">
-                        <i class="fas fa-magic"></i> Générer le QR Code
-                    </button>
                 </div>
                 
-                <!-- RIGHT: PREVIEW -->
-                <div class="preview-section">
-                    <!-- QR Preview -->
-                    <div class="card preview-card">
-                        <h3><i class="fas fa-eye"></i> Aperçu en direct</h3>
-                        
-                        <div class="qr-display">
-                            <div id="qrcode"></div>
-                            <div class="placeholder" id="qr-placeholder">
-                                <i class="fas fa-qrcode"></i>
-                                <h4>Votre QR Code</h4>
-                                <p>Personnalisez les options et cliquez sur "Générer"</p>
-                            </div>
-                        </div>
-                        
-                        <!-- QR Info -->
-                        <div class="qr-info" id="qr-info" style="display: none;">
-                            <div class="info-item">
-                                <i class="fas fa-ruler"></i>
-                                <div>
-                                    <div class="info-label">Taille</div>
-                                    <div class="info-value" id="info-size">400x400px</div>
-                                </div>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-paint-brush"></i>
-                                <div>
-                                    <div class="info-label">Design</div>
-                                    <div class="info-value" id="info-design">Carrés</div>
-                                </div>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-shield"></i>
-                                <div>
-                                    <div class="info-label">Correction</div>
-                                    <div class="info-value" id="info-error">15%</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Download Options -->
-                    <div class="card download-card">
-                        <h3><i class="fas fa-download"></i> Télécharger</h3>
-                        
-                        <div class="download-options">
-                            <div class="format-buttons">
-                                <button class="format-btn png" id="download-png" disabled>
-                                    <i class="fas fa-file-image"></i>
-                                    <div class="format-details">
-                                        <div class="format-name">PNG</div>
-                                        <div class="format-desc">Haute qualité</div>
-                                    </div>
-                                </button>
-                                
-                                <button class="format-btn svg" id="download-svg" disabled>
-                                    <i class="fas fa-file-code"></i>
-                                    <div class="format-details">
-                                        <div class="format-name">SVG</div>
-                                        <div class="format-desc">Vectoriel</div>
-                                    </div>
-                                </button>
-                                
-                                <button class="format-btn jpg" id="download-jpg" disabled>
-                                    <i class="fas fa-file-image"></i>
-                                    <div class="format-details">
-                                        <div class="format-name">JPG</div>
-                                        <div class="format-desc">Pour le web</div>
-                                    </div>
-                                </button>
-                            </div>
-                            
-                            <!-- Size Presets -->
-                            <div class="size-presets">
-                                <h4><i class="fas fa-crop-alt"></i> Taille de sortie</h4>
-                                <div class="size-buttons">
-                                    <button class="size-btn active" data-size="400">400px</button>
-                                    <button class="size-btn" data-size="600">600px</button>
-                                    <button class="size-btn" data-size="800">800px</button>
-                                    <button class="size-btn" data-size="1200">1200px</button>
-                                </div>
-                            </div>
-                            
-                            <!-- File Naming -->
-                            <div class="file-naming">
-                                <h4><i class="fas fa-font"></i> Nom du fichier</h4>
-                                <div class="name-input">
-                                    <input type="text" id="filename" value="mon-qr-code" placeholder="Nom de votre fichier">
-                                    <div class="name-preview">
-                                        <span id="name-preview">mon-qr-code.png</span>
-                                        <button class="copy-btn" id="copy-name">
-                                            <i class="fas fa-copy"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Coming Soon -->
-                    <div class="card coming-soon-card">
-                        <h3><i class="fas fa-rocket"></i> Fonctions à venir</h3>
-                        <div class="coming-soon-grid">
-                            <div class="coming-feature">
-                                <div class="feature-icon">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <div class="feature-details">
-                                    <h4>QR Code avec Image</h4>
-                                    <p>Encodez des images directement</p>
-                                </div>
-                            </div>
-                            <div class="coming-feature">
-                                <div class="feature-icon">
-                                    <i class="fas fa-video"></i>
-                                </div>
-                                <div class="feature-details">
-                                    <h4>QR Code avec Vidéo</h4>
-                                    <p>Générez des QR vers vos vidéos</p>
-                                </div>
-                            </div>
-                            <div class="coming-feature">
-                                <div class="feature-icon">
-                                    <i class="fas fa-file-pdf"></i>
-                                </div>
-                                <div class="feature-details">
-                                    <h4>QR Code avec PDF</h4>
-                                    <p>Partagez vos documents PDF</p>
-                                </div>
-                            </div>
-                            <div class="coming-feature">
-                                <div class="feature-icon">
-                                    <i class="fas fa-music"></i>
-                                </div>
-                                <div class="feature-details">
-                                    <h4>QR Code avec Audio</h4>
-                                    <p>Encodez des fichiers audio</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="coming-soon-note">
-                            <i class="fas fa-clock"></i>
-                            <span>Disponible dans les prochaines mises à jour</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- GENERATE BUTTON -->
+                <button id="generate-btn" class="generate-button">
+                    <i class="fas fa-magic"></i> Générer le QR Code
+                </button>
             </div>
-        </div>
-    </main>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <i class="fas fa-qrcode"></i>
-                    <div>
-                        <h3>BAMOTCH QR</h3>
-                        <p>Générateur avancé de QR codes</p>
+            
+            <!-- RIGHT: PREVIEW & DOWNLOAD -->
+            <div class="preview-section">
+                <!-- PREVIEW CARD -->
+                <div class="card">
+                    <h3><i class="fas fa-eye"></i> Aperçu en direct</h3>
+                    
+                    <div class="qr-preview-container">
+                        <div id="qrcode"></div>
+                        <div class="qr-placeholder" id="qr-placeholder">
+                            <i class="fas fa-qrcode"></i>
+                            <h4>Votre QR Code</h4>
+                            <p>Configurez et générez pour voir l'aperçu</p>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="footer-info">
-                    <p>&copy; <span id="current-year">2024</span> BAMOTCH QR</p>
-                    <p>Développé par <strong>TAHIROU DESIGN STUDIO</strong></p>
-                    <p class="privacy">
-                        <i class="fas fa-lock"></i>
-                        <span>Traitement 100% local · Aucune donnée collectée</span>
-                    </p>
+                <!-- DOWNLOAD CARD -->
+                <div class="card">
+                    <h3><i class="fas fa-download"></i> Télécharger</h3>
+                    
+                    <div class="download-buttons">
+                        <button id="download-png" class="download-btn png" disabled>
+                            <i class="fas fa-file-image"></i> PNG
+                        </button>
+                        <button id="download-svg" class="download-btn svg" disabled>
+                            <i class="fas fa-file-code"></i> SVG
+                        </button>
+                        <button id="download-jpg" class="download-btn jpg" disabled>
+                            <i class="fas fa-file-image"></i> JPG
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <p><small>Format vectoriel (SVG) disponible bientôt</small></p>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- SCRIPT -->
-    <script>
-        // ========== INITIALISATION ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎨 BAMOTCH QR ULTIME chargé avec succès!');
-            
-            // Mettre à jour l'année
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            
-            // ========== VARIABLES ==========
-            let currentQR = null;
-            let currentContent = '';
-            let currentLogo = null;
-            let currentShape = 'square';
-            let currentPattern = 'solid';
-            let currentColorType = 'solid';
-            let currentColor = '#000000';
-            let currentBgColor = '#ffffff';
-            let currentGradient = '';
-            let downloadSize = 400;
-            
-            // ========== ÉLÉMENTS DU DOM ==========
-            const startBtn = document.getElementById('start-btn');
-            const generator = document.getElementById('generator');
-            const contentTabs = document.querySelectorAll('.content-tab');
-            const contentForms = document.querySelectorAll('.content-form');
-            const generateBtn = document.getElementById('generate-btn');
-            const qrcodeDiv = document.getElementById('qrcode');
-            const qrPlaceholder = document.getElementById('qr-placeholder');
-            const qrInfo = document.getElementById('qr-info');
-            const shapeOptions = document.querySelectorAll('.shape-option');
-            const patternOptions = document.querySelectorAll('.pattern-option');
-            const colorOptions = document.querySelectorAll('.color-option');
-            const qrColorInput = document.getElementById('qr-color');
-            const qrBgInput = document.getElementById('qr-bg');
-            const qrSizeSlider = document.getElementById('qr-size');
-            const sizeValue = document.getElementById('size-value');
-            const infoSize = document.getElementById('info-size');
-            const infoDesign = document.getElementById('info-design');
-            const infoError = document.getElementById('info-error');
-            const downloadPngBtn = document.getElementById('download-png');
-            const downloadSvgBtn = document.getElementById('download-svg');
-            const downloadJpgBtn = document.getElementById('download-jpg');
-            const sizeButtons = document.querySelectorAll('.size-btn');
-            const filenameInput = document.getElementById('filename');
-            const namePreview = document.getElementById('name-preview');
-            const copyNameBtn = document.getElementById('copy-name');
-            const logoDropzone = document.getElementById('logo-dropzone');
-            const logoFileInput = document.getElementById('logo-file');
-            const selectLogoBtn = document.getElementById('select-logo');
-            const logoPreview = document.getElementById('logo-preview');
-            const logoImg = document.getElementById('logo-img');
-            const logoName = document.getElementById('logo-name');
-            const logoSize = document.getElementById('logo-size');
-            const removeLogoBtn = document.getElementById('remove-logo');
-            const themeBtn = document.getElementById('theme-btn');
-            
-            // ========== THÈME ==========
-            themeBtn.addEventListener('click', function() {
-                document.body.classList.toggle('dark-theme');
-                this.innerHTML = document.body.classList.contains('dark-theme') 
-                    ? '<i class="fas fa-sun"></i>' 
-                    : '<i class="fas fa-moon"></i>';
-                showMessage('Thème changé');
-            });
-            
-            // ========== BOUTON START ==========
-            startBtn.addEventListener('click', function() {
-                generator.scrollIntoView({ behavior: 'smooth' });
-                this.classList.add('pulse');
-                setTimeout(() => this.classList.remove('pulse'), 500);
-                showMessage('🎉 Commencez à créer votre QR code !');
-            });
-            
-            // ========== GESTION DES TABS ==========
-            contentTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    if (this.classList.contains('coming-soon')) {
-                        showMessage('🚀 Cette fonctionnalité arrive bientôt !', 'info');
-                        return;
-                    }
-                    
-                    const type = this.getAttribute('data-type');
-                    
-                    // Mettre à jour les tabs
-                    contentTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Mettre à jour les forms
-                    contentForms.forEach(form => form.classList.remove('active'));
-                    document.getElementById(`${type}-form`).classList.add('active');
-                });
-            });
-            
-            // ========== FORMES ==========
-            shapeOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    shapeOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    currentShape = this.getAttribute('data-shape');
-                    infoDesign.textContent = this.querySelector('span').textContent;
-                    
-                    if (currentQR) generateQRCode();
-                });
-            });
-            
-            // ========== MOTIFS ==========
-            patternOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    patternOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    currentPattern = this.getAttribute('data-pattern');
-                    
-                    if (currentQR) generateQRCode();
-                });
-            });
-            
-            // ========== COULEURS ==========
-            colorOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    colorOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    const type = this.getAttribute('data-type');
-                    currentColorType = type;
-                    
-                    if (type === 'solid') {
-                        currentColor = this.getAttribute('data-color');
-                        currentBgColor = this.getAttribute('data-bg');
-                        qrColorInput.value = currentColor;
-                        qrBgInput.value = currentBgColor;
-                    } else if (type === 'gradient') {
-                        currentGradient = this.getAttribute('data-gradient');
-                    }
-                    
-                    if (currentQR) generateQRCode();
-                });
-            });
-            
-            // ========== COULEURS PERSONNALISÉES ==========
-            qrColorInput.addEventListener('input', function() {
-                currentColor = this.value;
-                currentColorType = 'solid';
-                colorOptions.forEach(opt => opt.classList.remove('active'));
                 
-                if (currentQR) generateQRCode();
-            });
-            
-            qrBgInput.addEventListener('input', function() {
-                currentBgColor = this.value;
-                currentColorType = 'solid';
-                colorOptions.forEach(opt => opt.classList.remove('active'));
-                
-                if (currentQR) generateQRCode();
-            });
-            
-            // ========== TAILLE ==========
-            qrSizeSlider.addEventListener('input', function() {
-                const size = this.value;
-                sizeValue.textContent = `${size}px`;
-                infoSize.textContent = `${size}x${size}px`;
-                
-                if (currentQR) generateQRCode();
-            });
-            
-            // ========== LOGO ==========
-            selectLogoBtn.addEventListener('click', () => logoFileInput.click());
-            logoDropzone.addEventListener('click', () => logoFileInput.click());
-            
-            logoDropzone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.style.borderColor = '#6a11cb';
-                this.style.background = 'rgba(106, 17, 203, 0.05)';
-            });
-            
-            logoDropzone.addEventListener('dragleave', function() {
-                this.style.borderColor = '';
-                this.style.background = '';
-            });
-            
-            logoDropzone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.style.borderColor = '';
-                this.style.background = '';
-                if (e.dataTransfer.files[0]) handleLogoFile(e.dataTransfer.files[0]);
-            });
-            
-            logoFileInput.addEventListener('change', function(e) {
-                if (this.files[0]) handleLogoFile(this.files[0]);
-            });
-            
-            function handleLogoFile(file) {
-                // Vérifier la taille
-                if (file.size > 1024 * 1024) {
-                    showMessage('Le logo est trop volumineux (max 1MB)', 'error');
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentLogo = e.target.result;
-                    logoImg.src = currentLogo;
-                    logoName.textContent = file.name;
-                    logoSize.textContent = formatFileSize(file.size);
-                    logoPreview.style.display = 'flex';
-                    
-                    showMessage('Logo ajouté avec succès');
-                    
-                    if (currentQR) generateQRCode();
-                };
-                reader.readAsDataURL(file);
-            }
-            
-            removeLogoBtn.addEventListener('click', function() {
-                currentLogo = null;
-                logoPreview.style.display = 'none';
-                logoFileInput.value = '';
-                showMessage('Logo supprimé');
-                
-                if (currentQR) generateQRCode();
-            });
-            
-            // ========== GÉNÉRATION ==========
-            generateBtn.addEventListener('click', function() {
-                // Récupérer le contenu
-                const activeTab = document.querySelector('.content-tab.active');
-                const type = activeTab ? activeTab.getAttribute('data-type') : 'text';
-                let content = '';
-                
-                switch(type) {
-                    case 'text':
-                        content = document.getElementById('text-input').value.trim();
-                        if (!content) {
-                            showMessage('Veuillez entrer du texte', 'warning');
-                            return;
-                        }
-                        break;
-                        
-                    case 'url':
-                        let url = document.getElementById('url-input').value.trim();
-                        if (!url) {
-                            showMessage('Veuillez entrer une URL', 'warning');
-                            return;
-                        }
-                        if (!url.startsWith('http')) url = 'https://' + url;
-                        content = url;
-                        break;
-                        
-                    case 'wifi':
-                        const ssid = document.getElementById('wifi-ssid').value.trim();
-                        const password = document.getElementById('wifi-password').value.trim();
-                        const security = document.getElementById('wifi-security').value;
-                        
-                        if (!ssid) {
-                            showMessage('Veuillez entrer le nom du réseau', 'warning');
-                            return;
-                        }
-                        
-                        if (security === 'nopass') {
-                            content = `WIFI:S:${ssid};T:nopass;;`;
-                        } else {
-                            if (!password) {
-                                showMessage('Veuillez entrer le mot de passe', 'warning');
-                                return;
-                            }
-                            content = `WIFI:S:${ssid};T:${security};P:${password};;`;
-                        }
-                        break;
-                        
-                    case 'contact':
-                        const name = document.getElementById('contact-name').value.trim();
-                        const phone = document.getElementById('contact-phone').value.trim();
-                        const email = document.getElementById('contact-email').value.trim();
-                        
-                        if (!name && !phone && !email) {
-                            showMessage('Veuillez entrer au moins une information', 'warning');
-                            return;
-                        }
-                        
-                        let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
-                        if (name) vcard += `FN:${name}\n`;
-                        if (phone) vcard += `TEL:${phone}\n`;
-                        if (email) vcard += `EMAIL:${email}\n`;
-                        vcard += 'END:VCARD';
-                        content = vcard;
-                        break;
-                }
-                
-                currentContent = content;
-                generateQRCode();
-            });
-            
-            function generateQRCode() {
-                qrcodeDiv.innerHTML = '';
-                qrPlaceholder.style.display = 'none';
-                qrInfo.style.display = 'flex';
-                
-                const size = parseInt(qrSizeSlider.value);
-                const errorLevel = document.getElementById('qr-error').value;
-                
-                try {
-                    currentQR = new QRCode(qrcodeDiv, {
-                        text: currentContent,
-                        width: size,
-                        height: size,
-                        colorDark: getQRColor(),
-                        colorLight: currentBgColor,
-                        correctLevel: QRCode.CorrectLevel[errorLevel]
-                    });
-                    
-                    qrcodeDiv.style.display = 'block';
-                    
-                    // Appliquer les effets visuels
-                    setTimeout(applyVisualEffects, 100);
-                    
-                    // Activer les téléchargements
-                    downloadPngBtn.disabled = false;
-                    downloadSvgBtn.disabled = false;
-                    downloadJpgBtn.disabled = false;
-                    
-                    // Mettre à jour les infos
-                    const errorText = {
-                        'L': '7%',
-                        'M': '15%',
-                        'Q': '25%',
-                        'H': '30%'
-                    }[errorLevel] || '15%';
-                    infoError.textContent = errorText;
-                    
-                    showMessage('✅ QR code généré avec succès !');
-                    
-                } catch (error) {
-                    console.error('Erreur:', error);
-                    showMessage('❌ Erreur de génération', 'error');
-                    qrPlaceholder.style.display = 'flex';
-                }
-            }
-            
-            function getQRColor() {
-                if (currentColorType === 'gradient') {
-                    switch(currentGradient) {
-                        case 'blue-purple': return '#6a11
+                <!-- COMING SOON -->
+                <div class="card">
+                    <h3><i class="fas fa-rocket"></i> Fonctionnalités à venir</h3>
+                    <div style="display: grid; gap: 15px; margin-top: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8f9fa; border-radius:
