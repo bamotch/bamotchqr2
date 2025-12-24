@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
@@ -20,6 +21,7 @@
 
     <main class="container">
         <div class="app-container">
+            <!-- Section de sélection du type de contenu -->
             <div class="input-section">
                 <div class="tabs">
                     <button class="tab active" data-type="text">Texte</button>
@@ -29,22 +31,28 @@
                     <button class="tab" data-type="image">Image</button>
                 </div>
 
+                <!-- Zone de saisie de contenu -->
                 <div class="content-input">
+                    <!-- Texte -->
                     <div class="input-group active" id="text-input">
                         <label for="text-content"><i class="fas fa-font"></i> Texte à encoder</label>
                         <textarea id="text-content" placeholder="Entrez le texte que vous souhaitez convertir en QR code..."></textarea>
                     </div>
 
+                    <!-- URL -->
                     <div class="input-group" id="url-input">
                         <label for="url-content"><i class="fas fa-link"></i> Adresse URL</label>
                         <input type="url" id="url-content" placeholder="https://exemple.com">
                     </div>
 
+                    <!-- Wi-Fi -->
                     <div class="input-group" id="wifi-input">
                         <label for="wifi-ssid"><i class="fas fa-wifi"></i> Nom du réseau (SSID)</label>
                         <input type="text" id="wifi-ssid" placeholder="Nom de votre réseau Wi-Fi">
+                        
                         <label for="wifi-password">Mot de passe</label>
                         <input type="text" id="wifi-password" placeholder="Mot de passe Wi-Fi">
+                        
                         <label for="wifi-security">Type de sécurité</label>
                         <select id="wifi-security">
                             <option value="WPA">WPA/WPA2</option>
@@ -53,41 +61,104 @@
                         </select>
                     </div>
 
+                    <!-- Contact -->
                     <div class="input-group" id="contact-input">
                         <label for="contact-name"><i class="fas fa-user"></i> Nom</label>
                         <input type="text" id="contact-name" placeholder="Nom complet">
+                        
                         <label for="contact-phone">Téléphone</label>
                         <input type="tel" id="contact-phone" placeholder="Numéro de téléphone">
+                        
                         <label for="contact-email">Email</label>
                         <input type="email" id="contact-email" placeholder="Adresse email">
                     </div>
 
+                    <!-- Image -->
                     <div class="input-group" id="image-input">
                         <label><i class="fas fa-image"></i> Image à convertir en QR code</label>
-                        <p class="info-note">Pour les images, nous générerons un QR code avec un lien vers l'image</p>
+                        <p class="info-note">Note: Pour les images, nous générerons un QR code avec les données de l'image encodées</p>
                         <input type="file" id="image-file" accept="image/*">
                         <div class="image-preview" id="image-preview"></div>
                     </div>
                 </div>
 
+                <!-- Options du QR code -->
                 <div class="qr-options">
                     <h3><i class="fas fa-sliders-h"></i> Options du QR code</h3>
+                    
+                    <!-- Nouvelles: Couleurs prédéfinies -->
+                    <div class="color-presets">
+                        <h4><i class="fas fa-palette"></i> Couleurs prédéfinies</h4>
+                        <div class="presets-grid">
+                            <button class="preset-btn active" data-color="#000000" data-bg="#ffffff">
+                                <span class="color-preview" style="background-color: #000000;"></span>
+                                <span class="bg-preview" style="background-color: #ffffff;"></span>
+                                Noir/Blanc
+                            </button>
+                            
+                            <button class="preset-btn" data-color="#2c3e50" data-bg="#ecf0f1">
+                                <span class="color-preview" style="background-color: #2c3e50;"></span>
+                                <span class="bg-preview" style="background-color: #ecf0f1;"></span>
+                                Bleu/Gris clair
+                            </button>
+                            
+                            <button class="preset-btn" data-color="#27ae60" data-bg="#d5f4e6">
+                                <span class="color-preview" style="background-color: #27ae60;"></span>
+                                <span class="bg-preview" style="background-color: #d5f4e6;"></span>
+                                Vert/Fond vert
+                            </button>
+                            
+                            <button class="preset-btn" data-color="#8e44ad" data-bg="#f4ecf7">
+                                <span class="color-preview" style="background-color: #8e44ad;"></span>
+                                <span class="bg-preview" style="background-color: #f4ecf7;"></span>
+                                Violet/Fond violet
+                            </button>
+                            
+                            <button class="preset-btn" data-color="#e74c3c" data-bg="#fadbd8">
+                                <span class="color-preview" style="background-color: #e74c3c;"></span>
+                                <span class="bg-preview" style="background-color: #fadbd8;"></span>
+                                Rouge/Fond rouge
+                            </button>
+                            
+                            <button class="preset-btn" data-color="#f39c12" data-bg="#fef5e7">
+                                <span class="color-preview" style="background-color: #f39c12;"></span>
+                                <span class="bg-preview" style="background-color: #fef5e7;"></span>
+                                Orange/Fond orange
+                            </button>
+                            
+                            <button class="preset-btn" data-color="#3498db" data-bg="#ebf5fb">
+                                <span class="color-preview" style="background-color: #3498db;"></span>
+                                <span class="bg-preview" style="background-color: #ebf5fb;"></span>
+                                Bleu ciel/Fond bleu
+                            </button>
+                            
+                            <button class="preset-btn" data-color="#000000" data-bg="#f7dc6f">
+                                <span class="color-preview" style="background-color: #000000;"></span>
+                                <span class="bg-preview" style="background-color: #f7dc6f;"></span>
+                                Noir/Jaune
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div class="options-grid">
                         <div class="option">
-                            <label for="qr-size">Taille</label>
+                            <label for="qr-size"><i class="fas fa-expand-alt"></i> Taille</label>
                             <input type="range" id="qr-size" min="100" max="400" value="200">
                             <span id="size-value">200px</span>
                         </div>
+                        
                         <div class="option">
-                            <label for="qr-color">Couleur</label>
+                            <label for="qr-color"><i class="fas fa-fill-drip"></i> Couleur du QR</label>
                             <input type="color" id="qr-color" value="#000000">
                         </div>
+                        
                         <div class="option">
-                            <label for="qr-bg">Fond</label>
+                            <label for="qr-bg"><i class="fas fa-square-full"></i> Fond</label>
                             <input type="color" id="qr-bg" value="#ffffff">
                         </div>
+                        
                         <div class="option">
-                            <label for="qr-error">Correction d'erreur</label>
+                            <label for="qr-error"><i class="fas fa-shield-alt"></i> Correction d'erreur</label>
                             <select id="qr-error">
                                 <option value="L">Faible (7%)</option>
                                 <option value="M" selected>Moyenne (15%)</option>
@@ -98,11 +169,15 @@
                     </div>
                 </div>
 
+                <!-- Bouton de génération -->
                 <div class="generate-btn">
-                    <button id="generate-btn"><i class="fas fa-bolt"></i> Générer le QR Code</button>
+                    <button id="generate-btn">
+                        <i class="fas fa-bolt"></i> Générer le QR Code
+                    </button>
                 </div>
             </div>
 
+            <!-- Section d'affichage du QR code -->
             <div class="output-section">
                 <div class="qr-container">
                     <h3><i class="fas fa-qrcode"></i> QR Code Généré</h3>
@@ -113,19 +188,31 @@
                     </div>
                 </div>
 
+                <!-- Options de téléchargement -->
                 <div class="download-options">
                     <h3><i class="fas fa-download"></i> Télécharger</h3>
                     <div class="download-buttons">
-                        <button id="download-png" disabled><i class="fas fa-file-image"></i> PNG</button>
-                        <button id="download-svg" disabled><i class="fas fa-file-code"></i> SVG</button>
-                        <button id="download-jpg" disabled><i class="fas fa-file-image"></i> JPG</button>
+                        <button id="download-png" disabled>
+                            <i class="fas fa-file-image"></i> PNG
+                        </button>
+                        <button id="download-svg" disabled>
+                            <i class="fas fa-file-code"></i> SVG
+                        </button>
+                        <button id="download-jpg" disabled>
+                            <i class="fas fa-file-image"></i> JPG
+                        </button>
                     </div>
                     
+                    <!-- Historique avec Firebase -->
                     <div class="history-section">
                         <h3><i class="fas fa-history"></i> Historique</h3>
                         <div class="history-controls">
-                            <button id="save-history"><i class="fas fa-save"></i> Sauvegarder</button>
-                            <button id="load-history"><i class="fas fa-history"></i> Charger</button>
+                            <button id="save-history">
+                                <i class="fas fa-save"></i> Sauvegarder
+                            </button>
+                            <button id="load-history">
+                                <i class="fas fa-history"></i> Charger
+                            </button>
                         </div>
                         <div id="history-list"></div>
                     </div>
@@ -133,24 +220,43 @@
             </div>
         </div>
         
+        <!-- Section à propos -->
         <div class="about-section">
             <h3><i class="fas fa-info-circle"></i> Comment utiliser BAMOTCH QR</h3>
             <div class="steps">
-                <div class="step"><div class="step-number">1</div><h4>Choisissez le type</h4><p>Sélectionnez l'onglet correspondant à vos données.</p></div>
-                <div class="step"><div class="step-number">2</div><h4>Entrez vos données</h4><p>Saisissez le texte, l'URL, ou téléversez une image.</p></div>
-                <div class="step"><div class="step-number">3</div><h4>Personnalisez</h4><p>Ajustez la taille et les couleurs du QR code.</p></div>
-                <div class="step"><div class="step-number">4</div><h4>Générez</h4><p>Cliquez sur "Générer" puis téléchargez votre QR code.</p></div>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Choisissez le type</h4>
+                    <p>Sélectionnez l'onglet correspondant à vos données.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Entrez vos données</h4>
+                    <p>Saisissez le texte, l'URL, ou téléversez une image.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Personnalisez</h4>
+                    <p>Choisissez une couleur prédéfinie ou personnalisez.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Générez et téléchargez</h4>
+                    <p>Cliquez sur "Générer" puis téléchargez votre QR code.</p>
+                </div>
             </div>
         </div>
     </main>
 
     <footer>
         <div class="container">
-            <p>BAMOTCH QR &copy; 2023 - Générateur de QR Codes gratuit</p>
-            <p>Déployé sur GitHub Pages</p>
+            <p>BAMOTCH QR &copy; <span id="current-year">2024</span> - Générateur de QR Codes gratuit</p>
+            <p>Développé par <strong>TAHIROU DESIGN STUDIO</strong> | Déployé sur GitHub Pages</p>
+            <p class="footer-note">Tous les QR codes générés sont stockés localement, vos données sont privées</p>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="firebase-config.js"></script>
     <script src="script.js"></script>
 </body>
