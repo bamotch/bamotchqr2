@@ -21,9 +21,39 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentQrContent = '';
     let currentQrType = 'text';
     
+    // Mettre à jour l'année automatiquement
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    
     // Afficher la valeur de la taille
     qrSize.addEventListener('input', function() {
         sizeValue.textContent = this.value + 'px';
+    });
+    
+    // Gestion des couleurs prédéfinies
+    const presetButtons = document.querySelectorAll('.preset-btn');
+    const qrColorInput = document.getElementById('qr-color');
+    const qrBgInput = document.getElementById('qr-bg');
+    
+    presetButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const color = this.getAttribute('data-color');
+            const bg = this.getAttribute('data-bg');
+            
+            // Mettre à jour les inputs couleur
+            qrColorInput.value = color;
+            qrBgInput.value = bg;
+            
+            // Mettre en surbrillance le bouton sélectionné
+            presetButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Si un QR code est déjà généré, le regénérer avec les nouvelles couleurs
+            if (currentQrCode) {
+                setTimeout(() => {
+                    generateBtn.click();
+                }, 300);
+            }
+        });
     });
     
     // Gestion des tabs
@@ -52,11 +82,25 @@ document.addEventListener('DOMContentLoaded', function() {
     imageFileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
+            // Vérifier la taille du fichier (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('L\'image est trop volumineuse. Maximum 5MB.');
+                this.value = '';
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = function(event) {
-                imagePreview.innerHTML = `<img src="${event.target.result}" alt="Aperçu de l'image">`;
+                imagePreview.innerHTML = `<img src="${event.target.result}" alt="Aperçu de l'image" style="max-width: 200px; border-radius: 5px;">`;
+            };
+            reader.onerror = function() {
+                alert('Erreur lors du chargement de l\'image');
+                imageFileInput.value = '';
+                imagePreview.innerHTML = '';
             };
             reader.readAsDataURL(file);
+        } else {
+            imagePreview.innerHTML = '';
         }
     });
     
@@ -69,9 +113,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const canvas = document.querySelector('#qrcode canvas');
             if (canvas) {
                 const link = document.createElement('a');
-                link.download = `bamotch-qr-${Date.now()}.png`;
+                const timestamp = new Date().getTime();
+                link.download = `bamotch-qr-${timestamp}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+                
+                // Message de confirmation
+                showNotification('QR code téléchargé en PNG!');
             }
         }
     });
@@ -83,13 +131,28 @@ document.addEventListener('DOMContentLoaded', function() {
             if (svg) {
                 const serializer = new XMLSerializer();
                 const source = serializer.serializeToString(svg);
-                const blob = new Blob([source], {type: 'image/svg+xml'});
+                
+                // Appliquer les couleurs actuelles au SVG avant téléchargement
+                const color = qrColorInput.value;
+                const bgColor = qrBgInput.value;
+                const styledSource = source.replace(/fill="#[0-9a-fA-F]{6}"/g, function(match) {
+                    if (match.includes('fill="#ffffff"')) {
+                        return `fill="${bgColor}"`;
+                    } else {
+                        return `fill="${color}"`;
+                    }
+                });
+                
+                const blob = new Blob([styledSource], {type: 'image/svg+xml'});
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.download = `bamotch-qr-${Date.now()}.svg`;
+                const timestamp = new Date().getTime();
+                link.download = `bamotch-qr-${timestamp}.svg`;
                 link.href = url;
                 link.click();
                 URL.revokeObjectURL(url);
+                
+                showNotification('QR code téléchargé en SVG!');
             }
         }
     });
@@ -99,13 +162,69 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentQrCode) {
             const canvas = document.querySelector('#qrcode canvas');
             if (canvas) {
+                // Créer un canvas avec fond blanc pour JPG
+                const tempCanvas = document.createElement('canvas');
+                const ctx = tempCanvas.getContext('2d');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                
+                // Remplir avec la couleur de fond
+                ctx.fillStyle = qrBgInput.value;
+                ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                
+                // Dessiner le QR code
+                ctx.drawImage(canvas, 0, 0);
+                
                 const link = document.createElement('a');
-                link.download = `bamotch-qr-${Date.now()}.jpg`;
-                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                const timestamp = new Date().getTime();
+                link.download = `bamotch-qr-${timestamp}.jpg`;
+                link.href = tempCanvas.toDataURL('image/jpeg', 0.9);
                 link.click();
+                
+                showNotification('QR code téléchargé en JPG!');
             }
         }
     });
+    
+    // Fonction pour afficher une notification
+    function showNotification(message) {
+        // Créer une notification temporaire
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    
+    // Ajouter les styles d'animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
     
     // Sauvegarde dans l'historique
     saveHistoryBtn.addEventListener('click', saveToHistory);
@@ -121,10 +240,18 @@ document.addEventListener('DOMContentLoaded', function() {
         switch(currentQrType) {
             case 'text':
                 content = document.getElementById('text-content').value.trim();
+                if (!content) {
+                    alert('Veuillez entrer du texte à encoder');
+                    return;
+                }
                 break;
                 
             case 'url':
                 let url = document.getElementById('url-content').value.trim();
+                if (!url) {
+                    alert('Veuillez entrer une URL');
+                    return;
+                }
                 if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
                     url = 'https://' + url;
                 }
@@ -174,14 +301,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
-                // Pour les images, on utilise l'URL de données
+                // Pour les images, nous créons un format spécial JSON
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    content = event.target.result;
+                    // Créer un objet avec les métadonnées de l'image
+                    const imageData = {
+                        type: 'image',
+                        filename: file.name,
+                        size: file.size,
+                        mimeType: file.type,
+                        dataUrl: event.target.result,
+                        timestamp: new Date().toISOString(),
+                        note: 'Image encodée par BAMOTCH QR'
+                    };
+                    
+                    // Convertir en JSON pour le QR code
+                    content = JSON.stringify(imageData);
+                    
+                    // Ajouter un préfixe pour identifier
+                    content = 'BAMOTCH_IMAGE:' + content;
+                    
                     generateQRCodeWithContent(content, 'image');
                 };
+                
+                reader.onerror = function() {
+                    alert('Erreur lors de la lecture de l\'image');
+                };
+                
                 reader.readAsDataURL(file);
-                return;
+                return; // Retourner ici car la génération est asynchrone
         }
         
         if (!content) {
@@ -206,34 +354,45 @@ document.addEventListener('DOMContentLoaded', function() {
         const bgColor = document.getElementById('qr-bg').value;
         const errorCorrection = document.getElementById('qr-error').value;
         
-        // Générer le nouveau QR code
-        currentQrCode = new QRCode(qrcodeDiv, {
-            text: content,
-            width: size,
-            height: size,
-            colorDark: color,
-            colorLight: bgColor,
-            correctLevel: QRCode.CorrectLevel[errorCorrection]
-        });
-        
-        // Masquer le placeholder et afficher le QR code
-        qrPlaceholder.style.display = 'none';
-        qrcodeDiv.style.display = 'block';
-        
-        // Activer les boutons de téléchargement
-        downloadPngBtn.disabled = false;
-        downloadSvgBtn.disabled = false;
-        downloadJpgBtn.disabled = false;
-        
-        // Pour les SVG, nous devons appliquer les couleurs
-        setTimeout(() => {
-            const svg = qrcodeDiv.querySelector('svg');
-            if (svg) {
-                const paths = svg.querySelectorAll('path');
-                paths[0].style.fill = bgColor;
-                paths[1].style.fill = color;
-            }
-        }, 100);
+        try {
+            // Générer le nouveau QR code
+            currentQrCode = new QRCode(qrcodeDiv, {
+                text: content,
+                width: size,
+                height: size,
+                colorDark: color,
+                colorLight: bgColor,
+                correctLevel: QRCode.CorrectLevel[errorCorrection]
+            });
+            
+            // Masquer le placeholder et afficher le QR code
+            qrPlaceholder.style.display = 'none';
+            qrcodeDiv.style.display = 'flex';
+            
+            // Activer les boutons de téléchargement
+            downloadPngBtn.disabled = false;
+            downloadSvgBtn.disabled = false;
+            downloadJpgBtn.disabled = false;
+            
+            // Appliquer les couleurs au SVG après un délai
+            setTimeout(() => {
+                const svg = qrcodeDiv.querySelector('svg');
+                if (svg) {
+                    const paths = svg.querySelectorAll('path');
+                    if (paths.length >= 2) {
+                        paths[0].style.fill = bgColor; // Fond
+                        paths[1].style.fill = color;   // Modules
+                    }
+                }
+                
+                // Afficher un message de succès
+                showNotification('QR code généré avec succès!');
+            }, 100);
+            
+        } catch (error) {
+            console.error('Erreur lors de la génération du QR code:', error);
+            alert('Erreur lors de la génération du QR code. Veuillez réessayer avec moins de données.');
+        }
     }
     
     // Fonction pour sauvegarder dans l'historique
@@ -243,21 +402,49 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Créer l'élément d'historique
+        const historyItem = {
+            type: currentQrType,
+            content: '',
+            fullContent: currentQrContent,
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        };
+        
+        // Créer un aperçu du contenu
+        if (currentQrType === 'image' && currentQrContent.startsWith('BAMOTCH_IMAGE:')) {
+            historyItem.content = '📷 Image: ' + currentQrContent.substring(14, 50) + '...';
+        } else if (currentQrType === 'text') {
+            historyItem.content = '📝 ' + (currentQrContent.length > 40 
+                ? currentQrContent.substring(0, 40) + '...' 
+                : currentQrContent);
+        } else if (currentQrType === 'url') {
+            historyItem.content = '🔗 ' + (currentQrContent.length > 40 
+                ? currentQrContent.substring(0, 40) + '...' 
+                : currentQrContent);
+        } else if (currentQrType === 'wifi') {
+            historyItem.content = '📶 QR Code Wi-Fi';
+        } else if (currentQrType === 'contact') {
+            historyItem.content = '👤 Carte de contact';
+        } else {
+            historyItem.content = currentQrContent.length > 50 
+                ? currentQrContent.substring(0, 50) + '...' 
+                : currentQrContent;
+        }
+        
         // Si Firebase est configuré
-        if (typeof db !== 'undefined') {
-            const historyItem = {
-                type: currentQrType,
-                content: currentQrContent.length > 100 ? currentQrContent.substring(0, 100) + '...' : currentQrContent,
-                fullContent: currentQrContent,
-                timestamp: new Date().toISOString(),
-                date: new Date().toLocaleString('fr-FR')
-            };
-            
-            // Ajouter à Firestore
+        if (typeof db !== 'undefined' && db.collection) {
             db.collection("history").add(historyItem)
                 .then((docRef) => {
                     console.log("Document écrit avec ID: ", docRef.id);
-                    alert('QR code sauvegardé dans l\'historique!');
+                    showNotification('QR code sauvegardé dans l\'historique cloud!');
+                    loadHistory();
                 })
                 .catch((error) => {
                     console.error("Erreur lors de l'ajout du document: ", error);
@@ -266,14 +453,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         } else {
             // Utiliser le stockage local comme fallback
-            const historyItem = {
-                type: currentQrType,
-                content: currentQrContent.length > 100 ? currentQrContent.substring(0, 100) + '...' : currentQrContent,
-                fullContent: currentQrContent,
-                timestamp: new Date().toISOString(),
-                date: new Date().toLocaleString('fr-FR')
-            };
-            
             saveToLocalHistory(historyItem);
         }
     }
@@ -289,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         localStorage.setItem('bamotch-qr-history', JSON.stringify(history));
-        alert('QR code sauvegardé dans l\'historique local!');
+        showNotification('QR code sauvegardé dans l\'historique local!');
         loadHistory();
     }
     
@@ -298,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function() {
         historyList.innerHTML = '';
         
         // Si Firebase est configuré
-        if (typeof db !== 'undefined') {
+        if (typeof db !== 'undefined' && db.collection) {
             db.collection("history")
                 .orderBy("timestamp", "desc")
                 .limit(20)
@@ -311,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
-                        addHistoryItemToDOM(data);
+                        addHistoryItemToDOM(data, doc.id);
                     });
                 })
                 .catch((error) => {
@@ -334,15 +513,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        history.forEach(item => {
-            addHistoryItemToDOM(item);
+        history.forEach((item, index) => {
+            addHistoryItemToDOM(item, 'local-' + index);
         });
     }
     
     // Fonction pour ajouter un élément d'historique au DOM
-    function addHistoryItemToDOM(item) {
+    function addHistoryItemToDOM(item, id) {
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
+        historyItem.id = 'history-' + id;
         
         // Icône selon le type
         let icon = 'fa-font';
@@ -351,16 +531,17 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'wifi': icon = 'fa-wifi'; break;
             case 'contact': icon = 'fa-user'; break;
             case 'image': icon = 'fa-image'; break;
+            default: icon = 'fa-font';
         }
         
         historyItem.innerHTML = `
-            <div>
-                <i class="fas ${icon}"></i>
+            <div style="display: flex; align-items: center;">
+                <i class="fas ${icon}" style="color: #2575fc; font-size: 14px;"></i>
                 <span class="history-content">${item.content}</span>
             </div>
-            <div>
+            <div style="display: flex; align-items: center;">
                 <span class="history-date">${item.date}</span>
-                <button class="history-action" onclick="loadFromHistory('${item.type}', '${encodeURIComponent(item.fullContent)}')">
+                <button class="history-action" onclick="loadFromHistory('${item.type}', '${encodeURIComponent(item.fullContent)}')" title="Charger ce QR code">
                     <i class="fas fa-redo"></i>
                 </button>
             </div>
@@ -370,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialisation: charger l'historique au démarrage
-    loadHistory();
+    setTimeout(loadHistory, 1000);
 });
 
 // Fonction pour charger à partir de l'historique
@@ -436,11 +617,35 @@ window.loadFromHistory = function(type, encodedContent) {
             }
             break;
         case 'image':
-            // Pour les images, le contenu est une URL de données
-            document.getElementById('image-preview').innerHTML = `<img src="${content}" alt="Image chargée">`;
+            // Pour les images encodées dans notre format spécial
+            if (content.startsWith('BAMOTCH_IMAGE:')) {
+                try {
+                    const jsonStr = content.substring('BAMOTCH_IMAGE:'.length);
+                    const imageData = JSON.parse(jsonStr);
+                    
+                    // Afficher l'image dans l'aperçu
+                    const imagePreview = document.getElementById('image-preview');
+                    imagePreview.innerHTML = `<img src="${imageData.dataUrl}" alt="Image chargée" style="max-width: 200px; border-radius: 5px;">`;
+                    
+                    // Mettre à jour le fichier input (complexe, on laisse juste l'aperçu)
+                    // Note: On ne peut pas définir la valeur d'un input file par sécurité
+                    
+                    // Afficher un message informatif
+                    alert('Image chargée depuis l\'historique. Cliquez sur "Générer" pour recréer le QR code.');
+                } catch (error) {
+                    console.error('Erreur lors du chargement de l\'image:', error);
+                    alert('Format d\'image non reconnu');
+                }
+            } else if (content.startsWith('data:image')) {
+                // Pour les anciennes images en data URL
+                document.getElementById('image-preview').innerHTML = 
+                    `<img src="${content}" alt="Image chargée" style="max-width: 200px; border-radius: 5px;">`;
+            }
             break;
     }
     
-    // Générer automatiquement le QR code
-    document.getElementById('generate-btn').click();
+    // Générer automatiquement le QR code après un court délai
+    setTimeout(() => {
+        document.getElementById('generate-btn').click();
+    }, 500);
 };
