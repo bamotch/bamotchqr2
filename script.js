@@ -3,79 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // INITIALISATION
     // ============================================
-
-    // Performance Monitoring
-const perf = {
-    startTime: performance.now(),
     
-    logPerformance: function() {
-        const loadTime = performance.now() - this.startTime;
-        console.log(`🚀 BAMOTCH QR chargé en ${loadTime.toFixed(0)}ms`);
-        
-        // Rapport pour Google
-        if (window.gtag) {
-            gtag('event', 'timing_complete', {
-                'name': 'load',
-                'value': Math.round(loadTime),
-                'event_category': 'Performance'
-            });
-        }
-    },
-    
-    lazyLoad: function() {
-        // Chargement différé des images
-        const images = document.querySelectorAll('img[data-src]');
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
-                    observer.unobserve(img);
-                }
-            });
-        });
-        
-        images.forEach(img => imageObserver.observe(img));
-    }
-};
-    // Analytics simple
-class Analytics {
-    static trackEvent(category, action, label) {
-        console.log(`📊 Analytics: ${category} - ${action} - ${label}`);
-        
-        // Stocker localement
-        const stats = JSON.parse(localStorage.getItem('bamotch_stats') || '{}');
-        stats[category] = stats[category] || {};
-        stats[category][action] = (stats[category][action] || 0) + 1;
-        localStorage.setItem('bamotch_stats', JSON.stringify(stats));
-        
-        // Envoyer à Google Analytics si configuré
-        if (window.gtag) {
-            gtag('event', action, {
-                'event_category': category,
-                'event_label': label
-            });
-        }
-    }
-    
-    static showStats() {
-        const stats = JSON.parse(localStorage.getItem('bamotch_stats') || '{}');
-        console.log('📈 Statistiques BAMOTCH QR:', stats);
-        return stats;
-    }
-}
-
-// Exemples d'utilisation
-Analytics.trackEvent('generation', 'qr_created', 'text');
-Analytics.trackEvent('download', 'format_selected', 'png');
-Analytics.trackEvent('design', 'shape_changed', 'circle');
-
-// Démarrer le monitoring
-window.addEventListener('load', () => {
-    perf.logPerformance();
-    perf.lazyLoad();
-});
     // Mettre à jour l'année
     document.getElementById('current-year').textContent = new Date().getFullYear();
     
