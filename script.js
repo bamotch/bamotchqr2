@@ -39,6 +39,37 @@ const perf = {
         images.forEach(img => imageObserver.observe(img));
     }
 };
+    // Analytics simple
+class Analytics {
+    static trackEvent(category, action, label) {
+        console.log(`📊 Analytics: ${category} - ${action} - ${label}`);
+        
+        // Stocker localement
+        const stats = JSON.parse(localStorage.getItem('bamotch_stats') || '{}');
+        stats[category] = stats[category] || {};
+        stats[category][action] = (stats[category][action] || 0) + 1;
+        localStorage.setItem('bamotch_stats', JSON.stringify(stats));
+        
+        // Envoyer à Google Analytics si configuré
+        if (window.gtag) {
+            gtag('event', action, {
+                'event_category': category,
+                'event_label': label
+            });
+        }
+    }
+    
+    static showStats() {
+        const stats = JSON.parse(localStorage.getItem('bamotch_stats') || '{}');
+        console.log('📈 Statistiques BAMOTCH QR:', stats);
+        return stats;
+    }
+}
+
+// Exemples d'utilisation
+Analytics.trackEvent('generation', 'qr_created', 'text');
+Analytics.trackEvent('download', 'format_selected', 'png');
+Analytics.trackEvent('design', 'shape_changed', 'circle');
 
 // Démarrer le monitoring
 window.addEventListener('load', () => {
