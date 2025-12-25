@@ -3,7 +3,48 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // INITIALISATION
     // ============================================
+
+    // Performance Monitoring
+const perf = {
+    startTime: performance.now(),
     
+    logPerformance: function() {
+        const loadTime = performance.now() - this.startTime;
+        console.log(`🚀 BAMOTCH QR chargé en ${loadTime.toFixed(0)}ms`);
+        
+        // Rapport pour Google
+        if (window.gtag) {
+            gtag('event', 'timing_complete', {
+                'name': 'load',
+                'value': Math.round(loadTime),
+                'event_category': 'Performance'
+            });
+        }
+    },
+    
+    lazyLoad: function() {
+        // Chargement différé des images
+        const images = document.querySelectorAll('img[data-src]');
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        images.forEach(img => imageObserver.observe(img));
+    }
+};
+
+// Démarrer le monitoring
+window.addEventListener('load', () => {
+    perf.logPerformance();
+    perf.lazyLoad();
+});
     // Mettre à jour l'année
     document.getElementById('current-year').textContent = new Date().getFullYear();
     
