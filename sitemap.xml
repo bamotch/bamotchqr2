@@ -3,7 +3,7 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
     
     <url>
-        <loc>https://votre-username.github.io/bamotch-qr/</loc>
+        <loc>https://bamotch.github.io/bamotchqr2/</loc>
         <lastmod>2024-01-15</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
@@ -11,28 +11,27 @@
     
     <!-- Pages virtuelles pour SEO -->
     <url>
-        <loc>https://votre-username.github.io/bamotch-qr/generateur-qr-code</loc>
+        <loc>https://bamotch.github.io/bamotchqr2/generateur-qr-code</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>https://bamotch.github.io/bamotchqr2/qr-code-personnalise</loc>
         <lastmod>2024-01-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>https://votre-username.github.io/bamotch-qr/qr-code-personnalise</loc>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-avec-logo</loc>
         <lastmod>2024-01-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>https://votre-username.github.io/bamotch-qr/qr-code-avec-logo</loc>
-        <lastmod>2024-01-15</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
-        <loc>https://votre-username.github.io/bamotch-qr/qr-code-gratuit</loc>
+        <loc>https://bamotch.github.io/bamotchqr2/qr-code-gratuit</loc>
         <lastmod>2024-01-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
