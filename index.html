@@ -1,313 +1,616 @@
 <!DOCTYPE html>
-<html lang="fr-FR">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BAMOTCH QR | Générateur Gratuit de QR Codes - WiFi, Contact, Lien, Texte</title>
-    <meta name="description" content="Générez GRATUITEMENT des QR codes professionnels : WiFi, Contact vCard, Liens, Texte. 5 designs + 5 formes + logo intégré. 100% sécurisé et sans limite.">
-    <meta name="keywords" content="générateur QR code, QR code WiFi, QR code contact, QR code gratuit, créer QR code, QR code design, QR code personnalisé, QR code vCard">
-    <meta name="author" content="TAHIROU DESIGN STUDIO">
-    <meta name="robots" content="index, follow">
-    <meta name="google-site-verification" content="XKy3Fr-HEMcKIKwbjUfpOGSdpo6t2Rig0zFlpg0MlNU">
-    <meta property="og:title" content="BAMOTCH QR - Générateur Premium de QR Codes Gratuit">
-    <meta property="og:description" content="Créez des QR codes uniques pour WiFi, contacts, liens et texte. Designs exclusifs, 100% gratuit.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://bamotch.github.io/bamotchqr2">
-    <meta property="og:locale" content="fr_FR">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔳</text></svg>">
-    
-    <!-- Stylesheets -->
+    <title>BAMOTCH QR | Générateur Premium de QR Codes</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    
-    <!-- JavaScript Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/lib/qrcode.min.js"></script>
 </head>
 <body>
-    <!-- Google Site Verification -->
-    <meta name="google-site-verification" content="XKy3Fr-HEMcKIKwbjUfpOGSdpo6t2Rig0zFlpg0MlNU">
-    
-    <!-- Header -->
-    <header class="header">
+    <!-- Navigation -->
+    <nav class="navbar">
         <div class="container">
-            <div class="logo">
-                <i class="fas fa-qrcode logo-icon"></i>
-                <h1>BAMOTCH <span>QR</span></h1>
+            <div class="nav-brand">
+                <i class="fas fa-qrcode"></i>
+                <h1>BAMOTCH <span class="highlight">QR</span></h1>
             </div>
-            <div class="tagline">Générateur Professionnel de QR Codes</div>
+            <div class="nav-actions">
+                <button class="nav-btn" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="nav-btn" id="help-btn">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Hero -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Créez des QR Codes <span class="gradient-text">UNIQUES & STYLÉS</span></h2>
+                <p>Générez des QR codes personnalisés avec des designs avancés, formes spéciales et logos intégrés.</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <i class="fas fa-shapes"></i>
+                        <span>15+ Designs</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-palette"></i>
+                        <span>20+ Couleurs</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-download"></i>
+                        <span>3 Formats</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-image"></i>
+                        <span>Logo 1MB max</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h2>Créez des QR Codes <span class="highlight">UNIQUES</span> en 30 Secondes</h2>
-            <p class="subtitle">WiFi • Contact • Lien • Texte • 5 Designs • 5 Formes • Logo Intégré • 100% Gratuit</p>
-            
-            <div class="stats">
-                <div class="stat">
-                    <i class="fas fa-bolt"></i>
-                    <span>Génération Instantanée</span>
-                </div>
-                <div class="stat">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>100% Sécurisé</span>
-                </div>
-                <div class="stat">
-                    <i class="fas fa-infinity"></i>
-                    <span>Usage Illimité</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main App -->
     <main class="container">
         <div class="app-grid">
-            <!-- Configuration Panel -->
-            <div class="config-panel">
-                <div class="panel-card">
-                    <h3><i class="fas fa-sliders-h"></i> Configuration</h3>
-                    
-                    <!-- Tabs -->
-                    <div class="tabs">
-                        <button class="tab-btn active" data-tab="url">
-                            <i class="fas fa-link"></i> Lien
-                        </button>
-                        <button class="tab-btn" data-tab="text">
-                            <i class="fas fa-font"></i> Texte
-                        </button>
-                        <button class="tab-btn" data-tab="wifi">
-                            <i class="fas fa-wifi"></i> WiFi
-                        </button>
-                        <button class="tab-btn" data-tab="contact">
-                            <i class="fas fa-address-card"></i> Contact
-                        </button>
+            <!-- Section Gauche: Configuration -->
+            <div class="config-section">
+                <!-- Contenu -->
+                <div class="config-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-edit"></i> Contenu à encoder</h3>
+                        <div class="card-badge">Étape 1</div>
                     </div>
                     
-                    <!-- Tab Contents -->
-                    <div class="tab-content active" id="url-tab">
-                        <div class="form-group">
-                            <label><i class="fas fa-globe"></i> URL du site</label>
-                            <input type="url" id="url-input" placeholder="https://www.exemple.com" 
-                                   value="https://bamotch.github.io/bamotchqr2">
+                    <div class="content-tabs">
+                        <div class="tab-scroll">
+                            <button class="content-tab active" data-type="text">
+                                <i class="fas fa-font"></i>
+                                <span>Texte</span>
+                            </button>
+                            <button class="content-tab" data-type="url">
+                                <i class="fas fa-link"></i>
+                                <span>Lien Web</span>
+                            </button>
+                            <button class="content-tab" data-type="wifi">
+                                <i class="fas fa-wifi"></i>
+                                <span>Wi-Fi</span>
+                            </button>
+                            <button class="content-tab" data-type="contact">
+                                <i class="fas fa-address-card"></i>
+                                <span>Contact</span>
+                            </button>
+                            <button class="content-tab" data-type="image" disabled title="Prochainement">
+                                <i class="fas fa-image"></i>
+                                <span>Image</span>
+                                <span class="soon-badge">Bientôt</span>
+                            </button>
+                            <button class="content-tab" data-type="video" disabled title="Prochainement">
+                                <i class="fas fa-video"></i>
+                                <span>Vidéo</span>
+                                <span class="soon-badge">Bientôt</span>
+                            </button>
+                            <button class="content-tab" data-type="pdf" disabled title="Prochainement">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF</span>
+                                <span class="soon-badge">Bientôt</span>
+                            </button>
+                            <button class="content-tab" data-type="audio" disabled title="Prochainement">
+                                <i class="fas fa-music"></i>
+                                <span>Audio</span>
+                                <span class="soon-badge">Bientôt</span>
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="tab-content" id="text-tab">
-                        <div class="form-group">
-                            <label><i class="fas fa-align-left"></i> Texte à encoder</label>
-                            <textarea id="text-input" placeholder="Entrez votre texte ici...">BAMOTCH QR - Générateur professionnel de QR codes</textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="wifi-tab">
-                        <div class="form-group">
-                            <label><i class="fas fa-wifi"></i> Nom du réseau (SSID)</label>
-                            <input type="text" id="wifi-ssid" placeholder="MonWiFi">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-key"></i> Mot de passe</label>
-                            <input type="text" id="wifi-password" placeholder="MotDePasse123">
-                        </div>
-                        <div class="form-row">
+
+                    <!-- Contenu dynamique -->
+                    <div class="content-forms">
+                        <!-- Texte -->
+                        <div class="content-form active" id="text-form">
                             <div class="form-group">
-                                <label><i class="fas fa-shield-alt"></i> Sécurité</label>
-                                <select id="wifi-security">
-                                    <option value="WPA">WPA/WPA2</option>
-                                    <option value="WEP">WEP</option>
-                                    <option value="nopass">Aucun</option>
-                                </select>
+                                <label for="text-content">
+                                    <i class="fas fa-align-left"></i> Votre texte
+                                    <span class="char-counter" id="text-counter">0/1000</span>
+                                </label>
+                                <textarea id="text-content" placeholder="Saisissez le texte que vous souhaitez convertir en QR code..." maxlength="1000"></textarea>
                             </div>
+                        </div>
+
+                        <!-- URL -->
+                        <div class="content-form" id="url-form">
                             <div class="form-group">
-                                <label><i class="fas fa-eye-slash"></i> Caché</label>
-                                <select id="wifi-hidden">
-                                    <option value="false">Non</option>
-                                    <option value="true">Oui</option>
-                                </select>
+                                <label for="url-content">
+                                    <i class="fas fa-globe"></i> URL du site
+                                </label>
+                                <div class="url-input-wrapper">
+                                    <div class="url-prefix">https://</div>
+                                    <input type="text" id="url-content" placeholder="exemple.com/votre-page">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wi-Fi -->
+                        <div class="content-form" id="wifi-form">
+                            <div class="form-group">
+                                <label for="wifi-ssid">
+                                    <i class="fas fa-network-wired"></i> Nom du réseau (SSID)
+                                </label>
+                                <input type="text" id="wifi-ssid" placeholder="MonRéseauWiFi">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="wifi-security">
+                                        <i class="fas fa-shield-alt"></i> Type de sécurité
+                                    </label>
+                                    <select id="wifi-security">
+                                        <option value="WPA">WPA/WPA2</option>
+                                        <option value="WEP">WEP</option>
+                                        <option value="nopass">Aucune protection</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="wifi-password">
+                                        <i class="fas fa-key"></i> Mot de passe
+                                    </label>
+                                    <input type="text" id="wifi-password" placeholder="Mot de passe Wi-Fi">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="content-form" id="contact-form">
+                            <div class="form-group">
+                                <label for="contact-name">
+                                    <i class="fas fa-user"></i> Nom complet
+                                </label>
+                                <input type="text" id="contact-name" placeholder="John Doe">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact-phone">
+                                        <i class="fas fa-phone"></i> Téléphone
+                                    </label>
+                                    <input type="tel" id="contact-phone" placeholder="+33 1 23 45 67 89">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-email">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </label>
+                                    <input type="email" id="contact-email" placeholder="contact@exemple.com">
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="tab-content" id="contact-tab">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label><i class="fas fa-user"></i> Prénom</label>
-                                <input type="text" id="contact-firstname" placeholder="Jean">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-user"></i> Nom</label>
-                                <input type="text" id="contact-lastname" placeholder="Dupont">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-phone"></i> Téléphone</label>
-                            <input type="tel" id="contact-phone" placeholder="+33 1 23 45 67 89">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-envelope"></i> Email</label>
-                            <input type="email" id="contact-email" placeholder="contact@exemple.com">
-                        </div>
+                </div>
+
+                <!-- Design & Formes -->
+                <div class="config-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-paint-brush"></i> Design & Formes</h3>
+                        <div class="card-badge">Étape 2</div>
                     </div>
-                    
-                    <!-- Designs Section -->
-                    <div class="section">
-                        <h4><i class="fas fa-paint-brush"></i> Design des Modules</h4>
-                        <div class="design-grid">
-                            <div class="design-option active" data-design="square">
-                                <div class="design-preview square"></div>
-                                <span>Carré</span>
-                            </div>
-                            <div class="design-option" data-design="rounded">
-                                <div class="design-preview rounded"></div>
-                                <span>Arrondi</span>
-                            </div>
-                            <div class="design-option" data-design="circle">
-                                <div class="design-preview circle"></div>
-                                <span>Rond</span>
-                            </div>
-                            <div class="design-option" data-design="dots">
-                                <div class="design-preview dots"></div>
-                                <span>Points</span>
-                            </div>
-                            <div class="design-option" data-design="diamond">
-                                <div class="design-preview diamond"></div>
-                                <span>Losange</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Shapes Section -->
-                    <div class="section">
-                        <h4><i class="fas fa-shapes"></i> Forme du QR Code</h4>
+
+                    <!-- Formes des points -->
+                    <div class="shape-section">
+                        <h4><i class="fas fa-shapes"></i> Forme des points</h4>
                         <div class="shape-grid">
                             <div class="shape-option active" data-shape="square">
-                                <div class="shape-preview square-shape"></div>
-                                <span>Carré</span>
+                                <div class="shape-preview square"></div>
+                                <span>Carrés</span>
                             </div>
                             <div class="shape-option" data-shape="circle">
-                                <div class="shape-preview circle-shape"></div>
-                                <span>Cercle</span>
+                                <div class="shape-preview circle"></div>
+                                <span>Ronds</span>
+                            </div>
+                            <div class="shape-option" data-shape="rounded">
+                                <div class="shape-preview rounded"></div>
+                                <span>Arrondis</span>
+                            </div>
+                            <div class="shape-option" data-shape="diamond">
+                                <div class="shape-preview diamond"></div>
+                                <span>Losanges</span>
+                            </div>
+                            <div class="shape-option" data-shape="line">
+                                <div class="shape-preview line"></div>
+                                <span>Tirets</span>
+                            </div>
+                            <div class="shape-option" data-shape="dot">
+                                <div class="shape-preview dot"></div>
+                                <span>Points fins</span>
                             </div>
                             <div class="shape-option" data-shape="heart">
-                                <div class="shape-preview heart-shape">❤</div>
-                                <span>Cœur</span>
+                                <div class="shape-preview heart"></div>
+                                <span>Cœurs</span>
                             </div>
                             <div class="shape-option" data-shape="star">
-                                <div class="shape-preview star-shape">★</div>
-                                <span>Étoile</span>
-                            </div>
-                            <div class="shape-option" data-shape="plus">
-                                <div class="shape-preview plus-shape">+</div>
-                                <span>Plus</span>
+                                <div class="shape-preview star"></div>
+                                <span>Étoiles</span>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Colors Section -->
-                    <div class="section">
-                        <h4><i class="fas fa-palette"></i> Couleur</h4>
-                        <div class="color-grid" id="color-grid">
-                            <!-- Colors will be populated by JS -->
+
+                    <!-- Forme des yeux -->
+                    <div class="eye-section">
+                        <h4><i class="fas fa-eye"></i> Forme des yeux</h4>
+                        <div class="eye-grid">
+                            <div class="eye-option active" data-eye="square">
+                                <div class="eye-preview square-eye"></div>
+                                <span>Carrés</span>
+                            </div>
+                            <div class="eye-option" data-eye="circle">
+                                <div class="eye-preview circle-eye"></div>
+                                <span>Ronds</span>
+                            </div>
+                            <div class="eye-option" data-eye="rounded">
+                                <div class="eye-preview rounded-eye"></div>
+                                <span>Arrondis</span>
+                            </div>
+                            <div class="eye-option" data-eye="flower">
+                                <div class="eye-preview flower-eye"></div>
+                                <span>Fleurs</span>
+                            </div>
+                            <div class="eye-option" data-eye="diamond">
+                                <div class="eye-preview diamond-eye"></div>
+                                <span>Losanges</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Logo Upload -->
-                    <div class="section">
-                        <h4><i class="fas fa-image"></i> Logo</h4>
-                        <div class="logo-upload" id="logo-upload">
+
+                    <!-- Couleurs -->
+                    <div class="color-section">
+                        <h4><i class="fas fa-palette"></i> Couleurs</h4>
+                        <div class="color-presets">
+                            <div class="color-preset active" data-color="#000000" data-bg="#ffffff">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #000000 50%, #ffffff 50%)"></div>
+                                <span>Noir/Blanc</span>
+                            </div>
+                            <div class="color-preset" data-color="#2c3e50" data-bg="#ecf0f1">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #2c3e50 50%, #ecf0f1 50%)"></div>
+                                <span>Bleu Nuit</span>
+                            </div>
+                            <div class="color-preset" data-color="#e74c3c" data-bg="#fadbd8">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #e74c3c 50%, #fadbd8 50%)"></div>
+                                <span>Rouge Vif</span>
+                            </div>
+                            <div class="color-preset" data-color="#27ae60" data-bg="#d5f4e6">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #27ae60 50%, #d5f4e6 50%)"></div>
+                                <span>Vert Émeraude</span>
+                            </div>
+                            <div class="color-preset" data-color="#9b59b6" data-bg="#f4ecf7">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #9b59b6 50%, #f4ecf7 50%)"></div>
+                                <span>Violet Royal</span>
+                            </div>
+                            <div class="color-preset" data-color="#3498db" data-bg="#ebf5fb">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #3498db 50%, #ebf5fb 50%)"></div>
+                                <span>Bleu Océan</span>
+                            </div>
+                            <div class="color-preset" data-color="#f39c12" data-bg="#fef5e7">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #f39c12 50%, #fef5e7 50%)"></div>
+                                <span>Orange Soleil</span>
+                            </div>
+                            <div class="color-preset" data-color="#1abc9c" data-bg="#e8f6f3">
+                                <div class="color-sample" style="background: linear-gradient(135deg, #1abc9c 50%, #e8f6f3 50%)"></div>
+                                <span>Turquoise</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Couleurs personnalisées -->
+                        <div class="custom-colors">
+                            <div class="color-picker-group">
+                                <label for="qr-color">
+                                    <i class="fas fa-fill-drip"></i> Couleur QR
+                                </label>
+                                <input type="color" id="qr-color" value="#000000">
+                            </div>
+                            <div class="color-picker-group">
+                                <label for="qr-bg">
+                                    <i class="fas fa-square-full"></i> Fond
+                                </label>
+                                <input type="color" id="qr-bg" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo & Options -->
+                <div class="config-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cogs"></i> Options avancées</h3>
+                        <div class="card-badge">Étape 3</div>
+                    </div>
+
+                    <!-- Logo -->
+                    <div class="logo-section">
+                        <h4><i class="fas fa-image"></i> Logo au centre</h4>
+                        <div class="logo-upload-area" id="logo-dropzone">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Glissez ou cliquez pour ajouter un logo</p>
-                            <input type="file" id="logo-input" accept=".png,.jpg,.jpeg">
+                            <p>Glissez-déposez votre logo ici</p>
+                            <p class="logo-hint">ou cliquez pour sélectionner (max 1MB)</p>
+                            <input type="file" id="logo-file" accept="image/*" hidden>
+                            <button class="btn-select" id="select-logo">
+                                <i class="fas fa-folder-open"></i> Choisir un fichier
+                            </button>
                         </div>
-                        <div class="logo-preview" id="logo-preview"></div>
-                    </div>
-                    
-                    <!-- Size Control -->
-                    <div class="section">
-                        <h4><i class="fas fa-expand-alt"></i> Taille</h4>
-                        <div class="size-control">
-                            <input type="range" id="size-slider" min="200" max="800" value="400">
-                            <div class="size-labels">
-                                <span>200px</span>
-                                <span id="size-value">400px</span>
-                                <span>800px</span>
+                        <div class="logo-preview" id="logo-preview" style="display: none;">
+                            <div class="logo-container">
+                                <img id="logo-image" src="" alt="Logo">
+                                <button class="logo-remove" id="remove-logo">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="logo-info">
+                                <span id="logo-name">logo.png</span>
+                                <span id="logo-size">256 KB</span>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Generate Button -->
-                    <button class="generate-btn" id="generate-btn">
-                        <i class="fas fa-magic"></i> Générer le QR Code
+
+                    <!-- Options techniques -->
+                    <div class="tech-options">
+                        <div class="option-row">
+                            <div class="option-group">
+                                <label for="qr-size">
+                                    <i class="fas fa-expand-alt"></i> Taille
+                                    <span id="size-value">512px</span>
+                                </label>
+                                <input type="range" id="qr-size" min="256" max="1024" value="512" step="64">
+                            </div>
+                            <div class="option-group">
+                                <label for="qr-margin">
+                                    <i class="fas fa-border-all"></i> Marge
+                                    <span id="margin-value">4 modules</span>
+                                </label>
+                                <input type="range" id="qr-margin" min="0" max="8" value="4" step="1">
+                            </div>
+                        </div>
+                        
+                        <div class="option-row">
+                            <div class="option-group">
+                                <label for="qr-error">
+                                    <i class="fas fa-shield-alt"></i> Correction erreur
+                                </label>
+                                <select id="qr-error">
+                                    <option value="L">Faible (L - 7%)</option>
+                                    <option value="M" selected>Moyenne (M - 15%)</option>
+                                    <option value="Q">Élevée (Q - 25%)</option>
+                                    <option value="H">Maximale (H - 30%)</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label for="qr-version">
+                                    <i class="fas fa-layer-group"></i> Version QR
+                                </label>
+                                <select id="qr-version">
+                                    <option value="1" selected>Auto</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton Générer -->
+                <div class="generate-section">
+                    <button id="generate-btn" class="btn-generate">
+                        <i class="fas fa-bolt"></i>
+                        <span>Générer le QR Code</span>
+                        <div class="btn-pulse"></div>
                     </button>
                 </div>
             </div>
-            
-            <!-- Preview Panel -->
-            <div class="preview-panel">
-                <div class="panel-card">
-                    <h3><i class="fas fa-eye"></i> Prévisualisation</h3>
+
+            <!-- Section Droite: Prévisualisation -->
+            <div class="preview-section">
+                <!-- Prévisualisation -->
+                <div class="preview-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-eye"></i> Aperçu en direct</h3>
+                        <div class="preview-actions">
+                            <button class="preview-action" id="refresh-preview" title="Rafraîchir">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button class="preview-action" id="fullscreen-preview" title="Plein écran">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
                     
-                    <div class="qr-preview">
-                        <div class="loader" id="loader"></div>
-                        <div id="qrcode"></div>
+                    <div class="qr-preview-container">
+                        <div id="qrcode" class="qr-canvas"></div>
                         <div class="qr-placeholder" id="qr-placeholder">
-                            <i class="fas fa-qrcode"></i>
-                            <p>Votre QR code apparaîtra ici</p>
+                            <div class="placeholder-content">
+                                <i class="fas fa-qrcode"></i>
+                                <h4>Votre QR Code apparaîtra ici</h4>
+                                <p>Configurez les options et cliquez sur "Générer"</p>
+                                <div class="placeholder-design">
+                                    <div class="design-sample">
+                                        <div class="sample-dot square"></div>
+                                        <div class="sample-dot circle"></div>
+                                        <div class="sample-dot rounded"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Download Buttons -->
-                    <div class="download-section">
-                        <h4><i class="fas fa-download"></i> Télécharger</h4>
-                        <div class="download-buttons">
-                            <button class="download-btn png" id="download-png" disabled>
-                                <i class="fas fa-file-image"></i> PNG
-                            </button>
-                            <button class="download-btn svg" id="download-svg" disabled>
-                                <i class="fas fa-file-code"></i> SVG
-                            </button>
-                            <button class="download-btn jpg" id="download-jpg" disabled>
-                                <i class="fas fa-file-image"></i> JPG
-                            </button>
-                            <button class="download-btn pdf" id="download-pdf" disabled>
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </button>
+
+                    <!-- Statistiques QR -->
+                    <div class="qr-stats" id="qr-stats" style="display: none;">
+                        <div class="stat-item">
+                            <i class="fas fa-ruler"></i>
+                            <div>
+                                <div class="stat-value" id="stat-size">512x512</div>
+                                <div class="stat-label">Taille</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-database"></i>
+                            <div>
+                                <div class="stat-value" id="stat-data">128 octets</div>
+                                <div class="stat-label">Données</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-shield"></i>
+                            <div>
+                                <div class="stat-value" id="stat-error">15%</div>
+                                <div class="stat-label">Correction</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <div>
+                                <div class="stat-value" id="stat-version">Auto</div>
+                                <div class="stat-label">Version</div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- QR Info -->
-                    <div class="qr-info">
-                        <h4><i class="fas fa-info-circle"></i> Informations</h4>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="label">Type</span>
-                                <span class="value" id="info-type">-</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Taille</span>
-                                <span class="value" id="info-size">-</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Design</span>
-                                <span class="value" id="info-design">-</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Forme</span>
-                                <span class="value" id="info-shape">-</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Couleur</span>
-                                <span class="value" id="info-color">-</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Logo</span>
-                                <span class="value" id="info-logo">Non</span>
+                </div>
+
+                <!-- Téléchargement -->
+                <div class="download-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-download"></i> Télécharger</h3>
+                        <div class="quality-selector">
+                            <span>Qualité:</span>
+                            <select id="quality-select">
+                                <option value="1">Élevée</option>
+                                <option value="0.9" selected>Optimale</option>
+                                <option value="0.7">Moyenne</option>
+                                <option value="0.5">Basse</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="download-options">
+                        <div class="format-buttons">
+                            <button class="format-btn png-btn" id="download-png" disabled>
+                                <div class="format-icon">
+                                    <i class="fas fa-file-image"></i>
+                                </div>
+                                <div class="format-info">
+                                    <div class="format-name">PNG</div>
+                                    <div class="format-desc">Transparent · Haute qualité</div>
+                                </div>
+                                <div class="format-size" id="png-size">~500 KB</div>
+                            </button>
+
+                            <button class="format-btn svg-btn" id="download-svg" disabled>
+                                <div class="format-icon">
+                                    <i class="fas fa-file-code"></i>
+                                </div>
+                                <div class="format-info">
+                                    <div class="format-name">SVG</div>
+                                    <div class="format-desc">Vectoriel · Échelle infinie</div>
+                                </div>
+                                <div class="format-size" id="svg-size">~200 KB</div>
+                            </button>
+
+                            <button class="format-btn jpg-btn" id="download-jpg" disabled>
+                                <div class="format-icon">
+                                    <i class="fas fa-file-image"></i>
+                                </div>
+                                <div class="format-info">
+                                    <div class="format-name">JPG</div>
+                                    <div class="format-desc">Pour le web · Léger</div>
+                                </div>
+                                <div class="format-size" id="jpg-size">~300 KB</div>
+                            </button>
+                        </div>
+
+                        <!-- Tailles prédéfinies -->
+                        <div class="size-presets">
+                            <h4><i class="fas fa-crop-alt"></i> Taille de sortie</h4>
+                            <div class="size-buttons">
+                                <button class="size-btn active" data-size="512">
+                                    <span class="size-value">512px</span>
+                                    <span class="size-label">Standard</span>
+                                </button>
+                                <button class="size-btn" data-size="1024">
+                                    <span class="size-value">1024px</span>
+                                    <span class="size-label">HD</span>
+                                </button>
+                                <button class="size-btn" data-size="2048">
+                                    <span class="size-value">2048px</span>
+                                    <span class="size-label">4K</span>
+                                </button>
+                                <button class="size-btn" data-size="4096">
+                                    <span class="size-value">4096px</span>
+                                    <span class="size-label">Max</span>
+                                </button>
                             </div>
                         </div>
+
+                        <!-- Options de nommage -->
+                        <div class="naming-options">
+                            <h4><i class="fas fa-font"></i> Nom du fichier</h4>
+                            <div class="name-input">
+                                <input type="text" id="filename-input" value="mon-qr-code" placeholder="Nom de votre fichier">
+                                <div class="name-preview">
+                                    <span id="name-preview">mon-qr-code.png</span>
+                                    <button class="btn-copy" id="copy-name">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fonctions à venir -->
+                <div class="upcoming-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-rocket"></i> Fonctions à venir</h3>
+                    </div>
+                    <div class="upcoming-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <div class="feature-info">
+                                <h4>QR Code avec Image</h4>
+                                <p>Encodez des images directement dans le QR code</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="feature-info">
+                                <h4>QR Code avec Vidéo</h4>
+                                <p>Générez des QR codes vers vos vidéos</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="feature-info">
+                                <h4>QR Code avec PDF</h4>
+                                <p>Partagez vos documents PDF via QR code</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="feature-info">
+                                <h4>QR Code avec Audio</h4>
+                                <p>Encodez des fichiers audio dans vos QR codes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="upcoming-note">
+                        <i class="fas fa-clock"></i>
+                        <span>Disponible dans les prochaines mises à jour</span>
                     </div>
                 </div>
             </div>
@@ -315,33 +618,83 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <i class="fas fa-qrcode"></i>
-                    <h3>BAMOTCH QR</h3>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <i class="fas fa-qrcode"></i>
+                        <div>
+                            <h3>BAMOTCH QR</h3>
+                            <p>Générateur professionnel de QR codes stylés</p>
+                        </div>
+                    </div>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
                 </div>
-                <p class="footer-text">
-                    Générateur professionnel de QR codes - 100% gratuit et sécurisé
-                </p>
-                <div class="footer-links">
-                    <a href="https://bamotch.github.io/bamotchqr2" class="footer-link">
-                        <i class="fab fa-github"></i> GitHub
-                    </a>
+                
+                <div class="footer-col">
+                    <h4>Fonctionnalités</h4>
+                    <ul>
+                        <li><a href="#">Designs avancés</a></li>
+                        <li><a href="#">Formes personnalisées</a></li>
+                        <li><a href="#">Logo intégré</a></li>
+                        <li><a href="#">Couleurs illimitées</a></li>
+                    </ul>
                 </div>
-                <div class="copyright">
-                    &copy; 2025 <strong>TAHIROU DESIGN STUDIO</strong> - Tous droits réservés
+                
+                <div class="footer-col">
+                    <h4>Formats supportés</h4>
+                    <ul>
+                        <li><a href="#">PNG haute qualité</a></li>
+                        <li><a href="#">SVG vectoriel</a></li>
+                        <li><a href="#">JPG optimisé web</a></li>
+                        <li><a href="#">Export multiple</a></li>
+                    </ul>
                 </div>
-                <div class="privacy-note">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>100% local • Aucune donnée collectée</span>
+                
+                <div class="footer-col">
+                    <h4>À propos</h4>
+                    <div class="footer-info">
+                        <p>&copy; <span id="current-year">2024</span> BAMOTCH QR</p>
+                        <p>Développé par <strong>TAHIROU DESIGN STUDIO</strong></p>
+                        <p>Version 2.0.0</p>
+                        <p class="privacy-note">
+                            <i class="fas fa-lock"></i>
+                            <span>Traitement 100% local · Vos données restent privées</span>
+                        </p>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>BAMOTCH QR est un outil gratuit de génération de QR codes. Aucune donnée n'est stockée sur nos serveurs.</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript -->
-    <script src="js/app.js"></script>
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Configuration Toastr
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
+    </script>
 </body>
 </html>
