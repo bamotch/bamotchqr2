@@ -1,14 +1,3 @@
-
 User-agent: *
 Allow: /
-Disallow: /private/
-
 Sitemap: https://bamotch.github.io/bamotchqr2/sitemap.xml
-
-User-agent: Googlebot
-Allow: /
-Disallow: /private/
-
-User-agent: Bingbot
-Allow: /
-Disallow: /private/
