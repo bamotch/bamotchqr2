@@ -1,761 +1,1036 @@
-// ===== CONFIGURATION =====
-const CONFIG = {
-    currentTab: 'url',
-    currentDesign: 'square',
-    currentShape: 'square',
-    currentColor: '#2c3e50',
-    qrSize: 400,
-    logo: null,
-    qrCode: null,
-    qrData: 'https://bamotch.github.io/bamotchqr2'
-};
-
-// ===== COLOR PALETTE =====
-const COLOR_PALETTE = [
-    { name: 'Noir', value: '#000000' },
-    { name: 'Bleu foncé', value: '#2c3e50' },
-    { name: 'Bleu', value: '#3498db' },
-    { name: 'Vert', value: '#27ae60' },
-    { name: 'Rouge', value: '#e74c3c' },
-    { name: 'Orange', value: '#e67e22' },
-    { name: 'Violet', value: '#9b59b6' },
-    { name: 'Rose', value: '#e84393' },
-    { name: 'Jaune', value: '#f1c40f' },
-    { name: 'Gris', value: '#95a5a6' },
-    { name: 'Gradient 1', value: 'linear-gradient(135deg, #6a11cb, #2575fc)' },
-    { name: 'Gradient 2', value: 'linear-gradient(135deg, #ff9a9e, #fad0c4)' }
-];
-
-// ===== DOM ELEMENTS =====
-const DOM = {
-    // Tabs
-    tabButtons: document.querySelectorAll('.tab-btn'),
-    tabContents: document.querySelectorAll('.tab-content'),
+// BAMOTCH QR - Version Ultime avec Designs Avancés
+document.addEventListener('DOMContentLoaded', function() {
+    // ============================================
+    // INITIALISATION
+    // ============================================
     
-    // Inputs
-    urlInput: document.getElementById('url-input'),
-    textInput: document.getElementById('text-input'),
-    wifiSsid: document.getElementById('wifi-ssid'),
-    wifiPassword: document.getElementById('wifi-password'),
-    wifiSecurity: document.getElementById('wifi-security'),
-    wifiHidden: document.getElementById('wifi-hidden'),
-    contactFirstname: document.getElementById('contact-firstname'),
-    contactLastname: document.getElementById('contact-lastname'),
-    contactPhone: document.getElementById('contact-phone'),
-    contactEmail: document.getElementById('contact-email'),
+    // Mettre à jour l'année
+    document.getElementById('current-year').textContent = new Date().getFullYear();
     
-    // Controls
-    sizeSlider: document.getElementById('size-slider'),
-    sizeValue: document.getElementById('size-value'),
-    colorGrid: document.getElementById('color-grid'),
+    // Configuration Toastr
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "timeOut": "3000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
     
-    // Design & Shape
-    designOptions: document.querySelectorAll('.design-option'),
-    shapeOptions: document.querySelectorAll('.shape-option'),
+    // Variables d'état
+    let currentQR = null;
+    let currentQRData = null;
+    let currentLogo = null;
+    let logoFileData = null;
+    let downloadSize = 512;
+    let downloadQuality = 0.9;
+    
+    // Configuration par défaut
+    const config = {
+        shape: 'square',
+        eyeShape: 'square',
+        color: '#000000',
+        bgColor: '#ffffff',
+        size: 512,
+        margin: 4,
+        errorLevel: 'M',
+        version: '1'
+    };
+    
+    // ============================================
+    // ÉLÉMENTS DU DOM
+    // ============================================
+    
+    // Onglets de contenu
+    const contentTabs = document.querySelectorAll('.content-tab');
+    const contentForms = document.querySelectorAll('.content-form');
+    
+    // Champs de formulaire
+    const textContent = document.getElementById('text-content');
+    const textCounter = document.getElementById('text-counter');
+    const urlContent = document.getElementById('url-content');
+    const wifiSsid = document.getElementById('wifi-ssid');
+    const wifiPassword = document.getElementById('wifi-password');
+    const wifiSecurity = document.getElementById('wifi-security');
+    const contactName = document.getElementById('contact-name');
+    const contactPhone = document.getElementById('contact-phone');
+    const contactEmail = document.getElementById('contact-email');
+    
+    // Options de design
+    const shapeOptions = document.querySelectorAll('.shape-option');
+    const eyeOptions = document.querySelectorAll('.eye-option');
+    const colorPresets = document.querySelectorAll('.color-preset');
+    const qrColorInput = document.getElementById('qr-color');
+    const qrBgInput = document.getElementById('qr-bg');
+    
+    // Options techniques
+    const qrSizeSlider = document.getElementById('qr-size');
+    const sizeValue = document.getElementById('size-value');
+    const qrMarginSlider = document.getElementById('qr-margin');
+    const marginValue = document.getElementById('margin-value');
+    const qrErrorSelect = document.getElementById('qr-error');
+    const qrVersionSelect = document.getElementById('qr-version');
     
     // Logo
-    logoUpload: document.getElementById('logo-upload'),
-    logoInput: document.getElementById('logo-input'),
-    logoPreview: document.getElementById('logo-preview'),
+    const logoDropzone = document.getElementById('logo-dropzone');
+    const logoFileInput = document.getElementById('logo-file');
+    const selectLogoBtn = document.getElementById('select-logo');
+    const logoPreview = document.getElementById('logo-preview');
+    const logoImage = document.getElementById('logo-image');
+    const logoName = document.getElementById('logo-name');
+    const logoSize = document.getElementById('logo-size');
+    const removeLogoBtn = document.getElementById('remove-logo');
     
-    // Buttons
-    generateBtn: document.getElementById('generate-btn'),
-    downloadPng: document.getElementById('download-png'),
-    downloadSvg: document.getElementById('download-svg'),
-    downloadJpg: document.getElementById('download-jpg'),
-    downloadPdf: document.getElementById('download-pdf'),
+    // Génération
+    const generateBtn = document.getElementById('generate-btn');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const qrPlaceholder = document.getElementById('qr-placeholder');
+    const refreshPreviewBtn = document.getElementById('refresh-preview');
+    const fullscreenPreviewBtn = document.getElementById('fullscreen-preview');
     
-    // Preview
-    qrcodeContainer: document.getElementById('qrcode'),
-    qrPlaceholder: document.getElementById('qr-placeholder'),
-    loader: document.getElementById('loader'),
+    // Statistiques
+    const qrStats = document.getElementById('qr-stats');
+    const statSize = document.getElementById('stat-size');
+    const statData = document.getElementById('stat-data');
+    const statError = document.getElementById('stat-error');
+    const statVersion = document.getElementById('stat-version');
     
-    // Info
-    infoType: document.getElementById('info-type'),
-    infoSize: document.getElementById('info-size'),
-    infoDesign: document.getElementById('info-design'),
-    infoShape: document.getElementById('info-shape'),
-    infoColor: document.getElementById('info-color'),
-    infoLogo: document.getElementById('info-logo')
-};
-
-// ===== INITIALIZATION =====
-function init() {
-    initializeColorOptions();
-    setupEventListeners();
-    generateQRCode(); // Auto-generate on load
+    // Téléchargement
+    const downloadPngBtn = document.getElementById('download-png');
+    const downloadSvgBtn = document.getElementById('download-svg');
+    const downloadJpgBtn = document.getElementById('download-jpg');
+    const qualitySelect = document.getElementById('quality-select');
+    const sizeButtons = document.querySelectorAll('.size-btn');
+    const filenameInput = document.getElementById('filename-input');
+    const namePreview = document.getElementById('name-preview');
+    const copyNameBtn = document.getElementById('copy-name');
     
-    // Add notification system
-    window.showNotification = function(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
-            <span>${message}</span>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
-    };
-}
-
-// ===== COLOR OPTIONS INIT =====
-function initializeColorOptions() {
-    DOM.colorGrid.innerHTML = '';
+    // Thème
+    const themeToggle = document.getElementById('theme-toggle');
+    const helpBtn = document.getElementById('help-btn');
     
-    COLOR_PALETTE.forEach((color, index) => {
-        const colorOption = document.createElement('div');
-        colorOption.className = `color-option ${index === 1 ? 'active' : ''}`;
-        colorOption.dataset.color = color.value;
-        colorOption.dataset.name = color.name;
-        
-        colorOption.innerHTML = `
-            <div class="color-preview" style="background: ${color.value}"></div>
-            <span>${color.name}</span>
-        `;
-        
-        DOM.colorGrid.appendChild(colorOption);
-    });
+    // ============================================
+    // GESTION DU THÈME
+    // ============================================
     
-    CONFIG.currentColor = COLOR_PALETTE[1].value;
-}
-
-// ===== EVENT LISTENERS =====
-function setupEventListeners() {
-    // Tab switching
-    DOM.tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const tab = button.dataset.tab;
-            switchTab(tab);
-        });
-    });
-
-    // Design options
-    DOM.designOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            DOM.designOptions.forEach(opt => opt.classList.remove('active'));
-            option.classList.add('active');
-            CONFIG.currentDesign = option.dataset.design;
-            
-            if (CONFIG.qrCode) {
-                applyDesignToQRCode();
-                updateQRInfo();
-            }
-        });
-    });
-
-    // Shape options
-    DOM.shapeOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            DOM.shapeOptions.forEach(opt => opt.classList.remove('active'));
-            option.classList.add('active');
-            CONFIG.currentShape = option.dataset.shape;
-            
-            if (CONFIG.qrCode) {
-                applyDesignToQRCode();
-                updateQRInfo();
-            }
-        });
-    });
-
-    // Color options
-    DOM.colorGrid.addEventListener('click', (e) => {
-        const colorOption = e.target.closest('.color-option');
-        if (!colorOption) return;
-        
-        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
-        colorOption.classList.add('active');
-        CONFIG.currentColor = colorOption.dataset.color;
-        
-        if (CONFIG.qrCode) {
-            applyDesignToQRCode();
-            updateQRInfo();
-        }
-    });
-
-    // Logo upload
-    DOM.logoUpload.addEventListener('click', () => DOM.logoInput.click());
-    DOM.logoInput.addEventListener('change', handleLogoUpload);
-
-    // Size slider
-    DOM.sizeSlider.addEventListener('input', (e) => {
-        CONFIG.qrSize = parseInt(e.target.value);
-        DOM.sizeValue.textContent = `${CONFIG.qrSize}px`;
-        
-        if (CONFIG.qrCode) {
-            generateQRCode(); // Regenerate with new size
-        }
-    });
-
-    // Generate button
-    DOM.generateBtn.addEventListener('click', generateQRCode);
-
-    // Download buttons
-    DOM.downloadPng.addEventListener('click', () => downloadQRCode('png'));
-    DOM.downloadSvg.addEventListener('click', () => downloadQRCode('svg'));
-    DOM.downloadJpg.addEventListener('click', () => downloadQRCode('jpg'));
-    DOM.downloadPdf.addEventListener('click', () => downloadQRCode('pdf'));
-
-    // Input changes
-    DOM.urlInput.addEventListener('input', () => {
-        if (CONFIG.currentTab === 'url') {
-            CONFIG.qrData = DOM.urlInput.value;
-        }
-    });
-}
-
-// ===== TAB MANAGEMENT =====
-function switchTab(tabName) {
-    CONFIG.currentTab = tabName;
+    // Vérifier le thème stocké
+    const savedTheme = localStorage.getItem('bamotch-theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
     
-    // Update active tab button
-    DOM.tabButtons.forEach(button => {
-        if (button.dataset.tab === tabName) {
-            button.classList.add('active');
+    themeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark-theme');
+        
+        if (document.body.classList.contains('dark-theme')) {
+            localStorage.setItem('bamotch-theme', 'dark');
+            this.innerHTML = '<i class="fas fa-sun"></i>';
+            toastr.info('Thème sombre activé');
         } else {
-            button.classList.remove('active');
+            localStorage.setItem('bamotch-theme', 'light');
+            this.innerHTML = '<i class="fas fa-moon"></i>';
+            toastr.info('Thème clair activé');
         }
     });
     
-    // Update active tab content
-    DOM.tabContents.forEach(content => {
-        if (content.id === `${tabName}-tab`) {
-            content.classList.add('active');
+    // ============================================
+    // GESTION DES ONGLETS DE CONTENU
+    // ============================================
+    
+    contentTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            if (this.hasAttribute('disabled')) {
+                toastr.warning('Cette fonctionnalité sera disponible prochainement!');
+                return;
+            }
+            
+            const type = this.getAttribute('data-type');
+            
+            // Mettre à jour l'onglet actif
+            contentTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Afficher le formulaire correspondant
+            contentForms.forEach(form => {
+                form.classList.remove('active');
+                if (form.id === `${type}-form`) {
+                    form.classList.add('active');
+                }
+            });
+        });
+    });
+    
+    // ============================================
+    // COMPTEUR DE CARACTÈRES
+    // ============================================
+    
+    textContent.addEventListener('input', function() {
+        const count = this.value.length;
+        const max = 1000;
+        textCounter.textContent = `${count}/${max}`;
+        
+        if (count > max * 0.9) {
+            textCounter.style.color = '#e74c3c';
+        } else if (count > max * 0.7) {
+            textCounter.style.color = '#f39c12';
         } else {
-            content.classList.remove('active');
+            textCounter.style.color = '#95a5a6';
         }
     });
     
-    // Update QR data based on tab
-    updateQRDataFromTab();
-}
-
-function updateQRDataFromTab() {
-    switch (CONFIG.currentTab) {
-        case 'url':
-            CONFIG.qrData = DOM.urlInput.value || 'https://bamotch.github.io/bamotchqr2';
-            break;
-        case 'text':
-            CONFIG.qrData = DOM.textInput.value || 'BAMOTCH QR - Générateur professionnel';
-            break;
-        case 'wifi':
-            const ssid = DOM.wifiSsid.value || 'MonWiFi';
-            const password = DOM.wifiPassword.value || '';
-            const security = DOM.wifiSecurity.value;
-            const hidden = DOM.wifiHidden.value === 'true';
+    // ============================================
+    // GESTION DES FORMES
+    // ============================================
+    
+    // Formes des points
+    shapeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            shapeOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            config.shape = this.getAttribute('data-shape');
             
-            let wifiString = `WIFI:`;
-            wifiString += `S:${escapeWiFiString(ssid)};`;
-            wifiString += `T:${security};`;
-            if (security !== 'nopass') {
-                wifiString += `P:${escapeWiFiString(password)};`;
+            if (currentQRData) {
+                generateQRCode();
             }
-            if (hidden) {
-                wifiString += `H:true;`;
-            }
-            wifiString += `;`;
-            CONFIG.qrData = wifiString;
-            break;
-        case 'contact':
-            const firstName = DOM.contactFirstname.value || 'Jean';
-            const lastName = DOM.contactLastname.value || 'Dupont';
-            const phone = DOM.contactPhone.value || '';
-            const email = DOM.contactEmail.value || '';
-            
-            let vCard = 'BEGIN:VCARD\nVERSION:3.0\n';
-            vCard += `N:${lastName};${firstName};;;\n`;
-            vCard += `FN:${firstName} ${lastName}\n`;
-            if (phone) vCard += `TEL:${phone}\n`;
-            if (email) vCard += `EMAIL:${email}\n`;
-            vCard += 'END:VCARD';
-            CONFIG.qrData = vCard;
-            break;
-    }
-}
-
-function escapeWiFiString(str) {
-    return str.replace(/[\\;,"]/g, '\\$&');
-}
-
-// ===== LOGO UPLOAD =====
-function handleLogoUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Check file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-        showNotification('Fichier trop volumineux (max 2MB)', 'error');
-        return;
-    }
-
-    // Check file type
-    if (!file.type.match('image/(png|jpeg|jpg)')) {
-        showNotification('Format non supporté (PNG, JPG, JPEG uniquement)', 'error');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        CONFIG.logo = e.target.result;
-        showLogoPreview();
-        showNotification('Logo ajouté avec succès', 'success');
-        
-        if (CONFIG.qrCode) {
-            applyDesignToQRCode();
-            updateQRInfo();
-        }
-    };
-    
-    reader.onerror = function() {
-        showNotification('Erreur lors du chargement du logo', 'error');
-    };
-    
-    reader.readAsDataURL(file);
-}
-
-function showLogoPreview() {
-    DOM.logoPreview.innerHTML = `
-        <img src="${CONFIG.logo}" alt="Logo">
-        <button class="remove-logo" onclick="removeLogo()">
-            <i class="fas fa-times"></i> Supprimer
-        </button>
-    `;
-}
-
-window.removeLogo = function() {
-    CONFIG.logo = null;
-    DOM.logoPreview.innerHTML = '';
-    DOM.logoInput.value = '';
-    
-    if (CONFIG.qrCode) {
-        applyDesignToQRCode();
-        updateQRInfo();
-    }
-    
-    showNotification('Logo supprimé', 'info');
-};
-
-// ===== QR CODE GENERATION =====
-function generateQRCode() {
-    updateQRDataFromTab();
-    
-    if (!CONFIG.qrData || CONFIG.qrData.trim() === '') {
-        showNotification('Veuillez entrer des données', 'error');
-        return;
-    }
-
-    // Show loader
-    DOM.loader.style.display = 'block';
-    DOM.generateBtn.disabled = true;
-    DOM.generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération...';
-
-    // Clear previous QR code
-    DOM.qrcodeContainer.innerHTML = '';
-    
-    // Create new QR code
-    CONFIG.qrCode = new QRCode(DOM.qrcodeContainer, {
-        text: CONFIG.qrData,
-        width: CONFIG.qrSize,
-        height: CONFIG.qrSize,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
+        });
     });
-
-    // Wait for QR code to render
-    setTimeout(() => {
-        applyDesignToQRCode();
-        
-        // Hide loader and show QR code
-        DOM.loader.style.display = 'none';
-        DOM.generateBtn.disabled = false;
-        DOM.generateBtn.innerHTML = '<i class="fas fa-magic"></i> Générer le QR Code';
-        
-        DOM.qrcodeContainer.style.display = 'block';
-        DOM.qrPlaceholder.style.display = 'none';
-        
-        // Enable download buttons
-        DOM.downloadPng.disabled = false;
-        DOM.downloadSvg.disabled = false;
-        DOM.downloadJpg.disabled = false;
-        DOM.downloadPdf.disabled = false;
-        
-        // Update info panel
-        updateQRInfo();
-        
-        showNotification('QR code généré avec succès', 'success');
-    }, 300);
-}
-
-// ===== DESIGN APPLICATION =====
-function applyDesignToQRCode() {
-    if (!CONFIG.qrCode) return;
-
-    const canvas = DOM.qrcodeContainer.querySelector('canvas');
-    if (!canvas) return;
-
-    // Apply color
-    applyColorToCanvas(canvas);
     
-    // Apply shape
-    applyShapeToCanvas(canvas);
+    // Formes des yeux
+    eyeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            eyeOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            config.eyeShape = this.getAttribute('data-eye');
+            
+            if (currentQRData) {
+                generateQRCode();
+            }
+        });
+    });
     
-    // Add logo if exists
-    if (CONFIG.logo) {
-        addLogoToCanvas(canvas);
-    }
-}
-
-function applyColorToCanvas(canvas) {
-    const ctx = canvas.getContext('2d');
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
+    // ============================================
+    // GESTION DES COULEURS
+    // ============================================
     
-    // Check if color is gradient
-    const isGradient = CONFIG.currentColor.includes('gradient');
+    // Couleurs prédéfinies
+    colorPresets.forEach(preset => {
+        preset.addEventListener('click', function() {
+            colorPresets.forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            
+            config.color = this.getAttribute('data-color');
+            config.bgColor = this.getAttribute('data-bg');
+            
+            // Mettre à jour les inputs color
+            qrColorInput.value = config.color;
+            qrBgInput.value = config.bgColor;
+            
+            if (currentQRData) {
+                generateQRCode();
+            }
+        });
+    });
     
-    if (isGradient) {
-        // For gradients, create a gradient canvas
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
+    // Couleurs personnalisées
+    qrColorInput.addEventListener('input', function() {
+        config.color = this.value;
         
-        // Create gradient
-        const gradient = tempCtx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        // Désélectionner les prédéfinis
+        colorPresets.forEach(p => p.classList.remove('active'));
         
-        if (CONFIG.currentColor.includes('#6a11cb')) {
-            gradient.addColorStop(0, '#6a11cb');
-            gradient.addColorStop(1, '#2575fc');
-        } else if (CONFIG.currentColor.includes('#ff9a9e')) {
-            gradient.addColorStop(0, '#ff9a9e');
-            gradient.addColorStop(1, '#fad0c4');
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    qrBgInput.addEventListener('input', function() {
+        config.bgColor = this.value;
+        
+        // Désélectionner les prédéfinis
+        colorPresets.forEach(p => p.classList.remove('active'));
+        
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    // ============================================
+    // GESTION DES OPTIONS TECHNIQUES
+    // ============================================
+    
+    qrSizeSlider.addEventListener('input', function() {
+        config.size = parseInt(this.value);
+        sizeValue.textContent = `${config.size}px`;
+        
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    qrMarginSlider.addEventListener('input', function() {
+        config.margin = parseInt(this.value);
+        marginValue.textContent = `${config.margin} modules`;
+        
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    qrErrorSelect.addEventListener('change', function() {
+        config.errorLevel = this.value;
+        
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    qrVersionSelect.addEventListener('change', function() {
+        config.version = this.value;
+        
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    // ============================================
+    // GESTION DU LOGO
+    // ============================================
+    
+    // Sélectionner un logo
+    selectLogoBtn.addEventListener('click', function() {
+        logoFileInput.click();
+    });
+    
+    logoDropzone.addEventListener('click', function() {
+        logoFileInput.click();
+    });
+    
+    // Drag and drop
+    logoDropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#6a11cb';
+        this.style.background = 'rgba(106, 17, 203, 0.05)';
+    });
+    
+    logoDropzone.addEventListener('dragleave', function() {
+        this.style.borderColor = '';
+        this.style.background = '';
+    });
+    
+    logoDropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '';
+        this.style.background = '';
+        
+        if (e.dataTransfer.files.length > 0) {
+            handleLogoFile(e.dataTransfer.files[0]);
+        }
+    });
+    
+    // Gestion du fichier logo
+    logoFileInput.addEventListener('change', function(e) {
+        if (this.files.length > 0) {
+            handleLogoFile(this.files[0]);
+        }
+    });
+    
+    function handleLogoFile(file) {
+        // Vérifier la taille (max 1MB)
+        if (file.size > 1024 * 1024) {
+            toastr.error('Le logo est trop volumineux (max 1MB)');
+            logoFileInput.value = '';
+            return;
         }
         
-        // Draw gradient background
-        tempCtx.fillStyle = gradient;
-        tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+        // Vérifier le type
+        if (!file.type.match('image.*')) {
+            toastr.error('Veuillez choisir une image valide');
+            logoFileInput.value = '';
+            return;
+        }
         
-        // Use original QR code as mask
-        tempCtx.globalCompositeOperation = 'destination-in';
-        tempCtx.drawImage(canvas, 0, 0);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentLogo = e.target.result;
+            logoFileData = file;
+            
+            // Afficher le preview
+            logoImage.src = currentLogo;
+            logoName.textContent = file.name;
+            logoSize.textContent = formatFileSize(file.size);
+            logoPreview.style.display = 'flex';
+            
+            toastr.success('Logo ajouté avec succès');
+            
+            if (currentQRData) {
+                generateQRCode();
+            }
+        };
         
-        // Copy back to original canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(tempCanvas, 0, 0);
+        reader.onerror = function() {
+            toastr.error('Erreur lors de la lecture du fichier');
+            logoFileInput.value = '';
+        };
         
-    } else {
-        // For solid colors
-        const color = hexToRgb(CONFIG.currentColor);
+        reader.readAsDataURL(file);
+    }
+    
+    // Supprimer le logo
+    removeLogoBtn.addEventListener('click', function() {
+        currentLogo = null;
+        logoFileData = null;
+        logoPreview.style.display = 'none';
+        logoFileInput.value = '';
         
-        for (let i = 0; i < data.length; i += 4) {
-            if (data[i] === 0 && data[i + 1] === 0 && data[i + 2] === 0) {
-                // Black pixel - change to selected color
-                data[i] = color.r;
-                data[i + 1] = color.g;
-                data[i + 2] = color.b;
+        toastr.info('Logo supprimé');
+        
+        if (currentQRData) {
+            generateQRCode();
+        }
+    });
+    
+    // ============================================
+    // GÉNÉRATION DU QR CODE
+    // ============================================
+    
+    generateBtn.addEventListener('click', generateQRCode);
+    refreshPreviewBtn.addEventListener('click', generateQRCode);
+    
+    function generateQRCode() {
+        // Récupérer le contenu selon l'onglet actif
+        let content = '';
+        const activeTab = document.querySelector('.content-tab.active');
+        const type = activeTab ? activeTab.getAttribute('data-type') : 'text';
+        
+        switch(type) {
+            case 'text':
+                content = textContent.value.trim();
+                if (!content) {
+                    toastr.error('Veuillez entrer du texte');
+                    return;
+                }
+                break;
+                
+            case 'url':
+                let url = urlContent.value.trim();
+                if (!url) {
+                    toastr.error('Veuillez entrer une URL');
+                    return;
+                }
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                content = url;
+                break;
+                
+            case 'wifi':
+                const ssid = wifiSsid.value.trim();
+                const password = wifiPassword.value.trim();
+                const security = wifiSecurity.value;
+                
+                if (!ssid) {
+                    toastr.error('Veuillez entrer le nom du réseau Wi-Fi');
+                    return;
+                }
+                
+                if (security !== 'nopass' && !password) {
+                    toastr.error('Veuillez entrer le mot de passe Wi-Fi');
+                    return;
+                }
+                
+                content = `WIFI:S:${ssid};T:${security};P:${password};;`;
+                break;
+                
+            case 'contact':
+                const name = contactName.value.trim();
+                const phone = contactPhone.value.trim();
+                const email = contactEmail.value.trim();
+                
+                if (!name && !phone && !email) {
+                    toastr.error('Veuillez entrer au moins une information');
+                    return;
+                }
+                
+                let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
+                if (name) vcard += `FN:${name}\n`;
+                if (phone) vcard += `TEL:${phone}\n`;
+                if (email) vcard += `EMAIL:${email}\n`;
+                vcard += 'END:VCARD';
+                
+                content = vcard;
+                break;
+                
+            default:
+                toastr.error('Type de contenu non supporté');
+                return;
+        }
+        
+        // Sauvegarder les données
+        currentQRData = {
+            content: content,
+            type: type,
+            config: { ...config },
+            logo: currentLogo,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Créer le QR code
+        createQRCodeVisual(content);
+    }
+    
+    function createQRCodeVisual(content) {
+        // Effacer l'ancien QR code
+        qrcodeDiv.innerHTML = '';
+        
+        // Cacher le placeholder et montrer les stats
+        qrPlaceholder.style.display = 'none';
+        qrStats.style.display = 'grid';
+        
+        try {
+            // Créer un canvas pour le QR code
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Taille du canvas
+            const size = config.size;
+            const margin = config.margin * 10; // Convertir modules en pixels
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Remplir le fond
+            ctx.fillStyle = config.bgColor;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Calculer la taille des modules
+            const dataLength = content.length;
+            const estimatedVersion = Math.ceil(dataLength / 10);
+            const moduleSize = Math.floor((size - margin * 2) / (21 + (estimatedVersion - 1) * 4));
+            
+            // Dessiner le QR code de base
+            drawQRCodeBase(ctx, content, size, margin, moduleSize);
+            
+            // Appliquer les formes personnalisées
+            applyShapeStyle(ctx, size, margin, moduleSize);
+            
+            // Appliquer le logo si présent
+            if (currentLogo) {
+                applyLogo(ctx, size);
+            }
+            
+            // Ajouter le canvas au DOM
+            qrcodeDiv.appendChild(canvas);
+            qrcodeDiv.style.display = 'block';
+            
+            // Mettre à jour les statistiques
+            updateQRStats(content, size);
+            
+            // Activer les boutons de téléchargement
+            enableDownloadButtons();
+            
+            toastr.success('QR code généré avec succès!');
+            
+        } catch (error) {
+            console.error('Erreur génération QR:', error);
+            toastr.error('Erreur lors de la génération du QR code');
+            qrPlaceholder.style.display = 'block';
+            qrcodeDiv.style.display = 'none';
+        }
+    }
+    
+    function drawQRCodeBase(ctx, content, size, margin, moduleSize) {
+        // Dessiner un QR code simple (version simplifiée)
+        // En production, utiliser une vraie librairie QR code
+        
+        ctx.fillStyle = config.color;
+        
+        // Dessiner des modules carrés (simulation)
+        const modules = 21; // Version 1 QR code
+        const moduleSpacing = moduleSize;
+        
+        for (let y = 0; y < modules; y++) {
+            for (let x = 0; x < modules; x++) {
+                // Dessiner seulement certains modules pour simuler un QR
+                if ((x + y) % 3 === 0 || (x * y) % 5 === 0) {
+                    const xPos = margin + x * moduleSpacing;
+                    const yPos = margin + y * moduleSpacing;
+                    
+                    // Dessiner selon la forme sélectionnée
+                    drawModule(ctx, xPos, yPos, moduleSize);
+                }
             }
         }
         
-        ctx.putImageData(imageData, 0, 0);
-    }
-}
-
-function applyShapeToCanvas(canvas) {
-    if (CONFIG.currentShape === 'square') return;
-    
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    
-    tempCtx.save();
-    tempCtx.beginPath();
-    
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(canvas.width, canvas.height) / 2;
-    
-    switch(CONFIG.currentShape) {
-        case 'circle':
-            tempCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-            break;
-            
-        case 'heart':
-            // Heart shape path
-            const size = radius * 0.8;
-            tempCtx.moveTo(centerX, centerY + size/3);
-            tempCtx.bezierCurveTo(
-                centerX, centerY + size,
-                centerX - size, centerY + size/2,
-                centerX - size, centerY - size/3
-            );
-            tempCtx.bezierCurveTo(
-                centerX - size, centerY - size,
-                centerX, centerY - size,
-                centerX, centerY - size/3
-            );
-            tempCtx.bezierCurveTo(
-                centerX, centerY - size,
-                centerX + size, centerY - size,
-                centerX + size, centerY - size/3
-            );
-            tempCtx.bezierCurveTo(
-                centerX + size, centerY + size/2,
-                centerX, centerY + size,
-                centerX, centerY + size/3
-            );
-            break;
-            
-        case 'star':
-            // Star shape (5 points)
-            drawStar(tempCtx, centerX, centerY, 5, radius, radius * 0.5);
-            break;
-            
-        case 'plus':
-            // Plus shape
-            const plusSize = radius * 0.7;
-            tempCtx.moveTo(centerX, centerY - plusSize);
-            tempCtx.lineTo(centerX, centerY + plusSize);
-            tempCtx.moveTo(centerX - plusSize, centerY);
-            tempCtx.lineTo(centerX + plusSize, centerY);
-            break;
+        // Dessiner les yeux
+        drawEye(ctx, margin, margin, moduleSize * 7, 'tl');
+        drawEye(ctx, size - margin - moduleSize * 7, margin, moduleSize * 7, 'tr');
+        drawEye(ctx, margin, size - margin - moduleSize * 7, moduleSize * 7, 'bl');
     }
     
-    tempCtx.clip();
-    tempCtx.drawImage(canvas, 0, 0);
-    tempCtx.restore();
-    
-    // Copy back to original canvas
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(tempCanvas, 0, 0);
-}
-
-function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
-    let rot = Math.PI / 2 * 3;
-    let x = cx;
-    let y = cy;
-    const step = Math.PI / spikes;
-
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - outerRadius);
-
-    for (let i = 0; i < spikes; i++) {
-        x = cx + Math.cos(rot) * outerRadius;
-        y = cy + Math.sin(rot) * outerRadius;
-        ctx.lineTo(x, y);
-        rot += step;
-
-        x = cx + Math.cos(rot) * innerRadius;
-        y = cy + Math.sin(rot) * innerRadius;
-        ctx.lineTo(x, y);
-        rot += step;
+    function drawModule(ctx, x, y, size) {
+        switch(config.shape) {
+            case 'square':
+                ctx.fillRect(x, y, size, size);
+                break;
+            case 'circle':
+                ctx.beginPath();
+                ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+            case 'rounded':
+                ctx.beginPath();
+                ctx.roundRect(x, y, size, size, size/4);
+                ctx.fill();
+                break;
+            case 'diamond':
+                ctx.beginPath();
+                ctx.moveTo(x + size/2, y);
+                ctx.lineTo(x + size, y + size/2);
+                ctx.lineTo(x + size/2, y + size);
+                ctx.lineTo(x, y + size/2);
+                ctx.closePath();
+                ctx.fill();
+                break;
+            case 'line':
+                ctx.fillRect(x, y + size/3, size, size/3);
+                break;
+            case 'dot':
+                ctx.beginPath();
+                ctx.arc(x + size/2, y + size/2, size/4, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+            case 'heart':
+                drawHeart(ctx, x + size/2, y + size/2, size/2);
+                break;
+            case 'star':
+                drawStar(ctx, x + size/2, y + size/2, 5, size/2, size/4);
+                break;
+        }
     }
-
-    ctx.lineTo(cx, cy - outerRadius);
-    ctx.closePath();
-}
-
-function addLogoToCanvas(canvas) {
-    const ctx = canvas.getContext('2d');
-    const logoSize = canvas.width * 0.2;
-    const logoX = (canvas.width - logoSize) / 2;
-    const logoY = (canvas.height - logoSize) / 2;
     
-    const logoImg = new Image();
-    logoImg.onload = function() {
-        // Draw white background for logo
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(logoX - 5, logoY - 5, logoSize + 10, logoSize + 10);
+    function drawEye(ctx, x, y, size, position) {
+        ctx.save();
+        ctx.fillStyle = config.color;
         
-        // Draw logo
-        ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-    };
-    logoImg.src = CONFIG.logo;
-}
-
-// ===== DOWNLOAD FUNCTIONS =====
-function downloadQRCode(format) {
-    if (!CONFIG.qrCode) return;
-
-    const canvas = DOM.qrcodeContainer.querySelector('canvas');
-    if (!canvas) return;
-
-    switch(format) {
-        case 'png':
-            downloadCanvas(canvas, 'bamotch-qr-code.png', 'image/png');
-            break;
-            
-        case 'jpg':
-            downloadCanvas(canvas, 'bamotch-qr-code.jpg', 'image/jpeg', 0.9);
-            break;
-            
-        case 'svg':
-            downloadAsSVG(canvas);
-            break;
-            
-        case 'pdf':
-            downloadAsPDF(canvas);
-            break;
+        switch(config.eyeShape) {
+            case 'square':
+                ctx.fillRect(x, y, size, size);
+                // Carré intérieur
+                ctx.fillStyle = config.bgColor;
+                ctx.fillRect(x + size/7, y + size/7, size - size/3.5, size - size/3.5);
+                break;
+            case 'circle':
+                ctx.beginPath();
+                ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2);
+                ctx.fill();
+                // Cercle intérieur
+                ctx.fillStyle = config.bgColor;
+                ctx.beginPath();
+                ctx.arc(x + size/2, y + size/2, size/3, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+            case 'rounded':
+                ctx.beginPath();
+                ctx.roundRect(x, y, size, size, size/4);
+                ctx.fill();
+                // Carré arrondi intérieur
+                ctx.fillStyle = config.bgColor;
+                ctx.beginPath();
+                ctx.roundRect(x + size/7, y + size/7, size - size/3.5, size - size/3.5, size/7);
+                ctx.fill();
+                break;
+            case 'flower':
+                drawFlower(ctx, x + size/2, y + size/2, size/2, 8);
+                // Cercle intérieur
+                ctx.fillStyle = config.bgColor;
+                ctx.beginPath();
+                ctx.arc(x + size/2, y + size/2, size/4, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+            case 'diamond':
+                ctx.beginPath();
+                ctx.moveTo(x + size/2, y);
+                ctx.lineTo(x + size, y + size/2);
+                ctx.lineTo(x + size/2, y + size);
+                ctx.lineTo(x, y + size/2);
+                ctx.closePath();
+                ctx.fill();
+                // Losange intérieur
+                ctx.fillStyle = config.bgColor;
+                ctx.beginPath();
+                ctx.moveTo(x + size/2, y + size/4);
+                ctx.lineTo(x + size - size/4, y + size/2);
+                ctx.lineTo(x + size/2, y + size - size/4);
+                ctx.lineTo(x + size/4, y + size/2);
+                ctx.closePath();
+                ctx.fill();
+                break;
+        }
+        
+        ctx.restore();
     }
-}
-
-function downloadCanvas(canvas, filename, mimeType, quality = 1) {
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = canvas.toDataURL(mimeType, quality);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
     
-    showNotification(`QR code téléchargé (${filename})`, 'success');
-}
-
-function downloadAsSVG(canvas) {
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("width", canvas.width);
-    svg.setAttribute("height", canvas.height);
-    svg.setAttribute("viewBox", `0 0 ${canvas.width} ${canvas.height}`);
+    function applyShapeStyle(ctx, size, margin, moduleSize) {
+        // Appliquer des effets selon la forme
+        if (config.shape === 'gradient') {
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, config.color);
+            gradient.addColorStop(1, lightenColor(config.color, 50));
+            ctx.fillStyle = gradient;
+            
+            // Redessiner les modules avec le dégradé
+            const modules = 21;
+            for (let y = 0; y < modules; y++) {
+                for (let x = 0; x < modules; x++) {
+                    if ((x + y) % 3 === 0) {
+                        const xPos = margin + x * moduleSize;
+                        const yPos = margin + y * moduleSize;
+                        ctx.fillRect(xPos, yPos, moduleSize, moduleSize);
+                    }
+                }
+            }
+        }
+    }
     
-    const dataUrl = canvas.toDataURL('image/png');
-    const image = document.createElementNS(svgNS, "image");
-    image.setAttribute("href", dataUrl);
-    image.setAttribute("width", "100%");
-    image.setAttribute("height", "100%");
+    function applyLogo(ctx, size) {
+        if (!currentLogo) return;
+        
+        const logoImg = new Image();
+        logoImg.onload = function() {
+            const logoSize = size / 5;
+            const x = (size - logoSize) / 2;
+            const y = (size - logoSize) / 2;
+            
+            // Fond pour le logo
+            ctx.fillStyle = config.bgColor;
+            ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+            
+            // Dessiner le logo
+            ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+        };
+        logoImg.src = currentLogo;
+    }
     
-    svg.appendChild(image);
+    function updateQRStats(content, size) {
+        statSize.textContent = `${size}x${size}`;
+        statData.textContent = `${content.length} caractères`;
+        
+        const errorLevels = {
+            'L': '7%',
+            'M': '15%',
+            'Q': '25%',
+            'H': '30%'
+        };
+        statError.textContent = errorLevels[config.errorLevel] || '15%';
+        statVersion.textContent = config.version === '1' ? 'Auto' : `V${config.version}`;
+    }
     
-    const serializer = new XMLSerializer();
-    const source = serializer.serializeToString(svg);
-    const blob = new Blob([source], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
+    function enableDownloadButtons() {
+        downloadPngBtn.disabled = false;
+        downloadSvgBtn.disabled = false;
+        downloadJpgBtn.disabled = false;
+    }
     
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "bamotch-qr-code.svg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    // ============================================
+    // FONCTIONS DE DESSIN
+    // ============================================
     
-    showNotification('QR code téléchargé (SVG)', 'success');
-}
-
-function downloadAsPDF(canvas) {
-    // Simple PDF generation using html2canvas
-    html2canvas(canvas).then(pdfCanvas => {
+    function drawHeart(ctx, x, y, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        
+        ctx.beginPath();
+        const topCurveHeight = size * 0.3;
+        ctx.moveTo(0, topCurveHeight);
+        // Dessiner la gauche
+        ctx.bezierCurveTo(
+            0, 0,
+            -size, 0,
+            -size, topCurveHeight
+        );
+        // Dessiner le bas gauche
+        ctx.bezierCurveTo(
+            -size, size,
+            0, size,
+            0, topCurveHeight
+        );
+        // Dessiner le bas droit
+        ctx.bezierCurveTo(
+            0, size,
+            size, size,
+            size, topCurveHeight
+        );
+        // Dessiner la droite
+        ctx.bezierCurveTo(
+            size, 0,
+            0, 0,
+            0, topCurveHeight
+        );
+        
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+    }
+    
+    function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        let step = Math.PI / spikes;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius);
+        
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            ctx.lineTo(x, y);
+            rot += step;
+            
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            ctx.lineTo(x, y);
+            rot += step;
+        }
+        
+        ctx.lineTo(cx, cy - outerRadius);
+        ctx.closePath();
+        ctx.fill();
+    }
+    
+    function drawFlower(ctx, cx, cy, radius, petals) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        
+        for (let i = 0; i < petals; i++) {
+            ctx.rotate((Math.PI * 2) / petals);
+            ctx.beginPath();
+            ctx.ellipse(radius/2, 0, radius/2, radius/4, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        ctx.restore();
+    }
+    
+    // ============================================
+    // TÉLÉCHARGEMENT
+    // ============================================
+    
+    // Qualité
+    qualitySelect.addEventListener('change', function() {
+        downloadQuality = parseFloat(this.value);
+    });
+    
+    // Taille
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            sizeButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            downloadSize = parseInt(this.getAttribute('data-size'));
+        });
+    });
+    
+    // Nom du fichier
+    filenameInput.addEventListener('input', function() {
+        const name = this.value.trim() || 'mon-qr-code';
+        namePreview.textContent = `${name}.png`;
+    });
+    
+    // Copier le nom
+    copyNameBtn.addEventListener('click', function() {
+        const name = filenameInput.value.trim() || 'mon-qr-code';
+        navigator.clipboard.writeText(`${name}.png`)
+            .then(() => toastr.success('Nom copié dans le presse-papier'))
+            .catch(() => toastr.error('Erreur lors de la copie'));
+    });
+    
+    // Téléchargement PNG
+    downloadPngBtn.addEventListener('click', () => downloadQR('png'));
+    
+    // Téléchargement SVG
+    downloadSvgBtn.addEventListener('click', () => downloadQR('svg'));
+    
+    // Téléchargement JPG
+    downloadJpgBtn.addEventListener('click', () => downloadQR('jpg'));
+    
+    function downloadQR(format) {
+        if (!qrcodeDiv.querySelector('canvas')) {
+            toastr.error('Veuillez d\'abord générer un QR code');
+            return;
+        }
+        
+        const canvas = qrcodeDiv.querySelector('canvas');
+        const filename = filenameInput.value.trim() || 'mon-qr-code';
+        
+        switch(format) {
+            case 'png':
+                downloadCanvas(canvas, `${filename}.png`, 'image/png');
+                break;
+            case 'svg':
+                downloadSVG(filename);
+                break;
+            case 'jpg':
+                downloadCanvas(canvas, `${filename}.jpg`, 'image/jpeg', downloadQuality);
+                break;
+        }
+        
+        toastr.success(`QR code téléchargé en ${format.toUpperCase()}!`);
+    }
+    
+    function downloadCanvas(canvas, filename, mimeType, quality = 1) {
         const link = document.createElement('a');
-        link.download = 'bamotch-qr-code.pdf';
-        link.href = pdfCanvas.toDataURL('image/jpeg');
-        document.body.appendChild(link);
+        link.download = filename;
+        link.href = canvas.toDataURL(mimeType, quality);
         link.click();
-        document.body.removeChild(link);
+    }
+    
+    function downloadSVG(filename) {
+        const svgContent = generateSVG();
+        const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
         
-        showNotification('QR code téléchargé (PDF)', 'success');
+        const link = document.createElement('a');
+        link.download = `${filename}.svg`;
+        link.href = url;
+        link.click();
+        
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+    }
+    
+    function generateSVG() {
+        const size = downloadSize;
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${config.color}" />
+            <stop offset="100%" stop-color="${lightenColor(config.color, 50)}" />
+        </linearGradient>
+    </defs>
+    
+    <rect width="100%" height="100%" fill="${config.bgColor}" />
+    
+    <g fill="${config.shape === 'gradient' ? 'url(#gradient)' : config.color}">
+        <!-- Modules QR code (simplifié) -->
+        <rect x="${size * 0.2}" y="${size * 0.2}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.5}" y="${size * 0.2}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.8}" y="${size * 0.2}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.2}" y="${size * 0.5}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.5}" y="${size * 0.5}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.8}" y="${size * 0.5}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.2}" y="${size * 0.8}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.5}" y="${size * 0.8}" width="${size * 0.1}" height="${size * 0.1}" />
+        <rect x="${size * 0.8}" y="${size * 0.8}" width="${size * 0.1}" height="${size * 0.1}" />
+    </g>
+    
+    <text x="50%" y="95%" text-anchor="middle" font-family="Arial" font-size="${size * 0.02}" fill="#666">
+        BAMOTCH QR
+    </text>
+</svg>`;
+    }
+    
+    // ============================================
+    // FONCTIONS UTILITAIRES
+    // ============================================
+    
+    function lightenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        
+        return "#" + (
+            0x1000000 +
+            (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)
+        ).toString(16).slice(1);
+    }
+    
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    // ============================================
+    // PLEIN ÉCRAN
+    // ============================================
+    
+    fullscreenPreviewBtn.addEventListener('click', function() {
+        const qrContainer = qrcodeDiv.querySelector('canvas');
+        if (!qrContainer) {
+            toastr.warning('Générez d\'abord un QR code');
+            return;
+        }
+        
+        if (!document.fullscreenElement) {
+            qrcodeDiv.requestFullscreen().catch(err => {
+                toastr.error(`Erreur plein écran: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
     });
-}
-
-// ===== UTILITY FUNCTIONS =====
-function updateQRInfo() {
-    // Update type
-    const typeMap = {
-        'url': 'Lien URL',
-        'text': 'Texte',
-        'wifi': 'WiFi',
-        'contact': 'Contact vCard'
-    };
-    DOM.infoType.textContent = typeMap[CONFIG.currentTab] || 'URL';
     
-    // Update size
-    DOM.infoSize.textContent = `${CONFIG.qrSize} × ${CONFIG.qrSize}px`;
+    // ============================================
+    // AIDE
+    // ============================================
     
-    // Update design
-    const activeDesign = document.querySelector('.design-option.active span');
-    DOM.infoDesign.textContent = activeDesign ? activeDesign.textContent : 'Carré';
+    helpBtn.addEventListener('click', function() {
+        toastr.info(
+            '<h4>Comment utiliser BAMOTCH QR:</h4>' +
+            '<ol>' +
+            '<li>Choisissez le type de contenu (texte, lien, Wi-Fi, contact)</li>' +
+            '<li>Personnalisez la forme des points et des yeux</li>' +
+            '<li>Sélectionnez ou personnalisez les couleurs</li>' +
+            '<li>Ajoutez un logo si souhaité (max 1MB)</li>' +
+            '<li>Générez et téléchargez dans le format souhaité</li>' +
+            '</ol>',
+            'Aide & Instructions',
+            { timeOut: 10000, extendedTimeOut: 5000 }
+        );
+    });
     
-    // Update shape
-    const activeShape = document.querySelector('.shape-option.active span');
-    DOM.infoShape.textContent = activeShape ? activeShape.textContent : 'Carré';
+    // ============================================
+    // INITIALISATION
+    // ============================================
     
-    // Update color
-    const activeColor = document.querySelector('.color-option.active span');
-    DOM.infoColor.textContent = activeColor ? activeColor.textContent : 'Bleu foncé';
+    // Remplir avec des exemples
+    setTimeout(() => {
+        if (!textContent.value) {
+            textContent.value = 'Bienvenue sur BAMOTCH QR ! Créez des QR codes stylés et uniques avec notre générateur avancé.';
+            textContent.dispatchEvent(new Event('input'));
+        }
+        
+        if (!urlContent.value) {
+            urlContent.value = 'bamotch-qr.github.io';
+        }
+        
+        if (!wifiSsid.value) {
+            wifiSsid.value = 'MonRéseauMaison';
+            wifiPassword.value = 'MotDePasseSecret';
+        }
+        
+        if (!contactName.value) {
+            contactName.value = 'Jean Dupont';
+            contactPhone.value = '+33 1 23 45 67 89';
+            contactEmail.value = 'jean.dupont@email.com';
+        }
+    }, 1000);
     
-    // Update logo
-    DOM.infoLogo.textContent = CONFIG.logo ? 'Oui' : 'Non';
-}
-
-function hexToRgb(hex) {
-    if (hex.includes('gradient')) {
-        return { r: 0, g: 0, b: 0 };
-    }
+    // Activer le mode plein écran sur touche F
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'f' || e.key === 'F') {
+            fullscreenPreviewBtn.click();
+        }
+    });
     
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : { r: 0, g: 0, b: 0 };
-}
-
-// ===== INITIALIZE APP =====
-document.addEventListener('DOMContentLoaded', init);
-
-// Add notification styles
-const style = document.createElement('style');
-style.textContent = `
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 25px;
-        border-radius: 12px;
-        color: white;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    
-    .notification.success {
-        background: #27ae60;
-    }
-    
-    .notification.error {
-        background: #e74c3c;
-    }
-    
-    .notification.info {
-        background: #3498db;
-    }
-    
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    .remove-logo {
-        background: #e74c3c;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 10px;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
-    
-    .remove-logo:hover {
-        background: #c0392b;
-    }
-`;
-document.head.appendChild(style);
+    // Initialiser le nom du fichier
+    filenameInput.dispatchEvent(new Event('input'));
+});
