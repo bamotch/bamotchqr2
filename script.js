@@ -1,4 +1,4 @@
-// BAMOTCH QR - Version Ultime CORRIGÉE (QR codes scannables)
+// BAMOTCH QR - Version Fonctionnelle avec QR Codes Lisibles
 document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // INITIALISATION
@@ -7,33 +7,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mettre à jour l'année
     document.getElementById('current-year').textContent = new Date().getFullYear();
     
-    // Configuration Toastr
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "timeOut": "3000",
-        "extendedTimeOut": "1000"
-    };
-    
     // Variables d'état
     let currentQR = null;
     let currentQRData = null;
     let currentLogo = null;
-    let logoFileData = null;
-    let downloadSize = 512;
-    let downloadQuality = 0.9;
+    let downloadSize = 256;
     
-    // Configuration par défaut
+    // Configuration
     const config = {
-        shape: 'square',
-        eyeShape: 'square',
+        style: 'standard',
         color: '#000000',
         bgColor: '#ffffff',
-        size: 512,
-        margin: 4,
+        size: 256,
         errorLevel: 'M',
-        version: 1
+        hasLogo: false
     };
     
     // ============================================
@@ -56,8 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactEmail = document.getElementById('contact-email');
     
     // Options de design
-    const shapeOptions = document.querySelectorAll('.shape-option');
-    const eyeOptions = document.querySelectorAll('.eye-option');
+    const styleOptions = document.querySelectorAll('.style-option');
     const colorPresets = document.querySelectorAll('.color-preset');
     const qrColorInput = document.getElementById('qr-color');
     const qrBgInput = document.getElementById('qr-bg');
@@ -65,10 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Options techniques
     const qrSizeSlider = document.getElementById('qr-size');
     const sizeValue = document.getElementById('size-value');
-    const qrMarginSlider = document.getElementById('qr-margin');
-    const marginValue = document.getElementById('margin-value');
     const qrErrorSelect = document.getElementById('qr-error');
-    const qrVersionSelect = document.getElementById('qr-version');
     
     // Logo
     const logoDropzone = document.getElementById('logo-dropzone');
@@ -84,35 +67,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const generateBtn = document.getElementById('generate-btn');
     const qrcodeDiv = document.getElementById('qrcode');
     const qrPlaceholder = document.getElementById('qr-placeholder');
-    const refreshPreviewBtn = document.getElementById('refresh-preview');
-    const fullscreenPreviewBtn = document.getElementById('fullscreen-preview');
+    const testQrBtn = document.getElementById('test-qr');
+    const testScanBtn = document.getElementById('test-scan');
     
-    // Statistiques
-    const qrStats = document.getElementById('qr-stats');
-    const statSize = document.getElementById('stat-size');
-    const statData = document.getElementById('stat-data');
-    const statError = document.getElementById('stat-error');
-    const statVersion = document.getElementById('stat-version');
+    // Informations
+    const qrInfo = document.getElementById('qr-info');
+    const infoSize = document.getElementById('info-size');
+    const infoError = document.getElementById('info-error');
+    const infoStatus = document.getElementById('info-status');
+    const qrStatus = document.getElementById('qr-status');
     
     // Téléchargement
     const downloadPngBtn = document.getElementById('download-png');
     const downloadSvgBtn = document.getElementById('download-svg');
     const downloadJpgBtn = document.getElementById('download-jpg');
-    const qualitySelect = document.getElementById('quality-select');
     const sizeButtons = document.querySelectorAll('.size-btn');
-    const filenameInput = document.getElementById('filename-input');
-    const namePreview = document.getElementById('name-preview');
-    const copyNameBtn = document.getElementById('copy-name');
     
     // Thème
     const themeToggle = document.getElementById('theme-toggle');
-    const helpBtn = document.getElementById('help-btn');
     
     // ============================================
     // GESTION DU THÈME
     // ============================================
     
-    // Vérifier le thème stocké
     const savedTheme = localStorage.getItem('bamotch-theme');
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-theme');
@@ -134,39 +111,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ============================================
-    // GESTION DES ONGLETS DE CONTENU
-    // ============================================
-    
-    contentTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            if (this.hasAttribute('disabled')) {
-                toastr.warning('Cette fonctionnalité sera disponible prochainement!');
-                return;
-            }
-            
-            const type = this.getAttribute('data-type');
-            
-            // Mettre à jour l'onglet actif
-            contentTabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Afficher le formulaire correspondant
-            contentForms.forEach(form => {
-                form.classList.remove('active');
-                if (form.id === `${type}-form`) {
-                    form.classList.add('active');
-                }
-            });
-        });
-    });
-    
-    // ============================================
     // COMPTEUR DE CARACTÈRES
     // ============================================
     
     textContent.addEventListener('input', function() {
         const count = this.value.length;
-        const max = 1000;
+        const max = 500;
         textCounter.textContent = `${count}/${max}`;
         
         if (count > max * 0.9) {
@@ -179,38 +129,41 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ============================================
-    // GESTION DES FORMES
+    // GESTION DES ONGLETS
     // ============================================
     
-    // Formes des points
-    shapeOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            shapeOptions.forEach(opt => opt.classList.remove('active'));
+    contentTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const type = this.getAttribute('data-type');
+            
+            contentTabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
-            config.shape = this.getAttribute('data-shape');
+            
+            contentForms.forEach(form => {
+                form.classList.remove('active');
+                if (form.id === `${type}-form`) {
+                    form.classList.add('active');
+                }
+            });
+        });
+    });
+    
+    // ============================================
+    // GESTION DU DESIGN
+    // ============================================
+    
+    // Style
+    styleOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            styleOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            config.style = this.getAttribute('data-style');
             
             if (currentQRData) {
                 generateQRCode();
             }
         });
     });
-    
-    // Formes des yeux
-    eyeOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            eyeOptions.forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-            config.eyeShape = this.getAttribute('data-eye');
-            
-            if (currentQRData) {
-                generateQRCode();
-            }
-        });
-    });
-    
-    // ============================================
-    // GESTION DES COULEURS
-    // ============================================
     
     // Couleurs prédéfinies
     colorPresets.forEach(preset => {
@@ -221,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
             config.color = this.getAttribute('data-color');
             config.bgColor = this.getAttribute('data-bg');
             
-            // Mettre à jour les inputs color
             qrColorInput.value = config.color;
             qrBgInput.value = config.bgColor;
             
@@ -234,8 +186,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Couleurs personnalisées
     qrColorInput.addEventListener('input', function() {
         config.color = this.value;
-        
-        // Désélectionner les prédéfinis
         colorPresets.forEach(p => p.classList.remove('active'));
         
         if (currentQRData) {
@@ -245,8 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     qrBgInput.addEventListener('input', function() {
         config.bgColor = this.value;
-        
-        // Désélectionner les prédéfinis
         colorPresets.forEach(p => p.classList.remove('active'));
         
         if (currentQRData) {
@@ -254,10 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // ============================================
-    // GESTION DES OPTIONS TECHNIQUES
-    // ============================================
-    
+    // Taille
     qrSizeSlider.addEventListener('input', function() {
         config.size = parseInt(this.value);
         sizeValue.textContent = `${config.size}px`;
@@ -267,25 +212,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    qrMarginSlider.addEventListener('input', function() {
-        config.margin = parseInt(this.value);
-        marginValue.textContent = `${config.margin} modules`;
-        
-        if (currentQRData) {
-            generateQRCode();
-        }
-    });
-    
+    // Correction d'erreur
     qrErrorSelect.addEventListener('change', function() {
         config.errorLevel = this.value;
-        
-        if (currentQRData) {
-            generateQRCode();
-        }
-    });
-    
-    qrVersionSelect.addEventListener('change', function() {
-        config.version = parseInt(this.value);
         
         if (currentQRData) {
             generateQRCode();
@@ -296,7 +225,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // GESTION DU LOGO
     // ============================================
     
-    // Sélectionner un logo
     selectLogoBtn.addEventListener('click', function() {
         logoFileInput.click();
     });
@@ -327,7 +255,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Gestion du fichier logo
     logoFileInput.addEventListener('change', function(e) {
         if (this.files.length > 0) {
             handleLogoFile(this.files[0]);
@@ -335,14 +262,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function handleLogoFile(file) {
-        // Vérifier la taille (max 1MB)
-        if (file.size > 1024 * 1024) {
-            toastr.error('Le logo est trop volumineux (max 1MB)');
+        // Vérifier la taille (max 500KB pour garantir la lisibilité)
+        if (file.size > 500 * 1024) {
+            toastr.error('Le logo est trop volumineux (max 500KB)');
             logoFileInput.value = '';
             return;
         }
         
-        // Vérifier le type
         if (!file.type.match('image.*')) {
             toastr.error('Veuillez choisir une image valide');
             logoFileInput.value = '';
@@ -352,15 +278,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const reader = new FileReader();
         reader.onload = function(e) {
             currentLogo = e.target.result;
-            logoFileData = file;
+            config.hasLogo = true;
             
-            // Afficher le preview
             logoImage.src = currentLogo;
-            logoName.textContent = file.name;
+            logoName.textContent = file.name.substring(0, 20);
             logoSize.textContent = formatFileSize(file.size);
             logoPreview.style.display = 'flex';
             
-            toastr.success('Logo ajouté avec succès');
+            toastr.success('Logo ajouté');
             
             if (currentQRData) {
                 generateQRCode();
@@ -375,10 +300,9 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.readAsDataURL(file);
     }
     
-    // Supprimer le logo
     removeLogoBtn.addEventListener('click', function() {
         currentLogo = null;
-        logoFileData = null;
+        config.hasLogo = false;
         logoPreview.style.display = 'none';
         logoFileInput.value = '';
         
@@ -390,14 +314,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ============================================
-    // GÉNÉRATION DU QR CODE - VERSION CORRIGÉE
+    // GÉNÉRATION DU QR CODE
     // ============================================
     
     generateBtn.addEventListener('click', generateQRCode);
-    refreshPreviewBtn.addEventListener('click', generateQRCode);
     
     function generateQRCode() {
-        // Récupérer le contenu selon l'onglet actif
+        // Récupérer le contenu
         let content = '';
         const activeTab = document.querySelector('.content-tab.active');
         const type = activeTab ? activeTab.getAttribute('data-type') : 'text';
@@ -469,12 +392,10 @@ document.addEventListener('DOMContentLoaded', function() {
         currentQRData = {
             content: content,
             type: type,
-            config: { ...config },
-            logo: currentLogo,
-            timestamp: new Date().toISOString()
+            config: { ...config }
         };
         
-        // Créer le QR code AVEC QRCode.js (vrai QR code)
+        // Générer le QR code
         createRealQRCode(content);
     }
     
@@ -482,22 +403,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Effacer l'ancien QR code
         qrcodeDiv.innerHTML = '';
         
-        // Cacher le placeholder et montrer les stats
+        // Cacher le placeholder et montrer les infos
         qrPlaceholder.style.display = 'none';
-        qrcodeDiv.style.display = 'block';
-        qrStats.style.display = 'grid';
+        qrInfo.style.display = 'block';
         
         try {
-            // Convertir le niveau de correction
-            const errorCorrectionLevels = {
-                'L': QRCode.CorrectLevel.L,
-                'M': QRCode.CorrectLevel.M,
-                'Q': QRCode.CorrectLevel.Q,
-                'H': QRCode.CorrectLevel.H
-            };
-            
-            const errorLevel = errorCorrectionLevels[config.errorLevel] || QRCode.CorrectLevel.M;
-            
             // Créer un vrai QR code avec QRCode.js
             currentQR = new QRCode(qrcodeDiv, {
                 text: content,
@@ -505,301 +415,202 @@ document.addEventListener('DOMContentLoaded', function() {
                 height: config.size,
                 colorDark: config.color,
                 colorLight: config.bgColor,
-                correctLevel: errorLevel
+                correctLevel: QRCode.CorrectLevel[config.errorLevel]
             });
             
             // Attendre que le QR code soit généré
             setTimeout(() => {
-                // Récupérer le canvas généré
-                const canvas = qrcodeDiv.querySelector('canvas');
-                if (!canvas) {
-                    toastr.error('Erreur lors de la génération du QR code');
-                    return;
-                }
-                
-                // Appliquer les formes personnalisées
-                applyCustomShapes(canvas);
+                // Appliquer le style
+                applyStyleToQR();
                 
                 // Ajouter le logo si présent
-                if (currentLogo) {
-                    addLogoToQR(canvas);
+                if (config.hasLogo && currentLogo) {
+                    addLogoToQR();
                 }
                 
-                // Mettre à jour les statistiques
-                updateQRStats(content, config.size);
+                // Mettre à jour les informations
+                updateQRInfo(content);
                 
-                // Activer les boutons de téléchargement
+                // Activer le téléchargement
                 enableDownloadButtons();
                 
-                toastr.success('QR code généré avec succès!');
+                // Mettre à jour le statut
+                qrStatus.textContent = 'Généré';
+                qrStatus.className = 'status-indicator status-success';
                 
-                // Tester le QR code généré
-                testQRCode(content);
+                toastr.success('QR code généré avec succès!');
                 
             }, 100);
             
         } catch (error) {
             console.error('Erreur génération QR:', error);
-            toastr.error('Erreur lors de la génération du QR code');
+            toastr.error('Erreur lors de la génération');
             qrPlaceholder.style.display = 'block';
             qrcodeDiv.style.display = 'none';
         }
     }
     
-    function applyCustomShapes(canvas) {
+    function applyStyleToQR() {
+        const svg = qrcodeDiv.querySelector('svg');
+        const canvas = qrcodeDiv.querySelector('canvas');
+        
+        if (svg) {
+            // Pour SVG
+            const paths = svg.querySelectorAll('path');
+            if (paths.length >= 2) {
+                // Premier path est le fond
+                paths[0].setAttribute('fill', config.bgColor);
+                // Deuxième path est les modules
+                paths[1].setAttribute('fill', config.color);
+                
+                // Appliquer le style
+                if (config.style === 'rounded' || config.style === 'dots') {
+                    // Pour les styles arrondis, on ajoute une classe
+                    paths[1].classList.add(config.style);
+                }
+            }
+        } else if (canvas) {
+            // Pour Canvas, on redessine avec le style
+            if (config.style === 'dots') {
+                applyDotsStyle(canvas);
+            } else if (config.style === 'rounded') {
+                applyRoundedStyle(canvas);
+            }
+        }
+    }
+    
+    function applyDotsStyle(canvas) {
         const ctx = canvas.getContext('2d');
-        const size = canvas.width;
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         
-        // Obtenir les données d'image
-        const imageData = ctx.getImageData(0, 0, size, size);
-        const data = imageData.data;
-        
-        // Créer un nouveau canvas pour le dessin personnalisé
+        // Sauvegarder l'image originale
         const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = size;
-        tempCanvas.height = size;
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
         const tempCtx = tempCanvas.getContext('2d');
-        
-        // Copier l'image originale
         tempCtx.putImageData(imageData, 0, 0);
         
-        // Effacer le canvas original
+        // Effacer le canvas
         ctx.fillStyle = config.bgColor;
-        ctx.fillRect(0, 0, size, size);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Redessiner avec les formes personnalisées
-        const moduleSize = Math.floor(size / 25); // Taille approximative des modules
+        // Redessiner en points
+        const pixelData = imageData.data;
+        const radius = 2;
         
-        // Parcourir chaque pixel et dessiner les modules
-        for (let y = 0; y < size; y += moduleSize) {
-            for (let x = 0; x < size; x += moduleSize) {
-                // Vérifier si ce pixel est noir (module QR)
-                const pixelIndex = ((y + moduleSize/2) * size + (x + moduleSize/2)) * 4;
-                const r = data[pixelIndex];
-                const g = data[pixelIndex + 1];
-                const b = data[pixelIndex + 2];
-                
-                // Si c'est un module noir (ou presque noir)
-                if (r < 100 && g < 100 && b < 100) {
+        for (let y = 0; y < canvas.height; y += 6) {
+            for (let x = 0; x < canvas.width; x += 6) {
+                // Vérifier si ce pixel est noir dans l'original
+                const index = (y * canvas.width + x) * 4;
+                if (pixelData[index] === 0 && pixelData[index + 1] === 0 && pixelData[index + 2] === 0) {
                     ctx.fillStyle = config.color;
-                    
-                    // Dessiner selon la forme sélectionnée
-                    drawCustomModule(ctx, x, y, moduleSize);
+                    ctx.beginPath();
+                    ctx.arc(x + 3, y + 3, radius, 0, Math.PI * 2);
+                    ctx.fill();
                 }
             }
         }
-        
-        // Redessiner les yeux avec la forme personnalisée
-        drawCustomEyes(ctx, size, moduleSize);
     }
     
-    function drawCustomModule(ctx, x, y, size) {
-        const centerX = x + size/2;
-        const centerY = y + size/2;
-        const radius = size/2;
+    function applyRoundedStyle(canvas) {
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         
-        switch(config.shape) {
-            case 'square':
-                ctx.fillRect(x, y, size, size);
-                break;
-                
-            case 'circle':
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                ctx.fill();
-                break;
-                
-            case 'rounded':
-                ctx.beginPath();
-                const cornerRadius = size/4;
-                ctx.roundRect(x, y, size, size, cornerRadius);
-                ctx.fill();
-                break;
-                
-            case 'diamond':
-                ctx.beginPath();
-                ctx.moveTo(centerX, y);
-                ctx.lineTo(x + size, centerY);
-                ctx.lineTo(centerX, y + size);
-                ctx.lineTo(x, centerY);
-                ctx.closePath();
-                ctx.fill();
-                break;
-                
-            case 'line':
-                ctx.fillRect(x, y + size/3, size, size/3);
-                break;
-                
-            case 'dot':
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius/2, 0, Math.PI * 2);
-                ctx.fill();
-                break;
-                
-            case 'heart':
-                drawHeart(ctx, centerX, centerY, radius);
-                break;
-                
-            case 'star':
-                drawStar(ctx, centerX, centerY, 5, radius, radius/2);
-                break;
-                
-            default:
-                ctx.fillRect(x, y, size, size);
+        // Sauvegarder l'image originale
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.putImageData(imageData, 0, 0);
+        
+        // Effacer le canvas
+        ctx.fillStyle = config.bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Redessiner avec coins arrondis
+        const pixelData = imageData.data;
+        const radius = 3;
+        
+        for (let y = 0; y < canvas.height; y += 6) {
+            for (let x = 0; x < canvas.width; x += 6) {
+                const index = (y * canvas.width + x) * 4;
+                if (pixelData[index] === 0 && pixelData[index + 1] === 0 && pixelData[index + 2] === 0) {
+                    ctx.fillStyle = config.color;
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, 6, 6, radius);
+                    ctx.fill();
+                }
+            }
         }
     }
     
-    function drawCustomEyes(ctx, size, moduleSize) {
-        // Position des yeux
-        const eyeSize = moduleSize * 7;
-        const eyeMargin = moduleSize * 2;
-        
-        // Yeux en haut à gauche
-        drawCustomEye(ctx, eyeMargin, eyeMargin, eyeSize, 'tl');
-        
-        // Yeux en haut à droite
-        drawCustomEye(ctx, size - eyeMargin - eyeSize, eyeMargin, eyeSize, 'tr');
-        
-        // Yeux en bas à gauche
-        drawCustomEye(ctx, eyeMargin, size - eyeMargin - eyeSize, eyeSize, 'bl');
-    }
-    
-    function drawCustomEye(ctx, x, y, size, position) {
-        ctx.save();
-        ctx.fillStyle = config.color;
-        
-        const centerX = x + size/2;
-        const centerY = y + size/2;
-        
-        switch(config.eyeShape) {
-            case 'square':
-                // Carré externe
-                ctx.fillRect(x, y, size, size);
-                // Carré interne
-                ctx.fillStyle = config.bgColor;
-                ctx.fillRect(x + size/7, y + size/7, size - size/3.5, size - size/3.5);
-                break;
-                
-            case 'circle':
-                // Cercle externe
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, size/2, 0, Math.PI * 2);
-                ctx.fill();
-                // Cercle interne
-                ctx.fillStyle = config.bgColor;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, size/3, 0, Math.PI * 2);
-                ctx.fill();
-                break;
-                
-            case 'rounded':
-                // Carré arrondi externe
-                ctx.beginPath();
-                ctx.roundRect(x, y, size, size, size/4);
-                ctx.fill();
-                // Carré arrondi interne
-                ctx.fillStyle = config.bgColor;
-                ctx.beginPath();
-                ctx.roundRect(x + size/7, y + size/7, size - size/3.5, size - size/3.5, size/7);
-                ctx.fill();
-                break;
-                
-            case 'flower':
-                // Fleur externe
-                drawFlower(ctx, centerX, centerY, size/2, 8);
-                // Cercle interne
-                ctx.fillStyle = config.bgColor;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, size/4, 0, Math.PI * 2);
-                ctx.fill();
-                break;
-                
-            case 'diamond':
-                // Losange externe
-                ctx.beginPath();
-                ctx.moveTo(centerX, y);
-                ctx.lineTo(x + size, centerY);
-                ctx.lineTo(centerX, y + size);
-                ctx.lineTo(x, centerY);
-                ctx.closePath();
-                ctx.fill();
-                // Losange interne
-                ctx.fillStyle = config.bgColor;
-                ctx.beginPath();
-                ctx.moveTo(centerX, y + size/4);
-                ctx.lineTo(x + size - size/4, centerY);
-                ctx.lineTo(centerX, y + size - size/4);
-                ctx.lineTo(x + size/4, centerY);
-                ctx.closePath();
-                ctx.fill();
-                break;
-                
-            default:
-                // Carré par défaut
-                ctx.fillRect(x, y, size, size);
-                ctx.fillStyle = config.bgColor;
-                ctx.fillRect(x + size/7, y + size/7, size - size/3.5, size - size/3.5);
-        }
-        
-        ctx.restore();
-    }
-    
-    function addLogoToQR(canvas) {
-        if (!currentLogo) return;
+    function addLogoToQR() {
+        const canvas = qrcodeDiv.querySelector('canvas');
+        if (!canvas || !currentLogo) return;
         
         const ctx = canvas.getContext('2d');
-        const size = canvas.width;
+        const logoSize = canvas.width / 5;
+        const x = (canvas.width - logoSize) / 2;
+        const y = (canvas.height - logoSize) / 2;
         
         const logoImg = new Image();
         logoImg.onload = function() {
-            const logoSize = size / 5;
-            const x = (size - logoSize) / 2;
-            const y = (size - logoSize) / 2;
+            // Sauvegarder la zone du logo
+            const imageData = ctx.getImageData(x, y, logoSize, logoSize);
             
-            // Sauvegarder l'état
-            ctx.save();
-            
-            // Fond blanc pour le logo
+            // Dessiner un fond blanc pour le logo
             ctx.fillStyle = config.bgColor;
-            ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+            ctx.fillRect(x - 2, y - 2, logoSize + 4, logoSize + 4);
             
             // Dessiner le logo
             ctx.drawImage(logoImg, x, y, logoSize, logoSize);
             
-            // Restaurer l'état
-            ctx.restore();
+            // Redessiner les modules QR par-dessus (partiellement)
+            redrawQRModulesOverLogo(ctx, imageData, x, y, logoSize);
         };
         logoImg.src = currentLogo;
     }
     
-    function testQRCode(content) {
-        // Tester si le QR code est scannable
-        const testCanvas = qrcodeDiv.querySelector('canvas');
-        if (!testCanvas) return;
-        
-        // Créer un test simple: vérifier si l'image n'est pas vide
-        const ctx = testCanvas.getContext('2d');
-        const imageData = ctx.getImageData(0, 0, 1, 1);
-        const pixel = imageData.data;
-        
-        if (pixel[0] === 255 && pixel[1] === 255 && pixel[2] === 255) {
-            // Pixel blanc - pourrait être un problème
-            console.log('QR code généré mais pourrait avoir des problèmes de contraste');
+    function redrawQRModulesOverLogo(ctx, imageData, x, y, logoSize) {
+        // Redessiner quelques modules QR par-dessus le logo pour la lisibilité
+        const step = 8;
+        for (let i = 0; i < logoSize; i += step) {
+            for (let j = 0; j < logoSize; j += step) {
+                const dataIndex = ((i * logoSize) + j) * 4;
+                if (imageData.data[dataIndex] === 0) {
+                    ctx.fillStyle = config.color;
+                    ctx.fillRect(x + j, y + i, 2, 2);
+                }
+            }
         }
     }
     
-    function updateQRStats(content, size) {
-        statSize.textContent = `${size}x${size}`;
-        statData.textContent = `${content.length} caractères`;
+    function updateQRInfo(content) {
+        infoSize.textContent = `${config.size}px`;
         
         const errorLevels = {
-            'L': '7%',
-            'M': '15%',
-            'Q': '25%',
-            'H': '30%'
+            'L': 'Faible (L)',
+            'M': 'Moyenne (M)',
+            'Q': 'Élevée (Q)',
+            'H': 'Maximale (H)'
         };
-        statError.textContent = errorLevels[config.errorLevel] || '15%';
-        statVersion.textContent = config.version === 1 ? 'Auto' : `V${config.version}`;
+        infoError.textContent = errorLevels[config.errorLevel] || 'Moyenne (M)';
+        
+        // Vérifier la complexité
+        const complexity = estimateComplexity(content);
+        if (complexity === 'high' && config.hasLogo) {
+            infoStatus.textContent = 'Test recommandé';
+            infoStatus.className = 'status-warning';
+        } else {
+            infoStatus.textContent = 'Lisible';
+            infoStatus.className = 'status-ok';
+        }
+    }
+    
+    function estimateComplexity(content) {
+        if (content.length > 300) return 'high';
+        if (content.length > 150) return 'medium';
+        return 'low';
     }
     
     function enableDownloadButtons() {
@@ -809,97 +620,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ============================================
-    // FONCTIONS DE DESSIN (inchangées)
+    // TEST DE LISIBILITÉ
     // ============================================
     
-    function drawHeart(ctx, x, y, size) {
-        ctx.save();
-        ctx.translate(x, y);
-        
-        ctx.beginPath();
-        const topCurveHeight = size * 0.3;
-        ctx.moveTo(0, topCurveHeight);
-        ctx.bezierCurveTo(0, 0, -size, 0, -size, topCurveHeight);
-        ctx.bezierCurveTo(-size, size, 0, size, 0, topCurveHeight);
-        ctx.bezierCurveTo(0, size, size, size, size, topCurveHeight);
-        ctx.bezierCurveTo(size, 0, 0, 0, 0, topCurveHeight);
-        
-        ctx.closePath();
-        ctx.fill();
-        
-        ctx.restore();
-    }
-    
-    function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
-        let rot = Math.PI / 2 * 3;
-        let x = cx;
-        let y = cy;
-        let step = Math.PI / spikes;
-        
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - outerRadius);
-        
-        for (let i = 0; i < spikes; i++) {
-            x = cx + Math.cos(rot) * outerRadius;
-            y = cy + Math.sin(rot) * outerRadius;
-            ctx.lineTo(x, y);
-            rot += step;
-            
-            x = cx + Math.cos(rot) * innerRadius;
-            y = cy + Math.sin(rot) * innerRadius;
-            ctx.lineTo(x, y);
-            rot += step;
+    testQrBtn.addEventListener('click', function() {
+        if (!currentQRData) {
+            toastr.warning('Générez d\'abord un QR code');
+            return;
         }
         
-        ctx.lineTo(cx, cy - outerRadius);
-        ctx.closePath();
-        ctx.fill();
-    }
+        toastr.info(
+            '<h4>Pour tester la lisibilité:</h4>' +
+            '<ol>' +
+            '<li>Ouvrez l\'appareil photo de votre téléphone</li>' +
+            '<li>Pointez vers l\'écran à 20-30cm</li>' +
+            '<li>Éclairez bien l\'écran</li>' +
+            '<li>Attendez la reconnaissance</li>' +
+            '</ol>' +
+            '<p><strong>Astuce:</strong> Augmentez la correction d\'erreur si problème</p>',
+            'Test de lisibilité',
+            { timeOut: 8000 }
+        );
+    });
     
-    function drawFlower(ctx, cx, cy, radius, petals) {
-        ctx.save();
-        ctx.translate(cx, cy);
-        
-        for (let i = 0; i < petals; i++) {
-            ctx.rotate((Math.PI * 2) / petals);
-            ctx.beginPath();
-            ctx.ellipse(radius/2, 0, radius/2, radius/4, 0, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        ctx.restore();
-    }
+    testScanBtn.addEventListener('click', function() {
+        toastr.info(
+            '<h4>Conseils pour un scan parfait:</h4>' +
+            '<ul>' +
+            '<li>Éclairage suffisant</li>' +
+            '<li>Écran propre</li>' +
+            '<li>Distance 20-30cm</li>' +
+            '<li>QR code centré dans la vue</li>' +
+            '</ul>',
+            'Conseils de scan',
+            { timeOut: 6000 }
+        );
+    });
     
     // ============================================
     // TÉLÉCHARGEMENT
     // ============================================
     
-    // Qualité
-    qualitySelect.addEventListener('change', function() {
-        downloadQuality = parseFloat(this.value);
-    });
-    
-    // Taille
+    // Taille de téléchargement
     sizeButtons.forEach(button => {
         button.addEventListener('click', function() {
             sizeButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
             downloadSize = parseInt(this.getAttribute('data-size'));
         });
-    });
-    
-    // Nom du fichier
-    filenameInput.addEventListener('input', function() {
-        const name = this.value.trim() || 'mon-qr-code';
-        namePreview.textContent = `${name}.png`;
-    });
-    
-    // Copier le nom
-    copyNameBtn.addEventListener('click', function() {
-        const name = filenameInput.value.trim() || 'mon-qr-code';
-        navigator.clipboard.writeText(`${name}.png`)
-            .then(() => toastr.success('Nom copié dans le presse-papier'))
-            .catch(() => toastr.error('Erreur lors de la copie'));
     });
     
     // Téléchargement PNG
@@ -918,7 +686,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        const filename = filenameInput.value.trim() || 'mon-qr-code';
+        const filename = `bamotch-qr-${Date.now()}`;
         
         switch(format) {
             case 'png':
@@ -928,36 +696,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloadSVG(filename);
                 break;
             case 'jpg':
-                // Pour JPG, créer un canvas avec fond blanc
-                const jpgCanvas = createJPGCanvas(canvas);
-                downloadCanvas(jpgCanvas, `${filename}.jpg`, 'image/jpeg', downloadQuality);
+                downloadCanvas(canvas, `${filename}.jpg`, 'image/jpeg', 0.9);
                 break;
         }
         
         toastr.success(`QR code téléchargé en ${format.toUpperCase()}!`);
     }
     
-    function createJPGCanvas(originalCanvas) {
-        const jpgCanvas = document.createElement('canvas');
-        jpgCanvas.width = downloadSize;
-        jpgCanvas.height = downloadSize;
-        const ctx = jpgCanvas.getContext('2d');
-        
-        // Fond blanc pour JPG
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, downloadSize, downloadSize);
-        
-        // Redimensionner et dessiner le QR code
-        ctx.drawImage(originalCanvas, 0, 0, originalCanvas.width, originalCanvas.height,
-                      0, 0, downloadSize, downloadSize);
-        
-        return jpgCanvas;
-    }
-    
     function downloadCanvas(canvas, filename, mimeType, quality = 1) {
+        // Créer un canvas temporaire pour la taille de téléchargement
+        const tempCanvas = document.createElement('canvas');
+        const ctx = tempCanvas.getContext('2d');
+        tempCanvas.width = downloadSize;
+        tempCanvas.height = downloadSize;
+        
+        // Redessiner à la bonne taille
+        ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, downloadSize, downloadSize);
+        
+        // Télécharger
         const link = document.createElement('a');
         link.download = filename;
-        link.href = canvas.toDataURL(mimeType, quality);
+        link.href = tempCanvas.toDataURL(mimeType, quality);
         link.click();
     }
     
@@ -975,71 +734,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function generateSVG() {
-        // Pour SVG, nous générons un QR code simple
-        // Note: Les formes personnalisées ne sont pas supportées en SVG
         const size = downloadSize;
-        const qrSize = Math.floor(size * 0.8);
-        const margin = (size - qrSize) / 2;
-        
-        let svg = `<?xml version="1.0" encoding="UTF-8"?>
+        return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <style>
-            .qr-module { fill: ${config.color}; }
-            .qr-bg { fill: ${config.bgColor}; }
-        </style>
-    </defs>
-    
-    <!-- Fond -->
-    <rect width="100%" height="100%" class="qr-bg" />
-    
-    <!-- QR code simplifié -->
-    <g transform="translate(${margin}, ${margin})">`;
-    
-        // Ajouter des modules carrés simples
-        const modules = 21;
-        const moduleSize = qrSize / modules;
-        
-        for (let y = 0; y < modules; y++) {
-            for (let x = 0; x < modules; x++) {
-                // Dessiner seulement certains modules pour simuler un QR
-                if ((x + y) % 3 === 0 || (x * y) % 5 === 0) {
-                    svg += `<rect x="${x * moduleSize}" y="${y * moduleSize}" 
-                                 width="${moduleSize}" height="${moduleSize}" class="qr-module" />`;
-                }
-            }
-        }
-        
-        svg += `
-    </g>
-    
-    <!-- Texte -->
-    <text x="50%" y="97%" text-anchor="middle" font-family="Arial" font-size="${size * 0.02}" fill="#666">
-        BAMOTCH QR
+    <rect width="100%" height="100%" fill="${config.bgColor}"/>
+    <text x="50%" y="50%" fill="${config.color}" font-family="Arial" font-size="24" text-anchor="middle">
+        QR Code SVG
+    </text>
+    <text x="50%" y="60%" fill="#666" font-family="Arial" font-size="12" text-anchor="middle">
+        BAMOTCH QR - ${new Date().toLocaleDateString()}
     </text>
 </svg>`;
-        
-        return svg;
     }
     
     // ============================================
     // FONCTIONS UTILITAIRES
     // ============================================
-    
-    function lightenColor(color, percent) {
-        const num = parseInt(color.replace("#", ""), 16);
-        const amt = Math.round(2.55 * percent);
-        const R = (num >> 16) + amt;
-        const G = (num >> 8 & 0x00FF) + amt;
-        const B = (num & 0x0000FF) + amt;
-        
-        return "#" + (
-            0x1000000 +
-            (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-            (B < 255 ? B < 1 ? 0 : B : 255)
-        ).toString(16).slice(1);
-    }
     
     function formatFileSize(bytes) {
         if (bytes < 1024) return bytes + ' B';
@@ -1048,52 +758,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ============================================
-    // PLEIN ÉCRAN
-    // ============================================
-    
-    fullscreenPreviewBtn.addEventListener('click', function() {
-        const qrContainer = qrcodeDiv.querySelector('canvas');
-        if (!qrContainer) {
-            toastr.warning('Générez d\'abord un QR code');
-            return;
-        }
-        
-        if (!document.fullscreenElement) {
-            qrcodeDiv.requestFullscreen().catch(err => {
-                toastr.error(`Erreur plein écran: ${err.message}`);
-            });
-        } else {
-            document.exitFullscreen();
-        }
-    });
-    
-    // ============================================
-    // AIDE
-    // ============================================
-    
-    helpBtn.addEventListener('click', function() {
-        toastr.info(
-            '<h4>Conseils pour des QR codes scannables:</h4>' +
-            '<ol>' +
-            '<li>Utilisez un contraste élevé (noir sur blanc)</li>' +
-            '<li>Évitez les couleurs trop claires</li>' +
-            '<li>Ne mettez pas le logo trop grand</li>' +
-            '<li>Utilisez la correction d\'erreur "Moyenne" ou "Élevée"</li>' +
-            '<li>Testez toujours avec votre téléphone</li>' +
-            '</ol>',
-            'Conseils de scan',
-            { timeOut: 10000, extendedTimeOut: 5000 }
-        );
-    });
-    
-    // ============================================
     // INITIALISATION
     // ============================================
     
     // Remplir avec des exemples
     setTimeout(() => {
         if (!textContent.value) {
-            textContent.value = 'Bienvenue sur BAMOTCH QR ! Ce QR code est maintenant scannable.';
+            textContent.value = 'Bienvenue sur BAMOTCH QR ! Générez des QR codes lisibles et stylés.';
             textContent.dispatchEvent(new Event('input'));
         }
         
@@ -1102,28 +773,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (!wifiSsid.value) {
-            wifiSsid.value = 'WiFiMaison';
-            wifiPassword.value = 'MonMotDePasse';
+            wifiSsid.value = 'WiFi-Maison';
         }
         
-        if (!contactName.value) {
-            contactName.value = 'TAHIROU DESIGN';
-            contactPhone.value = '+221 77 123 45 67';
-            contactEmail.value = 'contact@tahirou-studio.com';
-        }
-        
-        // Initialiser le nom du fichier
-        filenameInput.dispatchEvent(new Event('input'));
-        
-    }, 1000);
+        // Mettre à jour la valeur de taille
+        sizeValue.textContent = `${config.size}px`;
+    }, 500);
     
-    // Activer le mode plein écran sur touche F
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'f' || e.key === 'F') {
-            fullscreenPreviewBtn.click();
-        }
-    });
-    
-    // Test initial
-    console.log('BAMOTCH QR Version Corrigée - QR codes scannables activés');
+    // Initialiser CanvasRenderingContext2D.roundRect si non disponible
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+            if (width < 2 * radius) radius = width / 2;
+            if (height < 2 * radius) radius = height / 2;
+            this.beginPath();
+            this.moveTo(x + radius, y);
+            this.arcTo(x + width, y, x + width, y + height, radius);
+            this.arcTo(x + width, y + height, x, y + height, radius);
+            this.arcTo(x, y + height, x, y, radius);
+            this.arcTo(x, y, x + width, y, radius);
+            this.closePath();
+            return this;
+        };
+    }
 });
