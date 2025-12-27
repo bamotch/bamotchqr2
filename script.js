@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let content = "";
         
         switch(type) {
-            case "text":
+            case 'text':
                 content = elements.textInput.value.trim();
                 if (!content) {
                     alert("Veuillez entrer du texte");
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 break;
                 
-            case "url":
+            case 'url':
                 let url = elements.urlInput.value.trim();
                 if (!url) {
                     alert("Veuillez entrer une URL");
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 content = url;
                 break;
                 
-            case "wifi":
+            case 'wifi':
                 const ssid = elements.wifiSsid.value.trim();
                 const password = elements.wifiPassword.value.trim();
                 const security = elements.wifiSecurity.value;
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 break;
                 
-            case "contact":
+            case 'contact':
                 const name = elements.contactName.value.trim();
                 const phone = elements.contactPhone.value.trim();
                 const email = elements.contactEmail.value.trim();
